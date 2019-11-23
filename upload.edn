@@ -1,0 +1,6 @@
+
+{:host "tiye.me"
+ :uploads [{:from "dist/*"
+            :to "cdn/circling-tree/"}
+           {:from "dist/index.html"
+            :to "repo/Quamolit/circling-tree/"}]}
