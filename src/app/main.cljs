@@ -1,17 +1,14 @@
 
-(ns phlox.main
+(ns app.main
   (:require ["pixi.js" :as PIXI]
             [phlox.core :refer [render!]]
-            [phlox.container :refer [comp-container]]
-            [phlox.schema :as schema]))
+            [app.container :refer [comp-container]]
+            [app.schema :as schema]))
 
 (defonce *store (atom schema/store))
 
 (defn updater [store op op-data]
-  (case op
-    :add-x (update store :x (fn [x] (if (> x 10) 0 (+ x 1))))
-    :tab (assoc store :tab op-data)
-    (do (println "unknown op" op op-data) store)))
+  (case op :tab (assoc store :tab op-data) (do (println "unknown op" op op-data) store)))
 
 (defn dispatch! [op op-data]
   (println "dispatch!" op op-data)
