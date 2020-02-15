@@ -15,19 +15,19 @@
   (let [get-branch (fn [v1]
                      (let [arrow1 (multiply-path arrow v1)
                            p1 (add-path p arrow1)
+                           r (+ (/ 12 level) 6)
                            line-ops (concat
                                      [[:move-to p]
                                       [:line-style
                                        {:color (hslx 0 0 60), :width 2, :alpha 0.6}]
                                       [:line-to p1]]
                                      (if (> (rand 2) 1.2)
-                                       [[:line-style {:color 0, :width 0, :alpha 0}]
-                                        [:arc {:center p1, :radius 22, :angle [1 -1]}]
+                                       [[:move-to
+                                         [(+ (first p1) (* r (js/Math.cos -1)))
+                                          (- (peek p1) (+ r (js/Math.sin -1)))]]
                                         [:line-style
-                                         {:color (rand (hslx 0 0 100)),
-                                          :width 4,
-                                          :alpha (rand 1)}]
-                                        [:arc {:center p1, :radius 22, :angle [-1 4.8]}]]))]
+                                         {:color (rand (hslx 0 0 100)), :width 4, :alpha 1}]
+                                        [:arc {:center p1, :radius r, :angle [-1 4.8]}]]))]
                        (if (shoud-shrink? level)
                          line-ops
                          (generate-branches p1 arrow1 line-ops (inc level)))))]
