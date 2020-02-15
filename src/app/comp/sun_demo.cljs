@@ -27,7 +27,7 @@
  (container
   {:position [200 200]}
   (container
-   {:position [-300 0]}
+   {:position [-200 0]}
    (rect
     {:position [0 0],
      :size [80 40],
