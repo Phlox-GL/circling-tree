@@ -42,5 +42,5 @@
        nil (comp-sun-demo touch-key)
        :circle (comp-circle-demo touch-key)
        :tree (comp-tree-demo touch-key)
-       :walking (comp-walking-demo)
+       :walking (comp-walking-demo touch-key)
        (text {:text (str "Unknown " tab), :position [0 0]}))))))

@@ -2,11 +2,8 @@
 (ns app.comp.tree-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx rect circle text container graphics create-list hslx]]))
-
-(defn add-path [[a b] [x y]] [(+ a x) (+ b y)])
-
-(defn multiply-path [[a b] [x y]] [(- (* a x) (* b y)) (+ (* a y) (* b x))])
+             [defcomp hslx rect circle text container graphics create-list hslx]]
+            [app.util :refer [add-path multiply-path]]))
 
 (defn shoud-shrink? [level]
   (cond (< level 4) false (> level 8) true :else (> (rand 2) 1.4)))
@@ -27,7 +24,11 @@
                                           (- (peek p1) (+ r (js/Math.sin -1)))]]
                                         [:line-style
                                          {:color (rand (hslx 0 0 100)), :width 4, :alpha 1}]
-                                        [:arc {:center p1, :radius r, :angle [-1 4.8]}]]))]
+                                        [:arc
+                                         {:center p1,
+                                          :radius r,
+                                          :angle [-1 4.8],
+                                          :anticlockwise? false}]]))]
                        (if (shoud-shrink? level)
                          line-ops
                          (generate-branches p1 arrow1 line-ops (inc level)))))]
