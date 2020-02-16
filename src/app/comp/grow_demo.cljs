@@ -6,7 +6,8 @@
             [app.util :refer [add-path multiply-path]]
             [app.comp.reset :refer [comp-reset]]
             [clojure.core.rrb-vector :refer [catvec]]
-            ["shortid" :as shortid]))
+            ["shortid" :as shortid]
+            [app.util :refer [rand-point]]))
 
 (defonce *grid (atom {}))
 
@@ -41,9 +42,6 @@
                    available (->> directions (remove (fn [x] (get @*grid x))))]
                (empty? available)))))
      (mapcat last result)]))
-
-(defn rand-point [n m]
-  [(- (js/Math.round (* 0.2 n)) (rand-int n)) (- (js/Math.round (* 0.2 m)) (rand-int m))])
 
 (defn generate-trails []
   (reset! *grid {})
