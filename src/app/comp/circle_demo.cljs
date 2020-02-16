@@ -2,7 +2,7 @@
 (ns app.comp.circle-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx rect circle text container graphics create-list hslx]]))
+             [defcomp hslx rect circle text container graphics create-list hslx g]]))
 
 (defn generate-circle-ops [idx]
   (loop [angle 0, acc []]
@@ -15,11 +15,12 @@
          (+ a2 (* 0.2 ratio))
          (conj
           acc
-          [:line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 3, :alpha 0}]
-          [:arc
-           {:center [0 0], :radius (* 8 idx), :angle [angle a1], :anticlockwise? false}]
-          [:line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 4, :alpha 1}]
-          [:arc {:center [0 0], :radius (* 8 idx), :angle [a1 a2], :anticlockwise? false}]))))))
+          (g :line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 3, :alpha 0})
+          (g
+           :arc
+           {:center [0 0], :radius (* 8 idx), :angle [angle a1], :anticlockwise? false})
+          (g :line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 4, :alpha 1})
+          (g :arc {:center [0 0], :radius (* 8 idx), :angle [a1 a2], :anticlockwise? false})))))))
 
 (defcomp
  comp-circle-demo

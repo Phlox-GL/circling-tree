@@ -2,7 +2,7 @@
 (ns app.comp.tree-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx rect circle text container graphics create-list hslx]]
+             [defcomp g hslx rect circle text container graphics create-list hslx]]
             [app.util :refer [add-path multiply-path]]))
 
 (defn shoud-shrink? [level]
@@ -14,21 +14,25 @@
                            p1 (add-path p arrow1)
                            r (+ (/ 12 level) 6)
                            line-ops (concat
-                                     [[:move-to p]
-                                      [:line-style
-                                       {:color (hslx 0 0 60), :width 2, :alpha 0.6}]
-                                      [:line-to p1]]
+                                     [(g :move-to p)
+                                      (g
+                                       :line-style
+                                       {:color (hslx 0 0 60), :width 2, :alpha 0.6})
+                                      (g :line-to p1)]
                                      (if (> (rand 2) 1.2)
-                                       [[:move-to
+                                       [(g
+                                         :move-to
                                          [(+ (first p1) (* r (js/Math.cos -1)))
-                                          (- (peek p1) (+ r (js/Math.sin -1)))]]
-                                        [:line-style
-                                         {:color (rand (hslx 0 0 100)), :width 4, :alpha 1}]
-                                        [:arc
+                                          (- (peek p1) (+ r (js/Math.sin -1)))])
+                                        (g
+                                         :line-style
+                                         {:color (rand (hslx 0 0 100)), :width 4, :alpha 1})
+                                        (g
+                                         :arc
                                          {:center p1,
                                           :radius r,
                                           :angle [-1 4.8],
-                                          :anticlockwise? false}]]))]
+                                          :anticlockwise? false})]))]
                        (if (shoud-shrink? level)
                          line-ops
                          (generate-branches p1 arrow1 line-ops (inc level)))))]

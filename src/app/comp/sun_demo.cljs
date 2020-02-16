@@ -2,10 +2,10 @@
 (ns app.comp.sun-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx rect circle text container graphics create-list hslx]]))
+             [defcomp g hslx rect circle text container graphics create-list hslx]]))
 
 (defn generate-line-ops []
-  (let [x0 2, ops [[:move-to [(+ x0 (* 400 (js/Math.random))) 0]]]]
+  (let [x0 2, ops [(g :move-to [(+ x0 (* 400 (js/Math.random))) 0])]]
     (loop [acc ops, x x0]
       (if (> x 300)
         acc
@@ -13,12 +13,13 @@
           (recur
            (conj
             acc
-            [:line-style
+            (g
+             :line-style
              {:color (* (js/Math.random) (hslx 0 0 100)),
               :width (if (< x2 160) 2 3),
-              :alpha (if (< x2 80) 0.2 0.9)}]
-            [:line-to [x1 0]]
-            [:move-to [x2 0]])
+              :alpha (if (< x2 80) 0.2 0.9)})
+            (g :line-to [x1 0])
+            (g :move-to [x2 0]))
            x2))))))
 
 (defcomp

@@ -2,7 +2,7 @@
 (ns app.comp.walking-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx rect circle text container graphics create-list hslx]]
+             [defcomp g hslx rect circle text container graphics create-list hslx]]
             [app.util :refer [add-path multiply-path]]
             [app.comp.reset :refer [comp-reset]]
             [clojure.core.rrb-vector :refer [catvec]]))
@@ -42,8 +42,8 @@
   (let [zoom-in [6 0]]
     (vec
      (concat
-      [[:move-to (multiply-path (first trail) zoom-in)]
-       [:line-style {:color (rand-int (hslx 0 0 90)), :width 2, :alpha 1}]]
+      [(g :move-to (multiply-path (first trail) zoom-in))
+       (g :line-style {:color (rand-int (hslx 0 0 90)), :width 2, :alpha 1})]
       (->> trail rest (map (fn [stop] [:line-to (multiply-path stop zoom-in)])))))))
 
 (defcomp
