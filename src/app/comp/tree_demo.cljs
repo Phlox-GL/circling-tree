@@ -3,7 +3,8 @@
   (:require [phlox.core
              :refer
              [defcomp g hslx rect circle text container graphics create-list hslx]]
-            [app.util :refer [add-path multiply-path]]))
+            [app.util :refer [add-path multiply-path]]
+            [app.comp.reset :refer [comp-reset]]))
 
 (defn shoud-shrink? [level]
   (cond (< level 4) false (> level 8) true :else (> (rand 2) 1.4)))
@@ -53,14 +54,4 @@
                      [:line-style {:color (hslx 0 0 100), :width 1, :alpha 1}]
                      [:line-to p0]]]
       (vec (generate-branches p0 p0 ops0 0)))})
-  (container
-   {:position [-440 -200]}
-   (rect
-    {:position [0 0],
-     :size [80 40],
-     :fill (hslx 0 0 40),
-     :on {:click (fn [e d!] (d! :touch nil))}})
-   (text
-    {:text "Reset",
-     :position [8 4],
-     :style {:font-family "Josefin Sans", :fill (hslx 0 0 100)}}))))
+  (comp-reset [-440 -200])))

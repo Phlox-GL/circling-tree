@@ -2,7 +2,8 @@
 (ns app.comp.circle-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx rect circle text container graphics create-list hslx g]]))
+             [defcomp hslx rect circle text container graphics create-list hslx g]]
+            [app.comp.reset :refer [comp-reset]]))
 
 (defn generate-circle-ops [idx]
   (loop [angle 0, acc []]
@@ -27,17 +28,7 @@
  (touch-key)
  (container
   {:position [0 140]}
-  (container
-   {:position [-200 200]}
-   (rect
-    {:position [0 0],
-     :size [80 40],
-     :fill (hslx 0 0 30),
-     :on {:click (fn [e d!] (d! :touch nil))}})
-   (text
-    {:text "Reset",
-     :position [8 8],
-     :style {:fill (hslx 0 0 90), :font-family "Josefin Sans", :font-size 20}}))
+  (comp-reset [-200 200])
   (create-list
    :container
    {}
