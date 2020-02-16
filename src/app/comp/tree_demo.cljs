@@ -2,11 +2,9 @@
 (ns app.comp.tree-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx rect circle text container graphics create-list hslx]]))
-
-(defn add-path [[a b] [x y]] [(+ a x) (+ b y)])
-
-(defn multiply-path [[a b] [x y]] [(- (* a x) (* b y)) (+ (* a y) (* b x))])
+             [defcomp g hslx rect circle text container graphics create-list hslx]]
+            [app.util :refer [add-path multiply-path]]
+            [app.comp.reset :refer [comp-reset]]))
 
 (defn shoud-shrink? [level]
   (cond (< level 4) false (> level 8) true :else (> (rand 2) 1.4)))
@@ -17,17 +15,25 @@
                            p1 (add-path p arrow1)
                            r (+ (/ 12 level) 6)
                            line-ops (concat
-                                     [[:move-to p]
-                                      [:line-style
-                                       {:color (hslx 0 0 60), :width 2, :alpha 0.6}]
-                                      [:line-to p1]]
+                                     [(g :move-to p)
+                                      (g
+                                       :line-style
+                                       {:color (hslx 0 0 60), :width 2, :alpha 0.6})
+                                      (g :line-to p1)]
                                      (if (> (rand 2) 1.2)
-                                       [[:move-to
+                                       [(g
+                                         :move-to
                                          [(+ (first p1) (* r (js/Math.cos -1)))
-                                          (- (peek p1) (+ r (js/Math.sin -1)))]]
-                                        [:line-style
-                                         {:color (rand (hslx 0 0 100)), :width 4, :alpha 1}]
-                                        [:arc {:center p1, :radius r, :angle [-1 4.8]}]]))]
+                                          (- (peek p1) (+ r (js/Math.sin -1)))])
+                                        (g
+                                         :line-style
+                                         {:color (rand (hslx 0 0 100)), :width 4, :alpha 1})
+                                        (g
+                                         :arc
+                                         {:center p1,
+                                          :radius r,
+                                          :angle [-1 4.8],
+                                          :anticlockwise? false})]))]
                        (if (shoud-shrink? level)
                          line-ops
                          (generate-branches p1 arrow1 line-ops (inc level)))))]
@@ -48,14 +54,4 @@
                      [:line-style {:color (hslx 0 0 100), :width 1, :alpha 1}]
                      [:line-to p0]]]
       (vec (generate-branches p0 p0 ops0 0)))})
-  (container
-   {:position [-440 -200]}
-   (rect
-    {:position [0 0],
-     :size [80 40],
-     :fill (hslx 0 0 40),
-     :on {:click (fn [e d!] (d! :touch nil))}})
-   (text
-    {:text "Reset",
-     :position [8 4],
-     :style {:font-family "Josefin Sans", :fill (hslx 0 0 100)}}))))
+  (comp-reset [-440 -200])))

@@ -6,7 +6,8 @@
             [app.comp.sun-demo :refer [comp-sun-demo]]
             [app.comp.circle-demo :refer [comp-circle-demo]]
             [app.comp.tree-demo :refer [comp-tree-demo]]
-            [app.comp.walking-demo :refer [comp-walking-demo]]))
+            [app.comp.walking-demo :refer [comp-walking-demo]]
+            [app.comp.grow-demo :refer [comp-grow-demo]]))
 
 (defcomp
  comp-tab
@@ -34,7 +35,9 @@
      (comp-tab "Sun" :home 0 (= tab :home))
      (comp-tab "Circle" :circle 1 (= tab :circle))
      (comp-tab "Tree" :tree 2 (= tab :tree))
-     (comp-tab "Walking" :walking 3 (= tab :walking)))
+     (comp-tab "Walking" :walking 3 (= tab :walking))
+     (comp-tab "Grow" :grow 4 (= tab :grow))
+     (comp-tab "Street" :street 5 (= tab :street)))
     (container
      {:position [280 80]}
      (case tab
@@ -42,5 +45,6 @@
        nil (comp-sun-demo touch-key)
        :circle (comp-circle-demo touch-key)
        :tree (comp-tree-demo touch-key)
-       :walking (comp-walking-demo)
+       :walking (comp-walking-demo touch-key)
+       :grow (comp-grow-demo touch-key)
        (text {:text (str "Unknown " tab), :position [0 0]}))))))
