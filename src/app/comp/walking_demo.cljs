@@ -4,7 +4,8 @@
              :refer
              [defcomp hslx rect circle text container graphics create-list hslx]]
             [app.util :refer [add-path multiply-path]]
-            [app.comp.reset :refer [comp-reset]]))
+            [app.comp.reset :refer [comp-reset]]
+            [clojure.core.rrb-vector :refer [catvec]]))
 
 (defonce *grid (atom {}))
 
@@ -27,11 +28,7 @@
                                   [picked])
                                 [])))]
             (let [tail-next (pick-next (peek trail)), head-next (pick-next (first trail))]
-              (cond
-                (and (empty? head-next) (empty? tail-next)) trail
-                (empty? head-next) (conj trail (first tail-next))
-                (empty? tail-next) (vec (concat head-next trail))
-                :else (vec (concat head-next trail tail-next)))))))))
+              (catvec head-next trail tail-next)))))))
 
 (defn rand-point [n] [(rand-int n) (rand-int n)])
 
