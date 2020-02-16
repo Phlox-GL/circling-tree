@@ -7,7 +7,8 @@
             [app.comp.circle-demo :refer [comp-circle-demo]]
             [app.comp.tree-demo :refer [comp-tree-demo]]
             [app.comp.walking-demo :refer [comp-walking-demo]]
-            [app.comp.grow-demo :refer [comp-grow-demo]]))
+            [app.comp.grow-demo :refer [comp-grow-demo]]
+            [app.comp.street-demo :refer [comp-street-demo]]))
 
 (defcomp
  comp-tab
@@ -47,4 +48,5 @@
        :tree (comp-tree-demo touch-key)
        :walking (comp-walking-demo touch-key)
        :grow (comp-grow-demo touch-key)
-       (text {:text (str "Unknown " tab), :position [0 0]}))))))
+       :street (comp-street-demo touch-key)
+       (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))
