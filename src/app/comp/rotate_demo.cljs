@@ -13,21 +13,27 @@
   (create-list
    :container
    {:position [400 280]}
-   (let [randon-lines (->> (range 4)
+   (let [randon-lines (->> (range 3)
                            (mapcat
                             (fn [idx]
-                              [(g :move-to [(rand 60) (rand 60)])
+                              [(g :move-to [(rand 160) (rand 100)])
                                (g
                                 :bezier-to
-                                {:p1 [(rand 300) (rand 300)],
-                                 :p2 [(rand 200) (rand 200)],
-                                 :to-p [(rand 100) (rand 100)]})
-                               (g :move-to [(rand 200) (rand 200)])
+                                {:p1 [(rand 180) (rand 300)],
+                                 :p2 [(rand 180) (rand 300)],
+                                 :to-p [(rand 160) (rand 80)]})
+                               (g :move-to [(rand 80) (rand 40)])
                                (g
                                 :bezier-to
-                                {:p1 [(rand 600) (rand 600)],
-                                 :p2 [(rand 400) (rand 400)],
-                                 :to-p [(rand 200) (rand 200)]})])))]
+                                {:p1 [(rand 400) (rand 300)],
+                                 :p2 [(rand 400) (rand 200)],
+                                 :to-p [(rand 160) (rand 120)]})
+                               (g :move-to [(rand 320) (rand 320)])
+                               (g
+                                :bezier-to
+                                {:p1 [(rand 600) (rand 400)],
+                                 :p2 [(rand 600) (rand 300)],
+                                 :to-p [(rand 400) (rand 320)]})])))]
      (->> (range 220)
           (map
            (fn [idx]
