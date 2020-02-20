@@ -13,16 +13,29 @@
   (create-list
    :container
    {:position [400 280]}
-   (->> (range 20)
-        (map
-         (fn [idx]
-           [idx
-            (graphics
-             {:ops [(g :line-style {:color (hslx (rand 360) 80 70), :width 4, :alpha 1})
-                    (g :move-to [0 -4])
-                    (g :bezier-to {:p1 [40 -40], :p2 [120 90], :to-p [200 0]})
-                    (g :bezier-to {:p1 [240 -40], :p2 [400 400], :to-p [160 -40]})
-                    (g :bezier-to {:p1 [100 -50], :p2 [220 90], :to-p [100 80]})
-                    (g :bezier-to {:p1 [40 80], :p2 [30 -80], :to-p [0 -4]})],
-              :rotation (* idx 0.1 js/Math.PI)})]))))
+   (let [randon-lines (->> (range 4)
+                           (mapcat
+                            (fn [idx]
+                              [(g :move-to [(rand 60) (rand 60)])
+                               (g
+                                :bezier-to
+                                {:p1 [(rand 300) (rand 300)],
+                                 :p2 [(rand 200) (rand 200)],
+                                 :to-p [(rand 100) (rand 100)]})
+                               (g :move-to [(rand 200) (rand 200)])
+                               (g
+                                :bezier-to
+                                {:p1 [(rand 600) (rand 600)],
+                                 :p2 [(rand 400) (rand 400)],
+                                 :to-p [(rand 200) (rand 200)]})])))]
+     (->> (range 220)
+          (map
+           (fn [idx]
+             [idx
+              (graphics
+               {:ops (vec
+                      (concat
+                       [(g :line-style {:color (hslx (rand 360) 80 70), :width 2, :alpha 1})]
+                       randon-lines)),
+                :rotation (* idx 0.1 js/Math.PI)})])))))
   (comp-reset [0 100])))
