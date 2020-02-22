@@ -32,7 +32,7 @@
                                     :alpha 1},
                        :alpha 1})
                      (rect
-                      {:size [(* 15 (rand-int 4)) (* 15 (rand-int 4))],
+                      {:size [(* 15 (rand-int 5)) (* 15 (rand-int 5))],
                        :position [(* 15 (rand-int 6)) (* 15 (rand-int 6))],
                        :fill (rand (hslx 0 0 100)),
                        :angle (* 45 (rand-int 4)),
@@ -41,6 +41,6 @@
                       {:size [(* 15 (inc (rand-int 2))) (* 15 (inc (rand-int 2)))],
                        :position [(* 15 (rand-int 16)) (* 15 (rand-int 16))],
                        :angle (* 45 (rand-int 4)),
-                       :alpha 1,
+                       :alpha (rand 1),
                        :line-style {:color (rand (hslx 0 0 100)), :width 2, :alpha 1}}))])))))))
   (comp-reset [-40 40])))
