@@ -13,43 +13,34 @@
   {}
   (create-list
    :container
-   {:position [400 280]}
-   (->> (range 18)
-        (map
-         (fn [idx]
-           [idx
-            (container
-             {:angle (* 20 idx)}
-             (rect
-              {:position [100 20],
-               :size [160 50],
-               :fill (hslx 0 0 90),
-               :alpha 0.3,
-               :line-style {:width 2, :color (hslx 0 0 90), :alpha 0.1}})
-             (rect
-              {:position [40 0],
-               :size [20 120],
-               :fill (hslx 0 0 90),
-               :alpha 0.3,
-               :line-style {:width 2, :color (hslx 0 0 90), :alpha 0.1}})
-             (rect
-              {:position [170 -80],
-               :size [20 180],
-               :fill (hslx 0 0 90),
-               :alpha 0.3,
-               :line-style {:width 2, :color (hslx 0 0 90), :alpha 0.1}})
-             (rect
-              {:position [200 0],
-               :size [20 200],
-               :fill (hslx 0 0 90),
-               :alpha 0.3,
-               :line-style {:width 2, :color (hslx 0 0 90), :alpha 0.1}})
-             (rect
-              {:position [240 -80],
-               :size [100 10],
-               :fill (hslx 0 0 90),
-               :alpha 0.3,
-               :line-style {:width 2, :color (hslx 0 0 90), :alpha 0.1}})
-             (circle {:radius 8, :position [10 90], :fill (hslx 0 0 90), :alpha 0.4})
-             (circle {:radius 16, :position [260 90], :fill (hslx 0 0 90), :alpha 0.4}))]))))
+   {:position [200 40]}
+   (->> (range 10)
+        (mapcat
+         (fn [x]
+           (->> (range 10)
+                (map
+                 (fn [y]
+                   [(str x "+" y)
+                    (container
+                     {:position [(* x 60) (* y 60)]}
+                     (rect
+                      {:size [(* 15 (rand-int 16)) (* 15 (rand-int 16))],
+                       :angle (* 45 (rand-int 4)),
+                       :position [(* 15 (rand-int 4)) (* 15 (rand-int 4))],
+                       :line-style {:color (rand (hslx 0 0 100)),
+                                    :width (rand-int 4),
+                                    :alpha 1},
+                       :alpha 1})
+                     (rect
+                      {:size [(* 15 (rand-int 4)) (* 15 (rand-int 4))],
+                       :position [(* 15 (rand-int 6)) (* 15 (rand-int 6))],
+                       :fill (rand (hslx 0 0 100)),
+                       :angle (* 45 (rand-int 4)),
+                       :alpha 0.9})
+                     (rect
+                      {:size [(* 15 (inc (rand-int 2))) (* 15 (inc (rand-int 2)))],
+                       :position [(* 15 (rand-int 16)) (* 15 (rand-int 16))],
+                       :angle (* 45 (rand-int 4)),
+                       :alpha 1,
+                       :line-style {:color (rand (hslx 0 0 100)), :width 2, :alpha 1}}))])))))))
   (comp-reset [-40 40])))
