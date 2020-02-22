@@ -46,12 +46,12 @@
  comp-tree-demo
  (touch-key)
  (container
-  {:position [300 600]}
+  {:position [0 0]}
   (graphics
-   {:position [0 0],
+   {:position [400 600],
     :ops (let [p0 [3 -80]
                ops0 [[:move-to [0 0]]
                      [:line-style {:color (hslx 0 0 100), :width 1, :alpha 1}]
                      [:line-to p0]]]
       (vec (generate-branches p0 p0 ops0 0)))})
-  (comp-reset [-440 -200])))
+  (comp-reset [0 0])))

@@ -45,4 +45,4 @@
                        [(g :line-style {:color (hslx (rand 360) 80 70), :width 2, :alpha 1})]
                        randon-lines)),
                 :rotation (* idx 0.1 js/Math.PI)})])))))
-  (comp-reset [0 100])))
+  (comp-reset [-40 40])))

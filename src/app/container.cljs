@@ -9,7 +9,9 @@
             [app.comp.walking-demo :refer [comp-walking-demo]]
             [app.comp.grow-demo :refer [comp-grow-demo]]
             [app.comp.street-demo :refer [comp-street-demo]]
-            [app.comp.rotate-demo :refer [comp-rotate-demo]]))
+            [app.comp.rotate-demo :refer [comp-rotate-demo]]
+            [app.comp.rects-demo :refer [comp-rects-demo]]
+            [app.style :as style]))
 
 (defcomp
  comp-tab
@@ -24,7 +26,7 @@
   (text
    {:text title,
     :position [20 3],
-    :style {:fill (hslx 0 0 100), :font-family "Josefin Sans"}})))
+    :style {:fill (hslx 0 0 100), :font-family style/font-fancy}})))
 
 (defcomp
  comp-container
@@ -40,7 +42,8 @@
      (comp-tab "Walking" :walking 3 (= tab :walking))
      (comp-tab "Grow" :grow 4 (= tab :grow))
      (comp-tab "Street" :street 5 (= tab :street))
-     (comp-tab "Rotate" :rotate 6 (= tab :rotate)))
+     (comp-tab "Rotate" :rotate 6 (= tab :rotate))
+     (comp-tab "Rects" :rects 7 (= tab :rects)))
     (container
      {:position [280 80]}
      (case tab
@@ -52,4 +55,5 @@
        :grow (comp-grow-demo touch-key)
        :street (comp-street-demo touch-key)
        :rotate (comp-rotate-demo touch-key)
+       :rects (comp-rects-demo touch-key)
        (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))

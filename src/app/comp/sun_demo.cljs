@@ -28,7 +28,7 @@
  (touch-key)
  (container
   {:position [200 200]}
-  (comp-reset [-200 0])
+  (comp-reset [-200 -200])
   (create-list
    :container
    {:position [400 40]}
