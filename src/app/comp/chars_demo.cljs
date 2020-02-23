@@ -8,16 +8,26 @@
             [app.style :as style]))
 
 (def curve-strokes
-  [[(g :move-to [0 0]) (g :quadratic-to {:p1 [10 0], :to-p [10 10]})]
-   [(g :move-to [10 0]) (g :quadratic-to {:p1 [10 10], :to-p [0 10]})]
-   [(g :move-to [10 10]) (g :quadratic-to {:p1 [0 10], :to-p [0 0]})]
-   [(g :move-to [0 10]) (g :quadratic-to {:p1 [0 0], :to-p [10 0]})]])
+  [[(g :move-to [0 0]) (g :arc {:center [0 10], :radius 10, :angle [(* -0.5 js/Math.PI) 0]})]
+   [(g :move-to [10 0]) (g :arc {:center [0 0], :radius 10, :angle [0 (* 0.5 js/Math.PI)]})]
+   [(g :move-to [10 10])
+    (g :arc {:center [10 0], :radius 10, :angle [(* 0.5 js/Math.PI) js/Math.PI]})]
+   [(g :move-to [0 10])
+    (g :arc {:center [10 10], :radius 10, :angle [js/Math.PI (* 1.5 js/Math.PI)]})]])
+
+(def dot-strokes
+  [[(g :move-to [4 5])
+    (g :arc {:center [5 5], :radius 1, :angle [(- 0 js/Math.PI) js/Math.PI]})
+    (g :close-path nil)]
+   [(g :move-to [0 5])
+    (g :arc {:center [5 5], :radius 4, :angle [(- 0 js/Math.PI) js/Math.PI]})
+    (g :close-path nil)]])
 
 (def slash-strokes
-  [[(g :move-to [0 0]) (g :line-to [10 10])] [(g :move-to [10 0]) (g :line-to [0 10])]])
+  [[(g :move-to [0 0]) (g :line-to [10 10])] [(g :move-to [10 0]) (g :line-to [0 10])] []])
 
 (def straight-strokes
-  [[(g :move-to [5 0]) (g :line-to [5 10])] [(g :move-to [0 5]) (g :line-to [10 5])]])
+  [[(g :move-to [5 0]) (g :line-to [5 10])] [(g :move-to [0 5]) (g :line-to [10 5])] []])
 
 (defcomp
  comp-stroke
@@ -34,14 +44,27 @@
             0 (concat (rand-nth straight-strokes) (rand-nth straight-strokes))
             1 (concat (rand-nth slash-strokes) (rand-nth slash-strokes))
             2
-              (case (rand-int 2)
-                0 (concat (rand-nth straight-strokes) (rand-nth straight-strokes))
-                1 (concat (rand-nth slash-strokes) (rand-nth slash-strokes)))
-            3 (rand-nth curve-strokes)
-            (case (rand-int 3)
-              0 (concat (rand-nth straight-strokes) (rand-nth straight-strokes))
-              1 (concat (rand-nth slash-strokes) (rand-nth slash-strokes))
-              (rand-nth curve-strokes)))))}))
+              (rand-nth
+               [(concat (rand-nth straight-strokes) (rand-nth straight-strokes))
+                (concat (rand-nth slash-strokes) (rand-nth slash-strokes))
+                (rand-nth dot-strokes)
+                []])
+            3 (rand-nth [(rand-nth curve-strokes) (rand-nth dot-strokes) []])
+            4
+              (rand-nth
+               [(concat (rand-nth straight-strokes) (rand-nth straight-strokes))
+                (concat (rand-nth curve-strokes) (rand-nth curve-strokes))
+                (rand-nth dot-strokes)
+                []])
+            5
+              (rand-nth
+               [(concat (rand-nth slash-strokes) (rand-nth slash-strokes))
+                (rand-nth curve-strokes)
+                []])
+            (rand-nth
+             [(concat (rand-nth straight-strokes) (rand-nth straight-strokes))
+              (rand-nth curve-strokes)
+              []]))))}))
 
 (defcomp
  comp-char
@@ -78,5 +101,5 @@
                    [(str x "+" y)
                     (container
                      {:position [(* x 50) (* y 50)]}
-                     (comp-char touch-key (rand-int 5)))])))))))
+                     (comp-char touch-key (rand-int 6)))])))))))
   (comp-reset [-40 40])))
