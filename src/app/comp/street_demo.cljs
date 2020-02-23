@@ -12,10 +12,10 @@
  comp-street-demo
  (touch-key)
  (container
-  {:position [400 100]}
+  {:position [0 0]}
   (create-list
    :container
-   {}
+   {:position [400 100]}
    (->> (range 200)
         (map
          (fn [idx]
@@ -28,4 +28,4 @@
                        (+ 4 (* 0.26 (js/Math.abs x) (+ 3 (rand 1))))],
                 :fill (hslx (+ 160 (rand 160)) (+ 40 (rand 60)) (+ 70 (rand 30))),
                 :alpha (+ 0.4 (rand 6))}))]))))
-  (comp-reset [-500 300])))
+  (comp-reset [200 0])))

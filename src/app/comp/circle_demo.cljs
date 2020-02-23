@@ -16,7 +16,7 @@
          (+ a2 (* 0.2 ratio))
          (conj
           acc
-          (g :line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 3, :alpha 0})
+          (g :line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 4, :alpha 0})
           (g
            :arc
            {:center [0 0], :radius (* 8 idx), :angle [angle a1], :anticlockwise? false})
@@ -28,7 +28,7 @@
  (touch-key)
  (container
   {:position [0 140]}
-  (comp-reset [-200 200])
+  (comp-reset [-80 -100])
   (create-list
    :container
    {}
