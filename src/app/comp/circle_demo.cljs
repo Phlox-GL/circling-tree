@@ -7,7 +7,7 @@
 
 (defn generate-circle-ops [idx]
   (loop [angle 0, acc []]
-    (if (> angle (+ js/Math.PI -0.3 (* 1.4 (js/Math.random))))
+    (if (> angle (+ js/Math.PI -0.3 (rand 1.4)))
       acc
       (let [ratio (/ 1 (inc idx))
             a1 (+ angle (* 0.4 ratio))
@@ -16,7 +16,7 @@
          (+ a2 (* 0.2 ratio))
          (conj
           acc
-          (g :line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 4, :alpha 0})
+          (g :line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 6, :alpha 0})
           (g
            :arc
            {:center [0 0], :radius (* 8 idx), :angle [angle a1], :anticlockwise? false})
