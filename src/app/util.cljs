@@ -7,6 +7,8 @@
 
 (defn multiply-path [[a b] [x y]] [(- (* a x) (* b y)) (+ (* a y) (* b x))])
 
+(defn rand-color [] (rand-int 0xffffff))
+
 (defn rand-point
   ([n] (rand-point n n))
   ([n m]
