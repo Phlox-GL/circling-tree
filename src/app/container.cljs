@@ -35,7 +35,7 @@
 (defcomp
  comp-container
  (store)
- (let [tab (:tab store), touch-key (:touch-key store)]
+ (let [tab (:tab store), states (:states store), touch-key (:touch-key store)]
    (container
     {}
     (container
@@ -66,6 +66,6 @@
        :rects (comp-rects-demo touch-key)
        :chars (comp-chars-demo touch-key)
        :bezier (comp-bezier-demo touch-key)
-       :cycloid (comp-cycloid-demo touch-key)
+       :cycloid (comp-cycloid-demo [:cycloid] (get states :cycloid))
        :chord (comp-chord-demo touch-key)
        (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))

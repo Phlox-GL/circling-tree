@@ -12,10 +12,18 @@
   (case op
     :tab (assoc store :tab op-data)
     :touch (assoc store :touch-key op-id)
+    :states
+      (let [[cursor new-state] op-data, path (conj cursor :data)]
+        (assoc-in store (concat [:states] path) new-state))
     (do (println "unknown op" op op-data) store)))
 
 (defn dispatch! [op op-data]
   (println "dispatch!" op op-data)
+  (case op
+    :states
+      (when-not (and (vector? op-data) (= 2 (count op-data)) (vector? (first op-data)))
+        (js/console.error "Invalid states op:" op-data))
+    (do))
   (let [op-id (shortid/generate)] (reset! *store (updater @*store op op-data op-id))))
 
 (defn main! []

@@ -1,4 +1,4 @@
 
 (ns app.schema )
 
-(def store {:tab :home})
+(def store {:tab :home, :states {}})
