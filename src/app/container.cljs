@@ -14,6 +14,7 @@
             [app.comp.chars-demo :refer [comp-chars-demo]]
             [app.comp.bezier-demo :refer [comp-bezier-demo]]
             [app.comp.cycloid-demo :refer [comp-cycloid-demo]]
+            [app.comp.chord-demo :refer [comp-chord-demo]]
             [app.style :as style]))
 
 (defcomp
@@ -49,7 +50,8 @@
      (comp-tab "Rects" :rects 7 (= tab :rects))
      (comp-tab "Chars" :chars 8 (= tab :chars))
      (comp-tab "Bezier" :bezier 8 (= tab :bezier))
-     (comp-tab "Cycloid" :cycloid 9 (= tab :cycloid)))
+     (comp-tab "Cycloid" :cycloid 9 (= tab :cycloid))
+     (comp-tab "Chord" :chord 10 (= tab :chord)))
     (container
      {:position [280 80]}
      (case tab
@@ -65,4 +67,5 @@
        :chars (comp-chars-demo touch-key)
        :bezier (comp-bezier-demo touch-key)
        :cycloid (comp-cycloid-demo touch-key)
+       :chord (comp-chord-demo touch-key)
        (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))
