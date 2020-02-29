@@ -18,13 +18,11 @@
     (do (println "unknown op" op op-data) store)))
 
 (defn dispatch! [op op-data]
-  (println "dispatch!" op op-data)
-  (case op
-    :states
-      (when-not (and (vector? op-data) (= 2 (count op-data)) (vector? (first op-data)))
-        (js/console.error "Invalid states op:" op-data))
-    (do))
-  (let [op-id (shortid/generate)] (reset! *store (updater @*store op op-data op-id))))
+  (if (vector? op)
+    (recur :states [op op-data])
+    (do
+     (when (not= op :states) (println "dispatch!" op op-data))
+     (let [op-id (shortid/generate)] (reset! *store (updater @*store op op-data op-id))))))
 
 (defn main! []
   (comment js/console.log PIXI)

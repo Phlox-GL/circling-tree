@@ -4,55 +4,70 @@
              :refer
              [defcomp hslx g rect circle text container graphics create-list hslx]]
             [app.comp.reset :refer [comp-reset]]
-            [app.util :refer [rand-point add-path subtract-path multiply-path]]))
+            [app.util :refer [rand-point add-path subtract-path multiply-path]]
+            [app.comp.button :refer [comp-button]]))
+
+(defn get-unit [param] (case param :tt1 0.03 :tt2 0.03 1))
 
 (defcomp
  comp-numbers-control
  (cursor state)
  (let [selected (:selected state), params [:r1 :r2 :r3 :tt1 :tt2]]
-   (create-list
-    :container
-    {}
-    (->> params
-         (map-indexed
-          (fn [idx param]
-            [idx
-             (container
-              {:position [(* idx 100) -80]}
-              (rect
-               {:position [0 0],
-                :size [80 30],
-                :fill (if (= selected param) (hslx 0 0 40) (hslx 0 0 20)),
-                :on {:click (fn [e d!] (d! :states [cursor (assoc state :selected param)]))},
-                :on-keyboard (if (= param selected)
-                  {:down (fn [e d!]
-                     (case (:key e)
-                       "ArrowUp"
-                         (d!
-                          :states
-                          [cursor (assoc state selected (+ 1 (get state selected)))])
-                       "ArrowDown"
-                         (d!
-                          :states
-                          [cursor (assoc state selected (- (get state selected) 1))])
-                       "`"
-                         (d!
-                          :states
-                          [cursor
+   (container
+    {:position [0 -80]}
+    (create-list
+     :container
+     {}
+     (->> params
+          (map-indexed
+           (fn [idx param]
+             [idx
+              (container
+               {:position [(* idx 100) 0]}
+               (rect
+                {:position [0 0],
+                 :size [80 30],
+                 :fill (if (= selected param) (hslx 0 0 40) (hslx 0 0 20)),
+                 :on {:click (fn [e d!] (d! :states [cursor (assoc state :selected param)]))},
+                 :on-keyboard (if (= param selected)
+                   {:down (fn [e d!]
+                      (case (:key e)
+                        "ArrowUp"
+                          (d!
+                           cursor
+                           (assoc state selected (+ (get state selected) (get-unit param))))
+                        "ArrowDown"
+                          (d!
+                           cursor
+                           (assoc state selected (- (get state selected) (get-unit param))))
+                        "`"
+                          (d!
+                           cursor
                            (assoc
                             state
                             selected
-                            (or (js/parseFloat (js/prompt "specify a number")) 0))])
-                       (js/console.warn "not handled" e)))})})
-              (text
-               {:text (str (name param) ": " (get state param)),
-                :position [4 8],
-                :style {:fill (hslx 0 0 100), :font-size 13}}))]))))))
+                            (or (js/parseFloat (js/prompt "specify a number")) 0)))
+                        (js/console.warn "not handled" e)))})})
+               (text
+                {:text (str (name param) ": " (get state param)),
+                 :position [4 8],
+                 :style {:fill (hslx 0 0 100), :font-size 13}}))]))))
+    (comp-button
+     {:text "Random",
+      :position [580 0],
+      :on-click (fn [e d!]
+        (d!
+         cursor
+         {:r1 (rand-int 400),
+          :r2 (rand-int 300),
+          :r3 (rand-int 200),
+          :tt1 (rand 4),
+          :tt2 (rand 4)}))}))))
 
 (defcomp
  comp-cycloid-demo
  (cursor states)
- (let [state (or (:data states) {:r1 300, :r2 100, :r3 50, :tt1 0, :tt2 0, :selected :r1})]
+ (let [state (or (:data states) {:r1 312, :r2 80, :r3 96, :tt1 0, :tt2 0, :selected :r1})]
    (container
     {}
     (graphics
