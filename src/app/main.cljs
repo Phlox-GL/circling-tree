@@ -4,25 +4,18 @@
             [phlox.core :refer [render!]]
             [app.container :refer [comp-container]]
             [app.schema :as schema]
-            ["shortid" :as shortid]))
+            ["shortid" :as shortid]
+            [app.updater :refer [updater]]))
 
 (defonce *store (atom schema/store))
-
-(defn updater [store op op-data op-id]
-  (case op
-    :tab (assoc store :tab op-data)
-    :touch (assoc store :touch-key op-id)
-    :states
-      (let [[cursor new-state] op-data, path (conj cursor :data)]
-        (assoc-in store (concat [:states] path) new-state))
-    (do (println "unknown op" op op-data) store)))
 
 (defn dispatch! [op op-data]
   (if (vector? op)
     (recur :states [op op-data])
     (do
      (when (not= op :states) (println "dispatch!" op op-data))
-     (let [op-id (shortid/generate)] (reset! *store (updater @*store op op-data op-id))))))
+     (let [op-id (shortid/generate), op-time (.now js/Date)]
+       (reset! *store (updater @*store op op-data op-id op-time))))))
 
 (defn main! []
   (comment js/console.log PIXI)
