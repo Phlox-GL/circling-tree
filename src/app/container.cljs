@@ -16,6 +16,7 @@
             [app.comp.cycloid-demo :refer [comp-cycloid-demo]]
             [app.comp.chord-demo :refer [comp-chord-demo]]
             [app.comp.oscillo-demo :refer [comp-oscillo-demo]]
+            [app.comp.geocentric-demo :refer [comp-geocentric-demo]]
             [app.style :as style]
             [clojure.string :as string]))
 
@@ -37,7 +38,19 @@
     :style {:fill (hslx 0 0 100), :font-size 20, :font-family style/font-fancy}})))
 
 (def tabs
-  [:sun :circle :tree :walking :grow :street :rotate :rects :bezier :cycloid :chord :oscillo])
+  [:sun
+   :circle
+   :tree
+   :walking
+   :grow
+   :street
+   :rotate
+   :rects
+   :bezier
+   :cycloid
+   :chord
+   :oscillo
+   :geocentric])
 
 (defcomp
  comp-container
@@ -54,7 +67,7 @@
     (container
      {:position [280 80]}
      (case tab
-       :home (comp-sun-demo touch-key)
+       :sun (comp-sun-demo touch-key)
        nil (comp-sun-demo touch-key)
        :circle (comp-circle-demo touch-key)
        :tree (comp-tree-demo touch-key)
@@ -68,4 +81,5 @@
        :cycloid (comp-cycloid-demo [:cycloid] (get states :cycloid))
        :chord (comp-chord-demo touch-key)
        :oscillo (comp-oscillo-demo [:oscillo] (get states :oscillo))
+       :geocentric (comp-geocentric-demo [:geocentric] (get states :geocentric))
        (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))
