@@ -15,7 +15,11 @@
             [app.comp.bezier-demo :refer [comp-bezier-demo]]
             [app.comp.cycloid-demo :refer [comp-cycloid-demo]]
             [app.comp.chord-demo :refer [comp-chord-demo]]
-            [app.style :as style]))
+            [app.comp.oscillo-demo :refer [comp-oscillo-demo]]
+            [app.style :as style]
+            [clojure.string :as string]))
+
+(defn cap-name [x] (str (string/upper-case (first x)) (subs x 1)))
 
 (defcomp
  comp-tab
@@ -32,26 +36,21 @@
     :position [20 3],
     :style {:fill (hslx 0 0 100), :font-size 20, :font-family style/font-fancy}})))
 
+(def tabs
+  [:sun :circle :tree :walking :grow :street :rotate :rects :bezier :cycloid :chord :oscillo])
+
 (defcomp
  comp-container
  (store)
  (let [tab (:tab store), states (:states store), touch-key (:touch-key store)]
    (container
     {}
-    (container
+    (create-list
+     :container
      {:position [60 80]}
-     (comp-tab "Sun" :home 0 (= tab :home))
-     (comp-tab "Circle" :circle 1 (= tab :circle))
-     (comp-tab "Tree" :tree 2 (= tab :tree))
-     (comp-tab "Walking" :walking 3 (= tab :walking))
-     (comp-tab "Grow" :grow 4 (= tab :grow))
-     (comp-tab "Street" :street 5 (= tab :street))
-     (comp-tab "Rotate" :rotate 6 (= tab :rotate))
-     (comp-tab "Rects" :rects 7 (= tab :rects))
-     (comp-tab "Chars" :chars 8 (= tab :chars))
-     (comp-tab "Bezier" :bezier 8 (= tab :bezier))
-     (comp-tab "Cycloid" :cycloid 9 (= tab :cycloid))
-     (comp-tab "Chord" :chord 10 (= tab :chord)))
+     (->> tabs
+          (map-indexed
+           (fn [idx item] [idx (comp-tab (cap-name (name item)) item idx (= tab item))]))))
     (container
      {:position [280 80]}
      (case tab
@@ -68,4 +67,5 @@
        :bezier (comp-bezier-demo touch-key)
        :cycloid (comp-cycloid-demo [:cycloid] (get states :cycloid))
        :chord (comp-chord-demo touch-key)
+       :oscillo (comp-oscillo-demo [:oscillo] (get states :oscillo))
        (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))
