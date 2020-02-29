@@ -12,10 +12,17 @@
        size (or (:size props) [120 32])
        button-text (or (:text props) "BUTTON")
        fill (or (:fill props) (hslx 0 0 20))
-       on-click (:on-click props)]
+       on-click (:on-click props)
+       events (:on props)
+       keyboard (:on-keyboard props)]
    (container
     {:position position}
-    (rect {:position [0 0], :size size, :fill fill, :on {:click on-click}})
+    (rect
+     {:position [0 0],
+      :size size,
+      :fill fill,
+      :on (or events (if (some? on-click) {:click on-click} nil)),
+      :on-keyboard keyboard})
     (text
      {:position [4 8],
       :text button-text,
