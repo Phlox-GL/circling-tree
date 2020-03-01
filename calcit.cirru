@@ -4070,7 +4070,7 @@
                   |r $ {} (:type :expr) (:time 1499755354983) (:id |B1aixsdK9pHb)
                     :data $ {}
                       |T $ {} (:type :leaf) (:author |rJG4IHzWf) (:time 1512359514709) (:text |:tab) (:id |BJ0oxjdFq6rb) (:at 1574442604907) (:by |rJG4IHzWf)
-                      |j $ {} (:type :leaf) (:author |rJG4IHzWf) (:time 1512359516026) (:text |:home) (:id |BJy2go_tcaBZ) (:at 1581746410010) (:by |rJG4IHzWf)
+                      |j $ {} (:type :leaf) (:author |rJG4IHzWf) (:time 1512359516026) (:text |nil) (:id |BJy2go_tcaBZ) (:at 1583032372858) (:by |rJG4IHzWf)
                   |v $ {} (:type :expr) (:by |rJG4IHzWf) (:at 1582912977009)
                     :data $ {}
                       |T $ {} (:type :leaf) (:by |rJG4IHzWf) (:at 1582912978059) (:text |:states) (:id |NoEOPRpHHleaf)
