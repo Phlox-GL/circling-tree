@@ -3,6 +3,10 @@
 
 (defn add-path [[a b] [x y]] [(+ a x) (+ b y)])
 
+(defn divide-path [[x y] [a b]]
+  (let [inverted (/ 1 (+ (* a a) (* b b)))]
+    [(* inverted (+ (* x a) (* y b))) (* inverted (- (* y a) (* x b)))]))
+
 (defn divide-x [point x] [(/ (first point) x) (/ (peek point) x)])
 
 (defn multiply-path [[a b] [x y]] [(- (* a x) (* b y)) (+ (* a y) (* b x))])

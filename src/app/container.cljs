@@ -17,6 +17,7 @@
             [app.comp.chord-demo :refer [comp-chord-demo]]
             [app.comp.oscillo-demo :refer [comp-oscillo-demo]]
             [app.comp.geocentric-demo :refer [comp-geocentric-demo]]
+            [app.comp.snowflake-demo :refer [comp-snowflake-demo]]
             [app.style :as style]
             [clojure.string :as string]))
 
@@ -50,7 +51,8 @@
    :cycloid
    :chord
    :oscillo
-   :geocentric])
+   :geocentric
+   :snowflake])
 
 (defcomp
  comp-container
@@ -82,4 +84,5 @@
        :chord (comp-chord-demo touch-key)
        :oscillo (comp-oscillo-demo [:oscillo] (get states :oscillo))
        :geocentric (comp-geocentric-demo [:geocentric] (get states :geocentric))
+       :snowflake (comp-snowflake-demo [:snowflake] (get states :snowflake))
        (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))
