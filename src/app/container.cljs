@@ -81,7 +81,7 @@
        :chars (comp-chars-demo touch-key)
        :bezier (comp-bezier-demo touch-key)
        :cycloid (comp-cycloid-demo [:cycloid] (get states :cycloid))
-       :chord (comp-chord-demo touch-key)
+       :chord (comp-chord-demo [:chord] (get states :chord))
        :oscillo (comp-oscillo-demo [:oscillo] (get states :oscillo))
        :geocentric (comp-geocentric-demo [:geocentric] (get states :geocentric))
        :snowflake (comp-snowflake-demo [:snowflake] (get states :snowflake))
