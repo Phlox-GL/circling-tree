@@ -55,7 +55,7 @@
                 state
                 :points
                 (fn [points]
-                  (conj (pop points) (add-path (last points) [-10 10]) (last points))))))}})
+                  (conj (pop points) (add-path (last points) [-100 100]) (last points))))))}})
      (comp-button
       {:text "Reduce",
        :position [80 0],
