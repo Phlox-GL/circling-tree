@@ -79,7 +79,7 @@
        :rotate (comp-rotate-demo touch-key)
        :rects (comp-rects-demo touch-key)
        :chars (comp-chars-demo touch-key)
-       :bezier (comp-bezier-demo touch-key)
+       :bezier (comp-bezier-demo [:bezier] (get states :bezier))
        :cycloid (comp-cycloid-demo [:cycloid] (get states :cycloid))
        :chord (comp-chord-demo [:chord] (get states :chord))
        :oscillo (comp-oscillo-demo [:oscillo] (get states :oscillo))
