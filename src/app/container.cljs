@@ -76,7 +76,7 @@
        :walking (comp-walking-demo touch-key)
        :grow (comp-grow-demo touch-key)
        :street (comp-street-demo touch-key)
-       :rotate (comp-rotate-demo touch-key)
+       :rotate (comp-rotate-demo [:rotate] (get states :rotate))
        :rects (comp-rects-demo touch-key)
        :chars (comp-chars-demo touch-key)
        :bezier (comp-bezier-demo [:bezier] (get states :bezier))
