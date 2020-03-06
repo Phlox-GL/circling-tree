@@ -18,4 +18,6 @@
   ([n m]
    [(- (js/Math.round (* 0.2 n)) (rand-int n)) (- (js/Math.round (* 0.2 m)) (rand-int m))]))
 
+(defn rough-size [[x y]] (+ (js/Math.abs x) (js/Math.abs y)))
+
 (defn subtract-path [[a b] [x y]] [(- a x) (- b y)])

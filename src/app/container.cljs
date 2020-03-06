@@ -8,7 +8,6 @@
             [app.comp.tree-demo :refer [comp-tree-demo]]
             [app.comp.walking-demo :refer [comp-walking-demo]]
             [app.comp.grow-demo :refer [comp-grow-demo]]
-            [app.comp.street-demo :refer [comp-street-demo]]
             [app.comp.rotate-demo :refer [comp-rotate-demo]]
             [app.comp.rects-demo :refer [comp-rects-demo]]
             [app.comp.chars-demo :refer [comp-chars-demo]]
@@ -41,17 +40,16 @@
 (def tabs
   [:sun
    :circle
-   :tree
+   :rects
    :walking
    :grow
-   :street
-   :rotate
-   :rects
-   :bezier
    :cycloid
    :chord
    :oscillo
    :geocentric
+   :rotate
+   :bezier
+   :tree
    :snowflake])
 
 (defcomp
@@ -72,10 +70,9 @@
        :sun (comp-sun-demo touch-key)
        nil (comp-sun-demo touch-key)
        :circle (comp-circle-demo touch-key)
-       :tree (comp-tree-demo touch-key)
+       :tree (comp-tree-demo [:tree] (get states :tree))
        :walking (comp-walking-demo touch-key)
        :grow (comp-grow-demo touch-key)
-       :street (comp-street-demo touch-key)
        :rotate (comp-rotate-demo [:rotate] (get states :rotate))
        :rects (comp-rects-demo touch-key)
        :chars (comp-chars-demo touch-key)
