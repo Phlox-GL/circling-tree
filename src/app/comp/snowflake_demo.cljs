@@ -6,12 +6,13 @@
             [app.comp.reset :refer [comp-reset]]
             [app.util
              :refer
-             [rand-point add-path subtract-path divide-x multiply-path divide-path]]
+             [rand-point add-path subtract-path divide-x multiply-path divide-path invert-y]]
             [phlox.comp.drag-point :refer [comp-drag-point]]
             [phlox.comp.button :refer [comp-button]]
-            [phlox.comp.slider :refer [comp-slider]]))
+            [phlox.comp.slider :refer [comp-slider]]
+            [phlox.comp.switch :refer [comp-switch]]))
 
-(defn fold-curve [points steps]
+(defn fold-curve [points steps shaking?]
   (let [template-points (->> (rest points)
                              (map (fn [point] (subtract-path point (first points)))))
         template-path (last template-points)
@@ -35,13 +36,15 @@
                                from
                                (multiply-path
                                 (subtract-path point from)
-                                (multiply-path pi inverted)))))))))
+                                (if (and shaking? (odd? idx))
+                                  (invert-y (multiply-path pi inverted))
+                                  (multiply-path pi inverted))))))))))
                  (mapcat identity)))))))))
 
 (defcomp
  comp-snowflake-demo
  (cursor states)
- (let [state (or (:data states) {:steps 1, :points [[40 300] [440 300]]})]
+ (let [state (or (:data states) {:steps 1, :points [[40 300] [440 300]], :shaking? false})]
    (container
     {}
     (container
@@ -74,11 +77,18 @@
        :position [180 0],
        :unit 0.1,
        :title "Steps",
-       :on-change (fn [value d!]
-         (d! cursor (assoc state :steps (min 6 (max 0 (js/Math.round value))))))}))
+       :min 0,
+       :max (if (>= 3 (count (:points state))) 12 6),
+       :round? true,
+       :on-change (fn [value d!] (d! cursor (assoc state :steps value)))})
+     (comp-switch
+      {:value (:shaking? state),
+       :position [340 0],
+       :title "Shake",
+       :on-change (fn [v d!] (d! cursor (assoc state :shaking? v)))}))
     (graphics
      {:position [0 0],
-      :ops (let [trail (fold-curve (:points state) (:steps state))]
+      :ops (let [trail (fold-curve (:points state) (:steps state) (:shaking? state))]
         (concat
          [(g :move-to (first trail))
           (g :line-style {:color (hslx 0 0 100), :width 1, :alpha 1})]
