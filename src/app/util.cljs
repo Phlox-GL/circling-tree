@@ -9,6 +9,8 @@
 
 (defn divide-x [point x] [(/ (first point) x) (/ (peek point) x)])
 
+(defn invert-y [[x y]] [x (unchecked-negate y)])
+
 (defn multiply-path [[a b] [x y]] [(- (* a x) (* b y)) (+ (* a y) (* b x))])
 
 (defn rand-color [] (rand-int 0xffffff))
