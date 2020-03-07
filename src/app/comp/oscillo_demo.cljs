@@ -4,47 +4,46 @@
              :refer
              [defcomp hslx g rect circle text container graphics create-list hslx]]
             [app.util :refer [rand-point rand-color]]
-            [app.comp.button :refer [comp-button]]))
+            [app.comp.button :refer [comp-button]]
+            [phlox.comp.slider :refer [comp-slider]]))
 
 (defcomp
  comp-oscillo-control
- (cursor state)
- (let [selected (get state :selected)]
-   (container
-    {}
-    (create-list
-     :container
-     {}
-     (->> [:m :n :step :unit]
-          (map-indexed
-           (fn [idx param]
-             [idx
-              (comp-button
-               {:text (str (name param) ": " (get state param)),
-                :position [(* 120 idx) 0],
-                :size [100 32],
-                :fill (if (= param selected) (hslx 0 0 40)),
-                :on {:click (fn [e d!] (d! cursor (assoc state :selected param)))},
-                :on-keyboard (if (= param selected)
-                  {:down (fn [e d!]
-                     (case (:key e)
-                       "ArrowUp" (d! cursor (update state selected inc))
-                       "ArrowDown" (d! cursor (update state selected dec))
-                       "`"
-                         (d!
-                          cursor
-                          (assoc
-                           state
-                           selected
-                           (or (js/parseFloat (js/prompt "get a number:")) 0)))
-                       (js/console.warn "Unknown" e)))})})]))))
-    (comp-button
-     {:text "Random",
-      :position [580 0],
-      :on-click (fn [e d!]
-        (d! cursor {:m (rand-int 40), :n (rand-int 40), :step 500, :unit 0.01}))}))))
+ (cursor state states)
+ (container
+  {}
+  (create-list
+   :container
+   {}
+   (->> [:m :n :step :unit]
+        (map-indexed
+         (fn [idx param]
+           [idx
+            (comp-slider
+             (conj cursor param)
+             (get states param)
+             {:value (get state param),
+              :title (name param),
+              :position [(* 140 idx) 0],
+              :unit (case param :unit 0.001 :step 1 0.1),
+              :on-change (fn [value d!]
+                (d!
+                 cursor
+                 (assoc
+                  state
+                  param
+                  (case param
+                    :m (max 1 (js/Math.round value))
+                    :n (max 1 (js/Math.round value))
+                    :step (max 1 (js/Math.round value))
+                    (max 0 value)))))})]))))
+  (comp-button
+   {:text "Random",
+    :position [580 0],
+    :on-click (fn [e d!]
+      (d! cursor {:m (rand-int 40), :n (rand-int 40), :step 500, :unit 0.01}))})))
 
-(def initial-state {:step 1000, :unit 0.01, :m 13, :n 3, :selected :step})
+(def initial-state {:step 1000, :unit 0.01, :m 13, :n 3})
 
 (defcomp
  comp-oscillo-demo
@@ -68,4 +67,4 @@
          [(g :move-to (first trail))
           (g :line-style {:color (rand-color), :width 2, :alpha 1})]
          (->> trail rest (map (fn [point] [:line-to point])))))})
-    (comp-oscillo-control cursor state))))
+    (comp-oscillo-control cursor state states))))
