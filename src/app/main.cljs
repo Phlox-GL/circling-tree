@@ -5,7 +5,8 @@
             [app.container :refer [comp-container]]
             [app.schema :as schema]
             ["shortid" :as shortid]
-            [app.updater :refer [updater]]))
+            [app.updater :refer [updater]]
+            ["fontfaceobserver" :as FontFaceObserver]))
 
 (defonce *store (atom schema/store))
 
@@ -19,7 +20,9 @@
 
 (defn main! []
   (comment js/console.log PIXI)
-  (render! (comp-container @*store) dispatch! {})
+  (-> (FontFaceObserver. "Josefin Sans")
+      (.load)
+      (.then (fn [] (render! (comp-container @*store) dispatch! {}))))
   (add-watch *store :change (fn [] (render! (comp-container @*store) dispatch! {})))
   (println "App Started"))
 
