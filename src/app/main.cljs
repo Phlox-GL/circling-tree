@@ -20,6 +20,7 @@
 
 (defn main! []
   (comment js/console.log PIXI)
+  (render! (comp-container @*store) dispatch! {})
   (-> (FontFaceObserver. "Josefin Sans")
       (.load)
       (.then (fn [] (render! (comp-container @*store) dispatch! {}))))
