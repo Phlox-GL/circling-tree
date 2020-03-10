@@ -17,6 +17,7 @@
             [app.comp.oscillo-demo :refer [comp-oscillo-demo]]
             [app.comp.geocentric-demo :refer [comp-geocentric-demo]]
             [app.comp.snowflake-demo :refer [comp-snowflake-demo]]
+            [app.comp.harmono-demo :refer [comp-harmono-demo]]
             [app.style :as style]
             [clojure.string :as string]))
 
@@ -50,7 +51,8 @@
    :rotate
    :bezier
    :tree
-   :snowflake])
+   :snowflake
+   :harmono])
 
 (defcomp
  comp-container
@@ -60,7 +62,7 @@
     {}
     (create-list
      :container
-     {:position [60 80]}
+     {:position [40 40]}
      (->> tabs
           (map-indexed
            (fn [idx item] [idx (comp-tab (cap-name (name item)) item idx (= tab item))]))))
@@ -82,4 +84,5 @@
        :oscillo (comp-oscillo-demo [:oscillo] (get states :oscillo))
        :geocentric (comp-geocentric-demo [:geocentric] (get states :geocentric))
        :snowflake (comp-snowflake-demo [:snowflake] (get states :snowflake))
+       :harmono (comp-harmono-demo [:harmono] (get states :harmono))
        (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))
