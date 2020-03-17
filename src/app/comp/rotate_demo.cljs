@@ -19,6 +19,8 @@
    (g :line-style {:color (hslx 240 100 70), :width 2, :alpha alpha})
    (g :bezier-to {:p1 (get points 9), :p2 (get points 10), :to-p (get points 11)})])
 
+(defn get-round? [param] (case param :steps true (do false)))
+
 (defcomp
  comp-rotate-demo
  (cursor states)
@@ -68,6 +70,7 @@
                {:title (name param),
                 :value (get state param),
                 :unit (case param :steps 0.4 :alpha 0.004 :base 0.2 1),
+                :round? (get-round? param),
                 :on-change (fn [v d!]
                   (d!
                    cursor

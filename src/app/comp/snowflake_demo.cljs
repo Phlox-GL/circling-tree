@@ -104,5 +104,6 @@
                (conj cursor idx)
                (get states idx)
                {:position point,
+                :title (str "p" idx),
                 :on-change (fn [position d!]
                   (d! cursor (assoc-in state [:points idx] position)))})])))))))

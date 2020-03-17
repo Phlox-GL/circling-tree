@@ -8,6 +8,8 @@
             [app.comp.button :refer [comp-button]]
             [phlox.comp.slider :refer [comp-slider]]))
 
+(defn get-round? [param] (case param :r1 true :r2 true :r3 true :steps true (do false)))
+
 (defn get-unit [param]
   (case param :r1 0.4 :r2 0.2 :r3 0.08 :tt1 0.01 :tt2 0.01 :steps 20 :v 0.004 1))
 
@@ -32,6 +34,7 @@
                {:value (get state param),
                 :position [(* idx 140) 30],
                 :unit (get-unit param),
+                :round? (get-round? param),
                 :title (name param),
                 :on-change (fn [v d!] (d! cursor (assoc state param (round-value v param))))})])))))))
 
