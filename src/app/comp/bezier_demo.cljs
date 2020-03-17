@@ -51,4 +51,5 @@
       :position [200 -40],
       :value (:n state),
       :unit 0.3,
+      :round? true,
       :on-change (fn [value d!] (d! cursor (assoc state :n (max 1 (js/Math.round value)))))}))))

@@ -11,7 +11,7 @@
         next-p1 (add-path next-from (multiply-path factor-1 arrow))
         next-p2 (add-path next-from (multiply-path factor-2 arrow))
         trail [(g :move-to next-p1) (g :line-to next-from) (g :line-to next-p2)]
-        too-deep? (or (> level 7) (< (rough-size arrow) 4))]
+        too-deep? (or (> level 8) (< (rough-size arrow) 4))]
     (if too-deep?
       trail
       (concat
@@ -54,11 +54,13 @@
      (conj cursor :p2)
      (get states :p2)
      {:position (:p2 state),
+      :title "end",
       :on-change (fn [position d!] (d! cursor (assoc state :p2 position)))})
     (comp-drag-point
      (conj cursor :p0)
      (get states :p0)
      {:position (:p0 state),
+      :title "from",
       :on-change (fn [position d!] (d! cursor (assoc state :p0 position)))}))))
 
 (defn should-shrink? [level]

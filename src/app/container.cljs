@@ -44,6 +44,7 @@
    :rects
    :walking
    :grow
+   :chars
    :cycloid
    :chord
    :oscillo

@@ -42,5 +42,6 @@
      {:value (:size state),
       :title "Size",
       :unit 0.1,
+      :round? true,
       :on-change (fn [n d!]
         (d! cursor (assoc state :size (min 300 (max (js/Math.round n) 4)))))}))))

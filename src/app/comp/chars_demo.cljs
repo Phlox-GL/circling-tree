@@ -36,7 +36,7 @@
   {:position [0 0],
    :ops (vec
          (concat
-          [(g :line-style {:color (hslx 0 0 100), :width 2, :alpha 1})]
+          [(g :line-style {:color (hslx 0 0 100), :width 1, :alpha 1})]
           (comment
            rand-nth
            [(rand-nth curve-strokes) (rand-nth straight-strokes) (rand-nth slash-strokes)])
@@ -71,7 +71,10 @@
  (touch-key kind)
  (container
   {}
-  (rect {:position [-3 -3], :size [46 46], :fill (hslx 240 60 70)})
+  (rect
+   {:position [-3 -3],
+    :size [46 46],
+    :line-style {:color (hslx 0 0 100), :alpha 0.4, :width 1}})
   (create-list
    :container
    {}
@@ -100,6 +103,6 @@
                  (fn [x]
                    [(str x "+" y)
                     (container
-                     {:position [(* x 50) (* y 50)]}
+                     {:position [(* x 54) (* y 54)]}
                      (comp-char touch-key (rand-int 6)))])))))))
   (comp-reset [-40 40])))

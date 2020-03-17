@@ -7,6 +7,8 @@
             [app.comp.button :refer [comp-button]]
             [phlox.comp.slider :refer [comp-slider]]))
 
+(defn get-round? [param] (case param :unit false (do true)))
+
 (defcomp
  comp-oscillo-control
  (cursor state states)
@@ -25,6 +27,7 @@
              {:value (get state param),
               :title (name param),
               :position [(* 140 idx) 0],
+              :round? (get-round? param),
               :unit (case param :unit 0.001 :step 1 0.1),
               :on-change (fn [value d!]
                 (d!
