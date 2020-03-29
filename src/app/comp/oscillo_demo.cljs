@@ -2,7 +2,7 @@
 (ns app.comp.oscillo-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx g rect circle text container graphics create-list hslx]]
+             [defcomp >> hslx g rect circle text container graphics create-list hslx]]
             [app.util :refer [rand-point rand-color]]
             [app.comp.button :refer [comp-button]]
             [phlox.comp.slider :refer [comp-slider]]))
@@ -11,7 +11,7 @@
 
 (defcomp
  comp-oscillo-control
- (cursor state states)
+ (state states)
  (container
   {}
   (create-list
@@ -22,8 +22,7 @@
          (fn [idx param]
            [idx
             (comp-slider
-             (conj cursor param)
-             (get states param)
+             (>> states param)
              {:value (get state param),
               :title (name param),
               :position [(* 140 idx) 0],
@@ -31,7 +30,7 @@
               :unit (case param :unit 0.001 :step 1 0.1),
               :on-change (fn [value d!]
                 (d!
-                 cursor
+                 (:cursor states)
                  (assoc
                   state
                   param
@@ -44,14 +43,14 @@
    {:text "Random",
     :position [580 0],
     :on-click (fn [e d!]
-      (d! cursor {:m (rand-int 40), :n (rand-int 40), :step 500, :unit 0.01}))})))
+      (d! (:cursor states) {:m (rand-int 40), :n (rand-int 40), :step 500, :unit 0.01}))})))
 
 (def initial-state {:step 1000, :unit 0.01, :m 13, :n 3})
 
 (defcomp
  comp-oscillo-demo
- (cursor states)
- (let [state (or (:data states) initial-state)]
+ (states)
+ (let [cursor (:cursor states), state (or (:data states) initial-state)]
    (container
     {}
     (graphics
@@ -70,4 +69,4 @@
          [(g :move-to (first trail))
           (g :line-style {:color (rand-color), :width 2, :alpha 1})]
          (->> trail rest (map (fn [point] [:line-to point])))))})
-    (comp-oscillo-control cursor state states))))
+    (comp-oscillo-control state states))))

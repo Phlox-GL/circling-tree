@@ -2,14 +2,14 @@
 (ns app.comp.geocentric-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx g rect circle text container graphics create-list hslx]]
+             [defcomp >> hslx g rect circle text container graphics create-list hslx]]
             [app.util :refer [rand-point rand-color add-path]]
             [app.comp.button :refer [comp-button]]
             [phlox.comp.slider :refer [comp-slider]]))
 
 (defcomp
  comp-geocentric-control
- (cursor state states)
+ (state states)
  (container
   {:position [0 -20]}
   (create-list
@@ -20,15 +20,14 @@
          (fn [idx param]
            [idx
             (comp-slider
-             (conj cursor param)
-             (get states param)
+             (>> states param)
              {:title (name param),
               :position [(* idx 140) 0],
               :value (get state param),
               :unit (case param :step 0.001 :steps 10 1),
               :on-change (fn [value d!]
                 (d!
-                 cursor
+                 (:cursor states)
                  (assoc
                   state
                   param
@@ -44,7 +43,7 @@
     :position [580 40],
     :on-click (fn [e d!]
       (d!
-       cursor
+       (:cursor states)
        {:r2 (rand-int 200),
         :v2 (rand 3),
         :r3 (rand-int 200),
@@ -57,7 +56,7 @@
 
 (defcomp
  comp-geocentric-demo
- (cursor states)
+ (states)
  (let [state (or (:data states) initial-state)]
    (container
     {}
@@ -82,6 +81,6 @@
          [(g :move-to (first trail))
           (g :line-style {:color (hslx 0 80 80), :width 2, :alpha 1})]
          (->> trail rest (map (fn [point] [:line-to point])))))})
-    (comp-geocentric-control cursor state states))))
+    (comp-geocentric-control state states))))
 
 (defn get-unit [param] (case param :r2 1 :r3 0.5 :v2 0.2 :v3 0.2 :steps 100 :step 0.001 1))

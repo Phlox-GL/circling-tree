@@ -2,7 +2,7 @@
 (ns app.comp.tree-demo
   (:require [phlox.core
              :refer
-             [defcomp g hslx rect circle text container graphics create-list hslx]]
+             [defcomp >> g hslx rect circle text container graphics create-list hslx]]
             [app.util :refer [add-path multiply-path subtract-path divide-path rough-size]]
             [phlox.comp.drag-point :refer [comp-drag-point]]))
 
@@ -31,8 +31,9 @@
 
 (defcomp
  comp-tree-demo
- (cursor states)
- (let [state (or (:data states) {:p1 [0.7 0.2], :p2 [0.84 0.15], :p0 [3 -80]})
+ (states)
+ (let [cursor (:cursor states)
+       state (or (:data states) {:p1 [0.7 0.2], :p2 [0.84 0.15], :p0 [3 -80]})
        p0 (:p0 state)
        base (subtract-path [0 0] p0)
        factor-1 (divide-path (:p1 state) base)
@@ -46,19 +47,16 @@
                         [:line-to p0]]]
         (concat trail (generate-branches p0 base 0 factor-1 factor-2)))})
     (comp-drag-point
-     (conj cursor :p1)
-     (get states :p1)
+     (>> states :p1)
      {:position (:p1 state),
       :on-change (fn [position d!] (d! cursor (assoc state :p1 position)))})
     (comp-drag-point
-     (conj cursor :p2)
-     (get states :p2)
+     (>> states :p2)
      {:position (:p2 state),
       :title "end",
       :on-change (fn [position d!] (d! cursor (assoc state :p2 position)))})
     (comp-drag-point
-     (conj cursor :p0)
-     (get states :p0)
+     (>> states :p0)
      {:position (:p0 state),
       :title "from",
       :on-change (fn [position d!] (d! cursor (assoc state :p0 position)))}))))

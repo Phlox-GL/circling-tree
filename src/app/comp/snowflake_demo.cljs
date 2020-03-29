@@ -2,7 +2,7 @@
 (ns app.comp.snowflake-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx g rect circle text container graphics create-list hslx]]
+             [defcomp >> hslx g rect circle text container graphics create-list hslx]]
             [app.comp.reset :refer [comp-reset]]
             [app.util
              :refer
@@ -43,8 +43,9 @@
 
 (defcomp
  comp-snowflake-demo
- (cursor states)
- (let [state (or (:data states) {:steps 1, :points [[40 300] [440 300]], :shaking? false})]
+ (states)
+ (let [cursor (:cursor states)
+       state (or (:data states) {:steps 1, :points [[40 300] [440 300]], :shaking? false})]
    (container
     {}
     (container
@@ -71,8 +72,7 @@
                 (fn [points]
                   (if (<= (count points) 2) points (conj (pop (pop points)) (last points)))))))}})
      (comp-slider
-      (conj cursor :steps)
-      (:steps states)
+      (>> states :steps)
       {:value (:steps state),
        :position [180 0],
        :unit 0.1,
@@ -101,8 +101,7 @@
            (fn [idx point]
              [idx
               (comp-drag-point
-               (conj cursor idx)
-               (get states idx)
+               (>> states idx)
                {:position point,
                 :title (str "p" idx),
                 :on-change (fn [position d!]

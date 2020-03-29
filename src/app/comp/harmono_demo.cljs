@@ -2,7 +2,7 @@
 (ns app.comp.harmono-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx g rect circle text container graphics create-list hslx]]
+             [defcomp >> hslx g rect circle text container graphics create-list hslx]]
             [app.util :refer [rand-point rand-color add-path multiply-path]]
             [phlox.comp.slider :refer [comp-slider]]
             [phlox.comp.drag-point :refer [comp-drag-point]]))
@@ -29,8 +29,7 @@
   (container
    {:position [0 -340]}
    (comp-slider
-    (conj cursor :steps)
-    (:steps states)
+    (>> states :steps)
     {:position [0 0],
      :value (:steps state),
      :unit 10,
@@ -39,8 +38,7 @@
      :title "steps",
      :on-change (fn [v d!] (d! cursor (assoc state :steps v)))})
    (comp-slider
-    (conj cursor :base)
-    (:base states)
+    (>> states :base)
     {:position [140 0],
      :value (:base state),
      :unit 0.001,
@@ -58,8 +56,7 @@
              (container
               {:position [(- (* idx 140) 600) 0]}
               (comp-slider
-               (conj cursor (str "frequency:" idx))
-               (get states (str "frequency:" idx))
+               (>> states (str "frequency:" idx))
                {:position [140 0],
                 :value (:frequency control),
                 :unit 0.1,
@@ -69,8 +66,7 @@
                 :on-change (fn [v d!]
                   (d! cursor (assoc-in state [:controls idx :frequency] v)))})
               (comp-slider
-               (conj cursor (str "phase:" idx))
-               (get states (str "phase:" idx))
+               (>> states (str "phase:" idx))
                {:position [140 50],
                 :value (:phase control),
                 :unit 0.1,
@@ -79,8 +75,7 @@
                 :title "phase",
                 :on-change (fn [v d!] (d! cursor (assoc-in state [:controls idx :phase] v)))})
               (comp-slider
-               (conj cursor (str "damping:" idx))
-               (get states (str "damping:" idx))
+               (>> states (str "damping:" idx))
                {:position [140 100],
                 :value (:damping control),
                 :unit 0.01,
@@ -99,16 +94,16 @@
          (fn [idx control]
            [idx
             (comp-drag-point
-             (conj cursor (str "apmplitude:" idx))
-             (get states (str "apmplitude:" idx))
+             (>> states (str "apmplitude:" idx))
              {:position (:amplitude control),
               :on-change (fn [v d!]
                 (d! cursor (assoc-in state [:controls idx :amplitude] v)))})])))))
 
 (defcomp
  comp-harmono-demo
- (cursor states)
- (let [state (or (:data states)
+ (states)
+ (let [cursor (:cursor states)
+       state (or (:data states)
                  {:controls (->> (range 3)
                                  (map
                                   (fn []
