@@ -2,7 +2,7 @@
 (ns app.container
   (:require [phlox.core
              :refer
-             [defcomp hslx rect circle text container graphics create-list hslx]]
+             [defcomp >> hslx rect circle text container graphics create-list hslx]]
             [app.comp.sun-demo :refer [comp-sun-demo]]
             [app.comp.circle-demo :refer [comp-circle-demo]]
             [app.comp.tree-demo :refer [comp-tree-demo]]
@@ -73,17 +73,17 @@
        :sun (comp-sun-demo touch-key)
        nil (comp-sun-demo touch-key)
        :circle (comp-circle-demo touch-key)
-       :tree (comp-tree-demo [:tree] (get states :tree))
+       :tree (comp-tree-demo (>> states :tree))
        :walking (comp-walking-demo touch-key)
        :grow (comp-grow-demo touch-key)
-       :rotate (comp-rotate-demo [:rotate] (get states :rotate))
+       :rotate (comp-rotate-demo (>> states :rotate))
        :rects (comp-rects-demo touch-key)
        :chars (comp-chars-demo touch-key)
-       :bezier (comp-bezier-demo [:bezier] (get states :bezier))
-       :cycloid (comp-cycloid-demo [:cycloid] (get states :cycloid))
-       :chord (comp-chord-demo [:chord] (get states :chord))
-       :oscillo (comp-oscillo-demo [:oscillo] (get states :oscillo))
-       :geocentric (comp-geocentric-demo [:geocentric] (get states :geocentric))
-       :snowflake (comp-snowflake-demo [:snowflake] (get states :snowflake))
-       :harmono (comp-harmono-demo [:harmono] (get states :harmono))
+       :bezier (comp-bezier-demo (>> states :bezier))
+       :cycloid (comp-cycloid-demo (>> states :cycloid))
+       :chord (comp-chord-demo (>> states :chord))
+       :oscillo (comp-oscillo-demo (>> states :oscillo))
+       :geocentric (comp-geocentric-demo (>> states :geocentric))
+       :snowflake (comp-snowflake-demo (>> states :snowflake))
+       :harmono (comp-harmono-demo (>> states :harmono))
        (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))

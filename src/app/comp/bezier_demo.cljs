@@ -2,7 +2,7 @@
 (ns app.comp.bezier-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx g rect circle text container graphics create-list hslx]]
+             [defcomp >> hslx g rect circle text container graphics create-list hslx]]
             [app.comp.reset :refer [comp-reset]]
             [app.util :refer [rand-point add-path subtract-path divide-x multiply-path]]
             [phlox.comp.drag-point :refer [comp-drag-point]]
@@ -25,8 +25,9 @@
 
 (defcomp
  comp-bezier-demo
- (cursor states)
- (let [state (or (:data states) {:points [[100 100] [400 100] [400 400] [100 400]], :n 80})]
+ (states)
+ (let [cursor (:cursor states)
+       state (or (:data states) {:points [[100 100] [400 100] [400 400] [100 400]], :n 80})]
    (container
     {}
     (graphics
@@ -40,13 +41,11 @@
            (fn [idx point]
              [idx
               (comp-drag-point
-               (conj cursor idx)
-               (get states idx)
+               (>> states idx)
                {:position point,
                 :on-change (fn [value d!] (d! cursor (assoc-in state [:points idx] value)))})]))))
     (comp-slider
-     (conj cursor :n)
-     (get states :n)
+     (>> states :n)
      {:title "n",
       :position [200 -40],
       :value (:n state),

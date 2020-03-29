@@ -2,7 +2,7 @@
 (ns app.comp.rotate-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx g rect circle text container graphics create-list hslx]]
+             [defcomp >> hslx g rect circle text container graphics create-list hslx]]
             [app.comp.reset :refer [comp-reset]]
             [app.util :refer [rand-point]]
             [phlox.comp.drag-point :refer [comp-drag-point]]
@@ -23,8 +23,9 @@
 
 (defcomp
  comp-rotate-demo
- (cursor states)
- (let [state (or (:data states)
+ (states)
+ (let [cursor (:cursor states)
+       state (or (:data states)
                  {:points (->> (range 12)
                                (map (fn [idx] [(+ 200 (rand 100)) (rand 100)]))
                                (vec)),
@@ -52,8 +53,7 @@
            (fn [idx point]
              [idx
               (comp-drag-point
-               (conj cursor idx)
-               (get states idx)
+               (>> states idx)
                {:position point,
                 :fill (hslx (cond (< idx 4) 0 (< idx 8) 120 :else 240) 100 70),
                 :on-change (fn [v d!] (d! cursor (assoc-in state [:points idx] v)))})]))))
@@ -65,8 +65,7 @@
            (fn [idx param]
              [param
               (comp-slider
-               (conj cursor param)
-               (get states param)
+               (>> states param)
                {:title (name param),
                 :value (get state param),
                 :unit (case param :steps 0.4 :alpha 0.004 :base 0.2 1),

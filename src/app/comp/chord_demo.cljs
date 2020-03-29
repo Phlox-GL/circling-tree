@@ -2,7 +2,7 @@
 (ns app.comp.chord-demo
   (:require [phlox.core
              :refer
-             [defcomp hslx g rect circle text container graphics create-list hslx]]
+             [defcomp >> hslx g rect circle text container graphics create-list hslx]]
             [app.comp.reset :refer [comp-reset]]
             [app.util :refer [rand-point rand-color]]
             [phlox.comp.slider :refer [comp-slider]]))
@@ -31,14 +31,13 @@
 
 (defcomp
  comp-chord-demo
- (cursor states)
- (let [state (or (:data states) {:size 20})]
+ (states)
+ (let [cursor (:cursor states), state (or (:data states) {:size 20})]
    (container
     {}
     (graphics {:position [400 320], :ops (generate-ops (:size state))})
     (comp-slider
-     (conj cursor :size)
-     (:size states)
+     (>> states :size)
      {:value (:size state),
       :title "Size",
       :unit 0.1,
