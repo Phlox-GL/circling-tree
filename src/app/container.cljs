@@ -18,6 +18,7 @@
             [app.comp.geocentric-demo :refer [comp-geocentric-demo]]
             [app.comp.snowflake-demo :refer [comp-snowflake-demo]]
             [app.comp.harmono-demo :refer [comp-harmono-demo]]
+            [app.comp.satellite-demo :refer [comp-satellite-demo]]
             [app.style :as style]
             [clojure.string :as string]))
 
@@ -27,10 +28,10 @@
  comp-tab
  (title tab idx selected?)
  (container
-  {:position [0 (* 40 idx)]}
+  {:position [0 (* 32 idx)]}
   (rect
    {:position [0 0],
-    :size [120 32],
+    :size [120 28],
     :fill (hslx 200 60 (if selected? 30 14)),
     :on {:click (fn [e d!] (d! :tab tab))}})
   (text
@@ -53,7 +54,8 @@
    :bezier
    :tree
    :snowflake
-   :harmono])
+   :harmono
+   :satellite])
 
 (defcomp
  comp-container
@@ -86,4 +88,5 @@
        :geocentric (comp-geocentric-demo (>> states :geocentric))
        :snowflake (comp-snowflake-demo (>> states :snowflake))
        :harmono (comp-harmono-demo (>> states :harmono))
+       :satellite (comp-satellite-demo (>> states :satellite))
        (text {:text (str "Unknown " tab), :style {:fill (hslx 0 0 100)}, :position [0 0]}))))))
