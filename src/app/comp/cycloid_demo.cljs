@@ -10,15 +10,14 @@
 
 (defn get-round? [param] (case param :r1 true :r2 true :r3 true :steps true (do false)))
 
-(defn get-unit [param]
-  (case param :r1 0.4 :r2 0.2 :r3 0.08 :tt1 0.01 :tt2 0.01 :steps 20 :v 0.004 1))
+(defn get-unit [param] (case param :r1 0.4 :r2 0.2 :r3 0.08 :steps 20 :v 0.004 1))
 
-(defn round-value [v param] (max 0 (case param :steps (js/Math.round v) v)))
+(defn round-value [v param] (case param :steps (js/Math.max 0 (js/Math.round v)) v))
 
 (defcomp
  comp-numbers-control
  (state states)
- (let [cursor (:cursor states), params [:r1 :r2 :r3 :steps :v :tt1 :tt2]]
+ (let [cursor (:cursor states), params [:r1 :r2 :r3 :steps :v]]
    (container
     {:position [0 -80]}
     (create-list
@@ -41,8 +40,7 @@
  comp-cycloid-demo
  (states)
  (let [cursor (:cursor states)
-       state (or (:data states)
-                 {:r1 312, :r2 80, :r3 96, :tt1 0, :tt2 0, :steps 2000, :v 0.11})]
+       state (or (:data states) {:r1 312, :r2 80, :r3 96, :steps 2000, :v 0.11})]
    (container
     {}
     (graphics
@@ -50,24 +48,25 @@
       :ops (let [r1 (:r1 state)
                  r2 (:r2 state)
                  r3 (:r3 state)
-                 tt1 (:tt1 state)
-                 tt2 (:tt2 state)
                  trail (->> (range (:steps state))
                             (map
                              (fn [idx]
                                (let [t (* idx (:v state))
                                      dr (- r1 r2)
                                      dr2 (- r2 r3)
-                                     t2 (+ tt1 (unchecked-negate (/ (* t r1) r2)))
-                                     t3 (+ tt2 (unchecked-negate (/ (* t2 r2) r3)))]
+                                     t2 (unchecked-negate (/ (* t r1) r2))
+                                     t3 (unchecked-negate (/ (* t2 r2) r3))]
                                  (add-path
                                   (add-path
                                    [(* dr (js/Math.cos t)) (* dr (js/Math.sin t))]
-                                   [(* dr2 (js/Math.cos t2)) (* dr2 (js/Math.sin t2))])
-                                  [(* r3 (js/Math.cos t3)) (* r3 (js/Math.sin t3))])))))]
-        (vec
-         (concat
-          [(g :line-style {:color (hslx 0 80 70), :width 1, :alpha 0.7})
-           (g :move-to (first trail))]
-          (->> trail rest (mapcat (fn [p] [(g :line-to p)]))))))})
+                                   (if (zero? r2)
+                                     [0 0]
+                                     [(* dr2 (js/Math.cos t2)) (* dr2 (js/Math.sin t2))]))
+                                  (if (zero? r3)
+                                    [0 0]
+                                    [(* r3 (js/Math.cos t3)) (* r3 (js/Math.sin t3))]))))))]
+        (concat
+         [(g :line-style {:color (hslx 0 80 70), :width 2, :alpha 0.7})
+          (g :move-to (or (first trail) [0 0]))]
+         (->> trail rest (mapcat (fn [p] [(g :line-to p)])))))})
     (comp-numbers-control state states))))
