@@ -1,5 +1,5 @@
 
-(ns app.container
+(ns app.comp.container
   (:require [phlox.core
              :refer
              [defcomp >> hslx rect circle text container graphics create-list hslx]]
@@ -33,7 +33,7 @@
    {:position [0 0],
     :size [120 28],
     :fill (hslx 200 60 (if selected? 30 14)),
-    :on {:click (fn [e d!] (d! :tab tab))}})
+    :on {:pointertap (fn [e d!] (d! :tab tab))}})
   (text
    {:text title,
     :position [20 3],

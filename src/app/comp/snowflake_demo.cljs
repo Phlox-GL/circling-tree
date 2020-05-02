@@ -52,7 +52,7 @@
      {:position [0 -60]}
      (comp-button
       {:text "Add",
-       :on {:click (fn [e d!]
+       :on {:pointertap (fn [e d!]
               (d!
                cursor
                (update
@@ -63,7 +63,7 @@
      (comp-button
       {:text "Reduce",
        :position [80 0],
-       :on {:click (fn [e d!]
+       :on {:pointertap (fn [e d!]
               (d!
                cursor
                (update

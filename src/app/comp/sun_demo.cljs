@@ -31,7 +31,7 @@
   (comp-reset [-200 -200])
   (create-list
    :container
-   {:position [400 40]}
+   {:position [200 40]}
    (->> (range 200)
         (map
          (fn [x]

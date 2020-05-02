@@ -2,11 +2,12 @@
 (ns app.main
   (:require ["pixi.js" :as PIXI]
             [phlox.core :refer [render!]]
-            [app.container :refer [comp-container]]
+            [app.comp.container :refer [comp-container]]
             [app.schema :as schema]
             ["shortid" :as shortid]
             [app.updater :refer [updater]]
-            ["fontfaceobserver" :as FontFaceObserver]))
+            ["fontfaceobserver" :as FontFaceObserver]
+            [phlox.core :as phlox-core]))
 
 (defonce *store (atom schema/store))
 
@@ -22,6 +23,13 @@
       (.load)
       (.then (fn [] (render! (comp-container @*store) dispatch! {}))))
   (add-watch *store :change (fn [] (render! (comp-container @*store) dispatch! {})))
+  (set!
+   (-> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency)
+   1000)
+  (-> @phlox-core/*app .-renderer .-plugins .-interaction .update)
+  (println
+   "code"
+   (-> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency))
   (println "App Started"))
 
 (defn reload! []
