@@ -14,7 +14,7 @@
    {:position [0 0],
     :size [80 40],
     :fill (hslx 0 0 40),
-    :on {:click (fn [e d!] (d! :touch nil))}})
+    :on {:pointertap (fn [e d!] (d! :touch nil))}})
   (text
    {:text "Refresh",
     :position [8 6],

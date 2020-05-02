@@ -4,7 +4,7 @@
              :refer
              [defcomp >> hslx g rect circle text container graphics create-list hslx]]
             [app.util :refer [rand-point rand-color]]
-            [app.comp.button :refer [comp-button]]
+            [phlox.comp.button :refer [comp-button]]
             [phlox.comp.slider :refer [comp-slider]]))
 
 (defn get-round? [param] (case param :unit false (do true)))
@@ -42,7 +42,7 @@
   (comp-button
    {:text "Random",
     :position [580 0],
-    :on-click (fn [e d!]
+    :on-pointertap (fn [e d!]
       (d! (:cursor states) {:m (rand-int 40), :n (rand-int 40), :step 500, :unit 0.01}))})))
 
 (def initial-state {:step 1000, :unit 0.01, :m 13, :n 3})

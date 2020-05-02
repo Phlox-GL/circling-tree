@@ -11,7 +11,8 @@
       acc
       (let [ratio (/ 1 (inc idx))
             a1 (+ angle (* 0.4 ratio))
-            a2 (+ a1 (* 6 ratio (js/Math.random)))]
+            a2 (+ a1 (* 6 ratio (js/Math.random)))
+            r0 (/ 180 js/Math.PI)]
         (recur
          (+ a2 (* 0.2 ratio))
          (conj
@@ -19,9 +20,17 @@
           (g :line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 6, :alpha 0})
           (g
            :arc
-           {:center [0 0], :radius (* 8 idx), :angle [angle a1], :anticlockwise? false})
+           {:center [0 0],
+            :radius (* 8 idx),
+            :angle [(* r0 angle) (* r0 a1)],
+            :anticlockwise? false})
           (g :line-style {:color (* (js/Math.random) (hslx 0 0 100)), :width 4, :alpha 1})
-          (g :arc {:center [0 0], :radius (* 8 idx), :angle [a1 a2], :anticlockwise? false})))))))
+          (g
+           :arc
+           {:center [0 0],
+            :radius (* 8 idx),
+            :angle [(* r0 a1) (* r0 a2)],
+            :anticlockwise? false})))))))
 
 (defcomp
  comp-circle-demo

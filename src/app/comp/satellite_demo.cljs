@@ -56,7 +56,7 @@
     (comp-button
      {:text "Add",
       :position [600 0],
-      :on {:click (fn [e d!]
+      :on {:pointertap (fn [e d!]
              (d!
               cursor
               (-> state
@@ -65,7 +65,7 @@
     (comp-button
      {:text "Remove",
       :position [660 0],
-      :on {:click (fn [e d!]
+      :on {:pointertap (fn [e d!]
              (d!
               cursor
               (-> state
@@ -99,23 +99,23 @@
                             (hslx 20 80 70)),
                           :width (if (= idx (:selected state)) 2 2),
                           :alpha 1})
-                        (g :begin-fill {:color (hslx 20 80 70)})
+                        (comment g :begin-fill {:color (hslx 20 80 70)})
                         (g
                          :arc
                          {:center (let [th (first segment)]
                             [(* r (js/Math.cos (rad th))) (* r (js/Math.sin (rad th)))]),
                           :radius 4,
-                          :angle [0 (* 2 js/Math.PI)]})
+                          :angle [0 360]})
                         (g
                          :arc
                          {:center [0 0],
                           :radius r,
                           :angle (let [segment (get-in state [:segments idx])]
-                            [(rad (first segment)) (rad (+ (first segment) (peek segment)))])})
+                            [(first segment) (+ (first segment) (peek segment))])})
                         (g
                          :arc
                          {:center (let [th (+ (first segment) (peek segment))]
                             [(* r (js/Math.cos (rad th))) (* r (js/Math.sin (rad th)))]),
                           :radius 4,
-                          :angle [0 (* 2 js/Math.PI)]})
+                          :angle [0 360]})
                         (g :end-fill nil)]}))])))))))

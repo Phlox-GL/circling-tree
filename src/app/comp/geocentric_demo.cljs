@@ -4,7 +4,7 @@
              :refer
              [defcomp >> hslx g rect circle text container graphics create-list hslx]]
             [app.util :refer [rand-point rand-color add-path]]
-            [app.comp.button :refer [comp-button]]
+            [phlox.comp.button :refer [comp-button]]
             [phlox.comp.slider :refer [comp-slider]]))
 
 (defcomp
@@ -41,7 +41,7 @@
   (comp-button
    {:text "Random",
     :position [580 40],
-    :on-click (fn [e d!]
+    :on-pointertap (fn [e d!]
       (d!
        (:cursor states)
        {:r2 (rand-int 200),
