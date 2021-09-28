@@ -27,10 +27,10 @@
                         :unit $ case-default param 0.1 (:unit 0.001) (:step 1)
                         :on-change $ fn (value d!)
                           d! (:cursor states)
-                            assoc state param $ case-default param (max 0 value)
-                              :m $ max 1 (js/Math.round value)
-                              :n $ max 1 (js/Math.round value)
-                              :step $ max 1 (js/Math.round value)
+                            assoc state param $ case-default param (js/Math.max 0 value)
+                              :m $ js/Math.max 1 (js/Math.round value)
+                              :n $ js/Math.max 1 (js/Math.round value)
+                              :step $ js/Math.max 1 (js/Math.round value)
               comp-button $ {} (:text "\"Random")
                 :position $ [] 580 0
                 :on-pointertap $ fn (e d!)
@@ -105,7 +105,8 @@
                 tab $ :tab store
                 states $ :states store
                 touch-key $ :touch-key store
-              container ({})
+              container
+                {} $ :position ([] -250 -320)
                 create-list :container
                   {} $ :position ([] 40 40)
                   -> tabs $ map-indexed
@@ -115,7 +116,12 @@
                         , item idx (= tab item)
                 container
                   {} $ :position ([] 280 80)
-                  case tab
+                  case-default tab
+                    text $ {}
+                      :text $ str "\"Unknown " tab
+                      :style $ {}
+                        :fill $ hslx 0 0 100
+                      :position $ [] 0 0
                     :sun $ comp-sun-demo touch-key
                     nil $ comp-sun-demo touch-key
                     :circle $ comp-circle-demo touch-key
@@ -133,11 +139,13 @@
                     :snowflake $ comp-snowflake-demo (>> states :snowflake)
                     :harmono $ comp-harmono-demo (>> states :harmono)
                     :satellite $ comp-satellite-demo (>> states :satellite)
-                    text $ {}
-                      :text $ str "\"Unknown " tab
-                      :style $ {}
-                        :fill $ hslx 0 0 100
-                      :position $ [] 0 0
+                circle $ {}
+                  :position $ [] 80 560
+                  :fill $ hslx 200 90 30
+                  :alpha 1
+                  :radius 10
+                  :on $ {}
+                    :pointertap $ fn (e d!) (js/document.body.requestFullscreen)
         |tabs $ quote
           def tabs $ [] :sun :circle :rects :walking :grow :chars :cycloid :chord :oscillo :geocentric :rotate :bezier :tree :snowflake :harmono :satellite
         |comp-tab $ quote
@@ -147,12 +155,12 @@
                 [] 0 $ * 32 idx
               rect $ {}
                 :position $ [] 0 0
-                :size $ [] 120 28
+                :size $ [] 80 28
                 :fill $ hslx 200 60 (if selected? 30 14)
                 :on $ {}
                   :pointertap $ fn (e d!) (d! :tab tab)
               text $ {} (:text title)
-                :position $ [] 20 3
+                :position $ [] 8 3
                 :style $ {}
                   :fill $ hslx 0 0 100
                   :font-size 20
@@ -189,7 +197,7 @@
                 factor-1 $ divide-path (:p1 state) base
                 factor-2 $ divide-path (:p2 state) base
               container
-                {} $ :position ([] 400 400)
+                {} $ :position ([] 0 200)
                 graphics $ {}
                   :position $ [] 0 0
                   :ops $ let
@@ -204,18 +212,27 @@
                 comp-drag-point (>> states :p1)
                   {}
                     :position $ :p1 state
+                    :radius 10
+                    :fill $ hslx 200 80 60
+                    :alpha 0.4
                     :on-change $ fn (position d!)
                       d! cursor $ assoc state :p1 position
                 comp-drag-point (>> states :p2)
                   {}
                     :position $ :p2 state
                     :title "\"end"
+                    :radius 10
+                    :alpha 0.4
+                    :fill $ hslx 200 80 60
                     :on-change $ fn (position d!)
                       d! cursor $ assoc state :p2 position
                 comp-drag-point (>> states :p0)
                   {}
                     :position $ :p0 state
                     :title "\"from"
+                    :radius 10
+                    :alpha 0.5
+                    :fill $ hslx 100 90 80
                     :on-change $ fn (position d!)
                       d! cursor $ assoc state :p0 position
         |generate-branches $ quote
@@ -273,10 +290,10 @@
                         :on-change $ fn (value d!)
                           d! (:cursor states)
                             assoc state param $ case-default param value
-                              :r2 $ max 1 (js/Math.round value)
-                              :v2 $ max 1 (js/Math.round value)
-                              :r3 $ max 1 (js/Math.round value)
-                              :v3 $ max 1 (js/Math.round value)
+                              :r2 $ js/Math.max 1 (js/Math.round value)
+                              :v2 $ js/Math.max 1 (js/Math.round value)
+                              :r3 $ js/Math.max 1 (js/Math.round value)
+                              :v3 $ js/Math.max 1 (js/Math.round value)
                               :steps $ js/Math.round value
               comp-button $ {} (:text "\"Random")
                 :position $ [] 580 40
@@ -384,7 +401,7 @@
                   {} $ :size 20
               container ({})
                 graphics $ {}
-                  :position $ [] 400 320
+                  :position $ [] 200 320
                   :ops $ generate-ops (:size state)
                 comp-slider (>> states :size)
                   {}
@@ -394,7 +411,7 @@
                     :round? true
                     :on-change $ fn (n d!)
                       d! cursor $ assoc state :size
-                        min 300 $ max (js/Math.round n) 4
+                        js/Math.min 300 $ js/Math.max (js/Math.round n) 4
     |app.comp.satellite-demo $ {}
       :ns $ quote
         ns app.comp.satellite-demo $ :require
@@ -539,7 +556,7 @@
         |comp-sun-demo $ quote
           defcomp comp-sun-demo (touch-key)
             container
-              {} $ :position ([] 200 200)
+              {} $ :position ([] 40 200)
               comp-reset $ [] -200 -200
               create-list :container
                 {} $ :position ([] 200 40)
@@ -732,7 +749,7 @@
                   map $ fn (idx)
                     [] idx $ graphics
                       {}
-                        :position $ [] 500 0
+                        :position $ [] 300 0
                         :ops $ generate-circle-ops idx
         |generate-circle-ops $ quote
           defn generate-circle-ops (idx)
@@ -779,7 +796,7 @@
           defcomp comp-rects-demo (touch-key)
             container ({})
               create-list :container
-                {} $ :position ([] 200 40)
+                {} $ :position ([] 40 40)
                 -> (range 10)
                   mapcat $ fn (x)
                     -> (range 10)
@@ -1002,13 +1019,13 @@
         |render-app! $ quote
           defn render-app! () $ render! (comp-container @*store) dispatch! ({})
         |main! $ quote
-          defn main! () (; js/console.log PIXI) (render-app!)
+          defn main! () (; js/console.log PIXI)
             -> (new FontFaceObserver "\"Josefin Sans") (.load)
               .then $ fn (e) (render-app!)
             add-watch *store :change $ fn (s p) (render-app!)
-            set! (-> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency) 1000
-            -> @phlox-core/*app .-renderer .-plugins .-interaction .update
-            println "\"code" $ -> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency
+              set! (-> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency) 1000
+              -> @phlox-core/*app .-renderer .-plugins .-interaction .update
+            ; println "\"code" $ -> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency
             println "\"App Started"
         |*store $ quote (defatom *store schema/store)
         |dispatch! $ quote
@@ -1016,7 +1033,7 @@
             when (not= op :states) (println "\"dispatch!" op op-data)
             let
                 op-id $ shortid/generate
-                op-time $ .now js/Date
+                op-time $ .!now js/Date
               reset! *store $ updater @*store op op-data op-id op-time
         |reload! $ quote
           defn reload! () $ if (nil? build-errors)
@@ -1213,7 +1230,7 @@
           defcomp comp-chars-demo (touch-key)
             container ({})
               create-list :container
-                {} $ :position ([] 100 0)
+                {} $ :position ([] 0 0)
                 -> (range 10)
                   mapcat $ fn (y)
                     -> (range 10)
@@ -1223,7 +1240,7 @@
                             {} $ :position
                               [] (* x 54) (* y 54)
                             comp-char touch-key $ rand-int 6
-              comp-reset $ [] -40 40
+              comp-reset $ [] -140 40
         |straight-strokes $ quote
           def straight-strokes $ []
             []
@@ -1354,7 +1371,7 @@
                 cursor $ :cursor states
                 state $ or (:data states)
                   {}
-                    :points $ [] ([] 100 100) ([] 400 100) ([] 400 400) ([] 100 400)
+                    :points $ [] ([] 40 100) ([] 200 100) ([] 200 400) ([] 40 400)
                     :n 80
               container ({})
                 graphics $ {}
@@ -1373,13 +1390,13 @@
                             d! cursor $ assoc-in state ([] :points idx) value
                 comp-slider (>> states :n)
                   {} (:title "\"n")
-                    :position $ [] 200 -40
+                    :position $ [] 0 -40
                     :value $ :n state
                     :unit 0.3
                     :round? true
                     :on-change $ fn (value d!)
                       d! cursor $ assoc state :n
-                        max 1 $ js/Math.round value
+                        js/Math.max 1 $ js/Math.round value
     |app.comp.grow-demo $ {}
       :ns $ quote
         ns app.comp.grow-demo $ :require
@@ -1543,12 +1560,13 @@
                 cursor $ :cursor states
                 state $ or (:data states)
                   {} (:steps 1)
-                    :points $ [] ([] 40 300) ([] 440 300)
+                    :points $ [] ([] 0 300) ([] 140 300)
                     :shaking? false
               container ({})
                 container
-                  {} $ :position ([] 0 -60)
+                  {} $ :position ([] -100 -60)
                   comp-button $ {} (:text "\"Add")
+                    :position $ [] -60 0
                     :on $ {}
                       :pointertap $ fn (e d!)
                         d! cursor $ update state :points
@@ -1557,7 +1575,7 @@
                               add-path (last points) ([] -100 100)
                               last points
                   comp-button $ {} (:text "\"Reduce")
-                    :position $ [] 80 0
+                    :position $ [] 0 0
                     :on $ {}
                       :pointertap $ fn (e d!)
                         d! cursor $ update state :points
@@ -1570,7 +1588,7 @@
                   comp-slider (>> states :steps)
                     {}
                       :value $ :steps state
-                      :position $ [] 180 0
+                      :position $ [] 80 0
                       :unit 0.1
                       :title "\"Steps"
                       :min 0
@@ -1582,7 +1600,7 @@
                         d! cursor $ assoc state :steps value
                   comp-switch $ {}
                     :value $ :shaking? state
-                    :position $ [] 340 0
+                    :position $ [] 200 0
                     :title "\"Shake"
                     :on-change $ fn (v d!)
                       d! cursor $ assoc state :shaking? v
@@ -1662,7 +1680,7 @@
                     :alpha 1
                 points $ :points state
               container
-                {} $ :position ([] 400 400)
+                {} $ :position ([] 240 400)
                 create-list :container ({})
                   ->
                     range $ :steps state
@@ -1697,8 +1715,8 @@
                           :on-change $ fn (v d!)
                             d! cursor $ assoc state param
                               case-default param v
-                                :steps $ max 1 (js/Math.round v)
-                                :alpha $ max 0 (min 1 v)
+                                :steps $ js/Math.max 1 (js/Math.round v)
+                                :alpha $ js/Math.max 0 (js/Math.min 1 v)
                           :position $ []
                             + -400 $ * idx 140
                             , -440
