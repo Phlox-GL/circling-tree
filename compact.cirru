@@ -1572,7 +1572,7 @@
                         d! cursor $ update state :points
                           fn (points)
                             conj (butlast points)
-                              add-path (last points) ([] -100 100)
+                              add-path (last points) ([] -80 -60)
                               last points
                   comp-button $ {} (:text "\"Reduce")
                     :position $ [] 0 0
@@ -1623,6 +1623,8 @@
                       [] idx $ comp-drag-point (>> states idx)
                         {} (:position point)
                           :title $ str "\"p" idx
+                          :alpha 0.5
+                          :color $ hslx 300 80 50
                           :on-change $ fn (position d!)
                             d! cursor $ assoc-in state ([] :points idx) position
     |app.comp.rotate-demo $ {}
