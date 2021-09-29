@@ -4,6 +4,7 @@ body {
   overscroll-behavior-y: none;
   overscroll-behavior-x: none;
   font-family: Josefin Sans, Hind;
+  font-size: 0;
 }
 
 body * {
