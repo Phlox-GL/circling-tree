@@ -14948,35 +14948,6 @@
                         :type :expr
                         :at 1629401513994
                         :by |rJG4IHzWf
-                      |v $ {}
-                        :data $ {}
-                          |T $ {} (:text |set!) (:type :leaf) (:at 1632854432107) (:by |rJG4IHzWf)
-                          |j $ {}
-                            :data $ {}
-                              |T $ {} (:text |->) (:type :leaf) (:at 1632854432107) (:by |rJG4IHzWf)
-                              |j $ {} (:text |@phlox-core/*app) (:type :leaf) (:at 1632854432107) (:by |rJG4IHzWf)
-                              |r $ {} (:text |.-renderer) (:type :leaf) (:at 1632854432107) (:by |rJG4IHzWf)
-                              |v $ {} (:text |.-plugins) (:type :leaf) (:at 1632854432107) (:by |rJG4IHzWf)
-                              |x $ {} (:text |.-interaction) (:type :leaf) (:at 1632854432107) (:by |rJG4IHzWf)
-                              |y $ {} (:text |.-interactionFrequency) (:type :leaf) (:at 1632854432107) (:by |rJG4IHzWf)
-                            :type :expr
-                            :at 1632854432107
-                            :by |rJG4IHzWf
-                          |r $ {} (:text |1000) (:type :leaf) (:at 1632854432107) (:by |rJG4IHzWf)
-                        :type :expr
-                        :at 1632854432107
-                        :by |rJG4IHzWf
-                      |x $ {}
-                        :data $ {}
-                          |T $ {} (:text |->) (:type :leaf) (:at 1632854436154) (:by |rJG4IHzWf)
-                          |j $ {} (:text |@phlox-core/*app) (:type :leaf) (:at 1632854436154) (:by |rJG4IHzWf)
-                          |r $ {} (:text |.-renderer) (:type :leaf) (:at 1632854436154) (:by |rJG4IHzWf)
-                          |v $ {} (:text |.-plugins) (:type :leaf) (:at 1632854436154) (:by |rJG4IHzWf)
-                          |x $ {} (:text |.-interaction) (:type :leaf) (:at 1632854436154) (:by |rJG4IHzWf)
-                          |y $ {} (:text |.update) (:type :leaf) (:at 1632854436154) (:by |rJG4IHzWf)
-                        :type :expr
-                        :at 1632854436154
-                        :by |rJG4IHzWf
                     :type :expr
                     :at 1583774306640
                     :by |rJG4IHzWf

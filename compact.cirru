@@ -1034,8 +1034,6 @@
             -> (new FontFaceObserver "\"Josefin Sans") (.load)
               .then $ fn (e) (render-app!)
             add-watch *store :change $ fn (s p) (render-app!)
-              set! (-> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency) 1000
-              -> @phlox-core/*app .-renderer .-plugins .-interaction .update
             ; println "\"code" $ -> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency
             when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "\"App Started"
