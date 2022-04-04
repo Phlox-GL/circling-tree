@@ -1,8 +1,9 @@
 
 {} (:package |app)
   :configs $ {} (:init-fn |app.main/main!) (:reload-fn |app.main/reload!)
-    :modules $ [] |memof/ |lilac/ |respo.calcit/ |respo-ui.calcit/ |phlox.calcit/
+    :modules $ [] |memof/ |lilac/ |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/
     :version nil
+  :entries $ {}
   :files $ {}
     |app.comp.oscillo-demo $ {}
       :ns $ quote
@@ -11,6 +12,7 @@
           [] app.util :refer $ [] rand-point rand-color
           [] phlox.comp.button :refer $ [] comp-button
           [] phlox.comp.slider :refer $ [] comp-slider
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |comp-oscillo-control $ quote
           defcomp comp-oscillo-control (state states)
@@ -273,6 +275,7 @@
           [] app.util :refer $ [] rand-point rand-color add-path
           [] phlox.comp.button :refer $ [] comp-button
           [] phlox.comp.slider :refer $ [] comp-slider
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |comp-geocentric-control $ quote
           defcomp comp-geocentric-control (state states)
@@ -359,6 +362,7 @@
           [] app.comp.reset :refer $ [] comp-reset
           [] app.util :refer $ [] rand-point rand-color
           [] phlox.comp.slider :refer $ [] comp-slider
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |shuffle $ quote
           defn shuffle (xs) (js/console.warn "\"TODO shuffle" xs) xs
@@ -420,6 +424,7 @@
           [] app.util :refer $ [] rand-point
           [] phlox.comp.slider :refer $ [] comp-slider
           [] phlox.comp.button :refer $ [] comp-button
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |comp-number-controls $ quote
           defcomp comp-number-controls (state states)
@@ -600,6 +605,7 @@
           [] phlox.comp.button :refer $ [] comp-button
           [] phlox.comp.slider :refer $ [] comp-slider
           [] phlox.comp.switch :refer $ [] comp-switch
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |round-value $ quote
           defn round-value (v param)
@@ -738,6 +744,7 @@
         ns app.comp.circle-demo $ :require
           [] phlox.core :refer $ [] defcomp hslx rect circle text container graphics create-list hslx g
           [] app.comp.reset :refer $ [] comp-reset
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |comp-circle-demo $ quote
           defcomp comp-circle-demo (touch-key)
@@ -791,6 +798,7 @@
           [] phlox.core :refer $ [] defcomp hslx g rect circle text container graphics create-list hslx
           [] app.comp.reset :refer $ [] comp-reset
           [] app.util :refer $ [] rand-point
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |comp-rects-demo $ quote
           defcomp comp-rects-demo (touch-key)
@@ -874,6 +882,7 @@
           [] app.util :refer $ [] rand-point rand-color add-path multiply-path
           [] phlox.comp.slider :refer $ [] comp-slider
           [] phlox.comp.drag-point :refer $ [] comp-drag-point
+          "\"@calcit/std" :refer $ rand
       :defs $ {}
         |render-points $ quote
           defn render-points (cursor states state controls)
@@ -1006,7 +1015,7 @@
     |app.main $ {}
       :ns $ quote
         ns app.main $ :require ([] "\"pixi.js" :as PIXI)
-          [] phlox.core :refer $ [] render! clear-phlox-caches!
+          [] phlox.core :refer $ [] render! clear-phlox-caches! update-viewer!
           [] app.comp.container :refer $ [] comp-container
           [] app.schema :as schema
           [] "\"shortid" :as shortid
@@ -1015,6 +1024,8 @@
           [] phlox.core :as phlox-core
           "\"./calcit.build-errors" :default build-errors
           "\"bottom-tip" :default hud!
+          app.config :refer $ dev? mobile?
+          touch-control.core :refer $ render-control! start-control-loop! replace-control-loop!
       :defs $ {}
         |render-app! $ quote
           defn render-app! () $ render! (comp-container @*store) dispatch! ({})
@@ -1026,6 +1037,7 @@
               set! (-> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency) 1000
               -> @phlox-core/*app .-renderer .-plugins .-interaction .update
             ; println "\"code" $ -> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency
+            when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "\"App Started"
         |*store $ quote (defatom *store schema/store)
         |dispatch! $ quote
@@ -1037,13 +1049,22 @@
               reset! *store $ updater @*store op op-data op-id op-time
         |reload! $ quote
           defn reload! () $ if (nil? build-errors)
-            do (println "\"Code updated.") (clear-phlox-caches!) (remove-watch *store :change)
+            do (clear-phlox-caches!) (remove-watch *store :change)
               add-watch *store :change $ fn (store prev) (render-app!)
               render-app!
+              when mobile? (replace-control-loop! 8 on-control-event) (render-control!)
               hud! "\"ok~" "\"Ok"
             hud! "\"error" build-errors
+        |on-control-event $ quote
+          defn on-control-event (elapsed states delta)
+            let
+                move $ :left-move states
+                scales $ :right-move delta
+              update-viewer! move $ nth scales 1
     |app.util $ {}
-      :ns $ quote (ns app.util)
+      :ns $ quote
+        ns app.util $ :require
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |divide-path $ quote
           defn divide-path (p1 p2)
@@ -1066,6 +1087,11 @@
         |rough-size $ quote
           defn rough-size (pair)
             let[] (x y) pair $ + (js/Math.abs x) (js/Math.abs y)
+        |rand-nth $ quote
+          defn rand-nth (xs)
+            let
+                n $ rand-int (count xs)
+              nth xs n
         |rand-color $ quote
           defn rand-color () $ rand-int 0xffffff
         |rand-point $ quote
@@ -1110,6 +1136,7 @@
           [] app.util :refer $ [] add-path multiply-path
           [] app.comp.reset :refer $ [] comp-reset
           [] clojure.core.rrb-vector :refer $ [] catvec
+          "\"@calcit/std" :refer $ rand rand-int rand-nth
       :defs $ {}
         |generate-trails $ quote
           defn generate-trails ()
@@ -1194,8 +1221,9 @@
         ns app.comp.chars-demo $ :require
           [] phlox.core :refer $ [] defcomp hslx g rect circle text container graphics create-list hslx
           [] app.comp.reset :refer $ [] comp-reset
-          [] app.util :refer $ [] rand-point
+          [] app.util :refer $ [] rand-point rand-nth
           [] app.style :as style
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |comp-char $ quote
           defcomp comp-char (touch-key kind)
@@ -1406,6 +1434,7 @@
           [] clojure.core.rrb-vector :refer $ [] catvec
           [] "\"shortid" :as shortid
           [] app.util :refer $ [] rand-point
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |generate-trails $ quote
           defn generate-trails ()
@@ -1635,6 +1664,7 @@
           [] app.util :refer $ [] rand-point
           [] phlox.comp.drag-point :refer $ [] comp-drag-point
           [] phlox.comp.slider :refer $ [] comp-slider
+          "\"@calcit/std" :refer $ rand rand-int
       :defs $ {}
         |gen-trail $ quote
           defn gen-trail (points alpha)
@@ -1726,7 +1756,8 @@
           defn get-round? (param)
             case param (:steps true) (do false)
     |app.config $ {}
-      :ns $ quote (ns app.config)
+      :ns $ quote
+        ns app.config $ :require ("\"mobile-detect" :default mobile-detect)
       :defs $ {}
         |cdn? $ quote
           def cdn? $ cond
@@ -1744,3 +1775,5 @@
               :else true
         |site $ quote
           def site $ {} (:dev-ui "\"http://localhost:8100/main-fonts.css") (:release-ui "\"http://cdn.tiye.me/favored-fonts/main-fonts.css") (:cdn-url "\"http://cdn.tiye.me/circling-tree/") (:title "\"Circling Tree") (:icon "\"http://cdn.tiye.me/logo/quamolit.png") (:storage-key "\"circling-tree")
+        |mobile? $ quote
+          def mobile? $ .!mobile (new mobile-detect js/window.navigator.userAgent)
