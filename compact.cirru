@@ -81,25 +81,25 @@
     |app.comp.container $ {}
       :ns $ quote
         ns app.comp.container $ :require
-          [] phlox.core :refer $ [] defcomp >> hslx rect circle text container graphics create-list hslx
-          [] app.comp.sun-demo :refer $ [] comp-sun-demo
-          [] app.comp.circle-demo :refer $ [] comp-circle-demo
-          [] app.comp.tree-demo :refer $ [] comp-tree-demo
-          [] app.comp.walking-demo :refer $ [] comp-walking-demo
-          [] app.comp.grow-demo :refer $ [] comp-grow-demo
-          [] app.comp.rotate-demo :refer $ [] comp-rotate-demo
-          [] app.comp.rects-demo :refer $ [] comp-rects-demo
-          [] app.comp.chars-demo :refer $ [] comp-chars-demo
-          [] app.comp.bezier-demo :refer $ [] comp-bezier-demo
-          [] app.comp.cycloid-demo :refer $ [] comp-cycloid-demo
-          [] app.comp.chord-demo :refer $ [] comp-chord-demo
-          [] app.comp.oscillo-demo :refer $ [] comp-oscillo-demo
-          [] app.comp.geocentric-demo :refer $ [] comp-geocentric-demo
-          [] app.comp.snowflake-demo :refer $ [] comp-snowflake-demo
-          [] app.comp.harmono-demo :refer $ [] comp-harmono-demo
-          [] app.comp.satellite-demo :refer $ [] comp-satellite-demo
-          [] app.style :as style
-          [] clojure.string :as string
+          phlox.core :refer $ defcomp >> hslx rect circle text container graphics create-list hslx
+          app.comp.sun-demo :refer $ comp-sun-demo
+          app.comp.circle-demo :refer $ comp-circle-demo
+          app.comp.tree-demo :refer $ comp-tree-demo
+          app.comp.walking-demo :refer $ comp-walking-demo
+          app.comp.grow-demo :refer $ comp-grow-demo
+          app.comp.rotate-demo :refer $ comp-rotate-demo
+          app.comp.rects-demo :refer $ comp-rects-demo
+          app.comp.chars-demo :refer $ comp-chars-demo
+          app.comp.bezier-demo :refer $ comp-bezier-demo
+          app.comp.cycloid-demo :refer $ comp-cycloid-demo
+          app.comp.chord-demo :refer $ comp-chord-demo
+          app.comp.oscillo-demo :refer $ comp-oscillo-demo
+          app.comp.geocentric-demo :refer $ comp-geocentric-demo
+          app.comp.snowflake-demo :refer $ comp-snowflake-demo
+          app.comp.harmono-demo :refer $ comp-harmono-demo
+          app.comp.satellite-demo :refer $ comp-satellite-demo
+          app.style :as style
+          clojure.string :as string
       :defs $ {}
         |comp-container $ quote
           defcomp comp-container (store)
@@ -1014,17 +1014,17 @@
                             d! cursor $ assoc-in state ([] :controls idx :damping) v
     |app.main $ {}
       :ns $ quote
-        ns app.main $ :require ([] "\"pixi.js" :as PIXI)
-          [] phlox.core :refer $ [] render! clear-phlox-caches! update-viewer!
-          [] app.comp.container :refer $ [] comp-container
-          [] app.schema :as schema
-          [] "\"shortid" :as shortid
-          [] app.updater :refer $ [] updater
-          [] "\"fontfaceobserver-es" :default FontFaceObserver
-          [] phlox.core :as phlox-core
+        ns app.main $ :require ("\"pixi.js" :as PIXI)
+          phlox.core :refer $ render! clear-phlox-caches! on-control-event
+          app.comp.container :refer $ comp-container
+          app.schema :as schema
+          "\"shortid" :as shortid
+          app.updater :refer $ updater
+          "\"fontfaceobserver-es" :default FontFaceObserver
+          phlox.core :as phlox-core
           "\"./calcit.build-errors" :default build-errors
           "\"bottom-tip" :default hud!
-          app.config :refer $ dev? mobile?
+          phlox.config :refer $ dev? mobile?
           touch-control.core :refer $ render-control! start-control-loop! replace-control-loop!
       :defs $ {}
         |render-app! $ quote
@@ -1053,12 +1053,6 @@
               when mobile? (replace-control-loop! 8 on-control-event) (render-control!)
               hud! "\"ok~" "\"Ok"
             hud! "\"error" build-errors
-        |on-control-event $ quote
-          defn on-control-event (elapsed states delta)
-            let
-                move $ :left-move states
-                scales $ :right-move delta
-              update-viewer! move $ nth scales 1
     |app.util $ {}
       :ns $ quote
         ns app.util $ :require
@@ -1757,21 +1751,5 @@
       :ns $ quote
         ns app.config $ :require ("\"mobile-detect" :default mobile-detect)
       :defs $ {}
-        |cdn? $ quote
-          def cdn? $ cond
-              exists? js/window
-              , false
-            (exists? js/process) (= "\"true" js/process.env.cdn)
-            :else false
-        |dev? $ quote
-          def dev? $ let
-              debug? $ do ^boolean js/goog.DEBUG
-            cond
-                exists? js/window
-                , debug?
-              (exists? js/process) (not= "\"true" js/process.env.release)
-              :else true
         |site $ quote
           def site $ {} (:dev-ui "\"http://localhost:8100/main-fonts.css") (:release-ui "\"http://cdn.tiye.me/favored-fonts/main-fonts.css") (:cdn-url "\"http://cdn.tiye.me/circling-tree/") (:title "\"Circling Tree") (:icon "\"http://cdn.tiye.me/logo/quamolit.png") (:storage-key "\"circling-tree")
-        |mobile? $ quote
-          def mobile? $ .!mobile (new mobile-detect js/window.navigator.userAgent)
