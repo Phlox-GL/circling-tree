@@ -11,10 +11,10 @@
   "author": "jiyinyiyong",
   "license": "MIT",
   "devDependencies": {
-    "vite": "^2.9.6"
+    "vite": "^2.9.10"
   },
   "dependencies": {
-    "@calcit/procs": "^0.5.41",
+    "@calcit/procs": "^0.5.45",
     "@calcit/std": "^0.0.1",
     "@quamolit/phlox-utils": "^0.0.2",
     "@quamolit/touch-control": "^0.0.8",
@@ -22,7 +22,7 @@
     "color": "^4.2.3",
     "fontfaceobserver-es": "^3.3.3",
     "mobile-detect": "^1.4.5",
-    "pixi.js": "^6.3.0",
+    "pixi.js": "^6.4.2",
     "shortid": "^2.2.16"
   }
 }
