@@ -682,7 +682,7 @@
             let
                 trails $ -> (range 12)
                   map $ fn (x) (rand-point 140 60)
-                  .distinct
+                  distinct
               &doseq (point trails) (swap! *grid assoc point true)
               loop
                   idx 50
@@ -1560,7 +1560,7 @@
                 trails $ -> (range 280)
                   map $ fn (x)
                     [] $ rand-point 80
-                  .distinct
+                  distinct
               &doseq (p trails)
                 swap! *grid assoc (first p) true
               loop
