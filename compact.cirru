@@ -1625,12 +1625,14 @@
       :defs $ {}
         |*store $ quote (defatom *store schema/store)
         |dispatch! $ quote
-          defn dispatch! (op op-data)
-            when (not= op :states) (println "\"dispatch!" op op-data)
+          defn dispatch! (op)
+            when
+              not= (nth op 0) :states
+              println "\"dispatch!" op
             let
                 op-id $ shortid/generate
                 op-time $ .!now js/Date
-              reset! *store $ updater @*store op op-data op-id op-time
+              reset! *store $ updater @*store op op-id op-time
         |main! $ quote
           defn main! () (; js/console.log PIXI)
             -> (new FontFaceObserver "\"Josefin Sans") (.load)
@@ -1675,12 +1677,13 @@
     |app.updater $ {}
       :defs $ {}
         |updater $ quote
-          defn updater (store op op-data op-id op-time)
-            case-default op
-              do (println "\"unknown op" op op-data) store
-              :tab $ assoc store :tab op-data
-              :touch $ assoc store :touch-key op-id
-              :states $ update-states store op-data
+          defn updater (store op op-id op-time)
+            tag-match op
+                :tab t
+                assoc store :tab t
+              (:touch t) (assoc store :touch-key t)
+              (:states cursor s) (update-states store cursor s)
+              _ $ do (eprintln "\"unknown op" op) store
       :ns $ quote
         ns app.updater $ :require
           [] phlox.cursor :refer $ [] update-states
