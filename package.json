@@ -1,9 +1,9 @@
 {
+  "packageManager": "yarn@4.12.0",
   "name": "phlox",
   "version": "0.1.0",
   "description": "a PIXI DSL in ClojureScript",
   "main": "index.js",
-  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git@github.com:mvc-works/calcit-workflow.git"
@@ -14,7 +14,7 @@
     "vite": "^4.4.2"
   },
   "dependencies": {
-    "@calcit/procs": "^0.7.5",
+    "@calcit/procs": "^0.13.27",
     "@calcit/std": "^0.0.2",
     "@quamolit/phlox-utils": "^0.0.2",
     "@quamolit/touch-control": "^0.0.13",
