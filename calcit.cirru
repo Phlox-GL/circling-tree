@@ -1,5 +1,5 @@
 
-{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `cr query` to inspect and `cr edit`/`cr tree` to modify. Run `cr docs agents --full` first. Manual edits must follow format and schema conventions, then run `cr edit format`.") (:package |app)
+{} (:about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --full` first. Manual edits must follow format and schema conventions, then run `calcit edit format`.") (:package |app)
   :entries $ {}
     :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!)
       :feature-policy $ {}
@@ -432,7 +432,7 @@
                     :alpha 1
                     :radius 10
                     :on $ {}
-                      :pointertap $ fn (e d!) (js/document.body.requestFullscreen)
+                      :pointertap $ fn (e d!) (.!requestFullscreen js/document.body)
           :examples $ []
           :schema $ :: 'Dynamic
         |comp-tab $ %{} 'CodeEntry (:doc |)
@@ -1020,7 +1020,7 @@
                 -> controls $ map-indexed
                   fn (idx control)
                     [] idx $ comp-drag-point
-                      >> states $ str |apmplitude: idx
+                      >> states $ str |amplitude: idx
                       {}
                         :position $ :amplitude control
                         :on-change $ fn (v d!)
@@ -2038,4 +2038,3 @@
         :code $ quote
           ns app.util $ :require
             |@calcit/std :refer $ rand rand-int
-
