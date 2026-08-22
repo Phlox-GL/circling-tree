@@ -12,8 +12,9 @@
           :code $ quote
             defcomp comp-bezier-demo (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
                     {}
                       :points $ [] ([] 40 100) ([] 200 100) ([] 200 400) ([] 40 400)
                       :n 80
@@ -22,11 +23,12 @@
                     :position $ [] 0 0
                     :ops $ let-sugar
                           [] p1 p2 q1 q2
-                          :points state
-                        n $ :n state
+                          option:unwrap-or (get state :points) nil
+                        n $ option:unwrap-or (get state :n) nil
                       gen-trail p1 p2 q1 q2 n
                   create-list :container ({})
-                    -> (:points state)
+                    ->
+                      option:unwrap-or (get state :points) nil
                       map-indexed $ fn (idx point)
                         [] idx $ comp-drag-point (>> states idx)
                           {} (:position point)
@@ -35,7 +37,7 @@
                   comp-slider (>> states :n)
                     {} (:title |n)
                       :position $ [] 0 -40
-                      :value $ :n state
+                      :value $ option:unwrap-or (get state :n) nil
                       :unit 0.3
                       :round? true
                       :on-change $ fn (value d!)
@@ -172,25 +174,25 @@
                 g :arc $ {}
                   :center $ [] 0 10
                   :radius 10
-                  :angle $ [] (* -0.5 js/Math.PI) 0
+                  :angle $ [] (* -0.5 phlox.math/ffi-pi) 0
               []
                 g :move-to $ [] 10 0
                 g :arc $ {}
                   :center $ [] 0 0
                   :radius 10
-                  :angle $ [] 0 (* 0.5 js/Math.PI)
+                  :angle $ [] 0 (* 0.5 phlox.math/ffi-pi)
               []
                 g :move-to $ [] 10 10
                 g :arc $ {}
                   :center $ [] 10 0
                   :radius 10
-                  :angle $ [] (* 0.5 js/Math.PI) js/Math.PI
+                  :angle $ [] (* 0.5 phlox.math/ffi-pi) js/Math.PI
               []
                 g :move-to $ [] 0 10
                 g :arc $ {}
                   :center $ [] 10 10
                   :radius 10
-                  :angle $ [] js/Math.PI (* 1.5 js/Math.PI)
+                  :angle $ [] js/Math.PI (* 1.5 phlox.math/ffi-pi)
           :examples $ []
           :schema $ :: 'Dynamic
         |dot-strokes $ %{} 'CodeEntry (:doc |)
@@ -201,14 +203,14 @@
                 g :arc $ {}
                   :center $ [] 5 5
                   :radius 1
-                  :angle $ [] (- 0 js/Math.PI) js/Math.PI
+                  :angle $ [] (- 0 phlox.math/ffi-pi) js/Math.PI
                 g :close-path nil
               []
                 g :move-to $ [] 0 5
                 g :arc $ {}
                   :center $ [] 5 5
                   :radius 4
-                  :angle $ [] (- 0 js/Math.PI) js/Math.PI
+                  :angle $ [] (- 0 phlox.math/ffi-pi) js/Math.PI
                 g :close-path nil
           :examples $ []
           :schema $ :: 'Dynamic
@@ -250,16 +252,18 @@
           :code $ quote
             defcomp comp-chord-demo (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
                     {} $ :size 20
                 container ({})
                   graphics $ {}
                     :position $ [] 200 320
-                    :ops $ generate-ops (:size state)
+                    :ops $ generate-ops
+                      option:unwrap-or (get state :size) nil
                   comp-slider (>> states :size)
                     {}
-                      :value $ :size state
+                      :value $ option:unwrap-or (get state :size) nil
                       :title |Size
                       :unit 0.1
                       :round? true
@@ -277,29 +281,29 @@
                 -> (range shares) shuffle $ mapcat
                   fn (idx)
                     let
-                        t $ * 2 js/Math.PI idx (/ 1 shares)
-                        t2 $ rand (* 2 js/Math.PI)
+                        t $ * 2 phlox.math/ffi-pi idx (/ 1 shares)
+                        t2 $ rand (* 2 phlox.math/ffi-pi)
                         color $ hslx
-                          * 180 t $ / 1 js/Math.PI
+                          * 180 t $ / 1 phlox.math/ffi-pi
                           , 100 60
                       []
                         g :move-to $ []
-                          * r $ js/Math.cos t
-                          * r $ js/Math.sin t
+                          * r $ phlox.core/ffi-cos t
+                          * r $ phlox.core/ffi-sin t
                         g :line-style $ {} (:color color) (:width 2) (:alpha 0.8)
                         g :quadratic-to $ {}
                           :p1 $ [] 0 0
                           :to-p $ []
-                            * r $ js/Math.cos t2
-                            * r $ js/Math.sin t2
+                            * r $ phlox.core/ffi-cos t2
+                            * r $ phlox.core/ffi-sin t2
                         g :line-style $ {} (:color color) (:width 0) (:alpha 0)
                         g :arc $ {}
                           :center $ [] 0 0
                           :radius r
                           :angle $ [] t2 t
                           :anticlockwise? $ <
-                            js/Math.abs $ - t t2
-                            , js/Math.PI
+                            phlox.core/ffi-abs $ - t t2
+                            , phlox.math/ffi-pi
           :examples $ []
           :schema $ :: 'Dynamic
         |shuffle $ %{} 'CodeEntry (:doc |)
@@ -339,18 +343,18 @@
                   angle 0
                   acc $ []
                 if
-                  > angle $ + js/Math.PI -0.3 (rand 1.4)
+                  > angle $ + phlox.math/ffi-pi -0.3 (rand 1.4)
                   , acc $ let
                       ratio $ / 1 (inc idx)
                       a1 $ + angle (* 0.4 ratio)
                       a2 $ + a1
-                        * 6 ratio $ js/Math.random
-                      r0 $ / 180 js/Math.PI
+                        * 6 ratio $ phlox.core/ffi-random
+                      r0 $ / 180 phlox.math/ffi-pi
                     recur
                       + a2 $ * 0.2 ratio
                       conj acc
                         g :line-style $ {}
-                          :color $ * (js/Math.random) (hslx 0 0 100)
+                          :color $ * (phlox.core/ffi-random) (hslx 0 0 100)
                           :width 6
                           :alpha 0
                         g :arc $ {}
@@ -359,7 +363,7 @@
                           :angle $ [] (* r0 angle) (* r0 a1)
                           :anticlockwise? false
                         g :line-style $ {}
-                          :color $ * (js/Math.random) (hslx 0 0 100)
+                          :color $ * (phlox.core/ffi-random) (hslx 0 0 100)
                           :width 4
                           :alpha 1
                         g :arc $ {}
@@ -389,9 +393,9 @@
           :code $ quote
             defcomp comp-container (store)
               let
-                  tab $ :tab store
-                  states $ :states store
-                  touch-key $ :touch-key store
+                  tab $ option:unwrap-or (get store :tab) nil
+                  states $ option:unwrap-or (get store :states) nil
+                  touch-key $ option:unwrap-or (get store :touch-key) nil
                 container
                   {} $ :position ([] -250 -320)
                   create-list :container
@@ -432,7 +436,7 @@
                     :alpha 1
                     :radius 10
                     :on $ {}
-                      :pointertap $ fn (e d!) (.!requestFullscreen js/document.body)
+                      :pointertap $ fn (e d!) (app.util/ffi-request-fullscreen js/document.body)
           :examples $ []
           :schema $ :: 'Dynamic
         |comp-tab $ %{} 'CodeEntry (:doc |)
@@ -488,23 +492,25 @@
           :code $ quote
             defcomp comp-cycloid-demo (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
                     {} (:r1 312) (:r2 80) (:r3 96) (:r4 20) (:r5 8) (:steps 2000) (:v 0.11) (:round? true)
                 container ({}) (comp-numbers-control state states)
                   graphics $ {}
                     :position $ [] 400 400
                     :ops $ let
-                        r1 $ :r1 state
-                        r2 $ :r2 state
-                        r3 $ :r3 state
-                        r4 $ :r4 state
-                        r5 $ :r5 state
+                        r1 $ option:unwrap-or (get state :r1) nil
+                        r2 $ option:unwrap-or (get state :r2) nil
+                        r3 $ option:unwrap-or (get state :r3) nil
+                        r4 $ option:unwrap-or (get state :r4) nil
+                        r5 $ option:unwrap-or (get state :r5) nil
                         trail $ ->
-                          range $ :steps state
+                          range $ option:unwrap-or (get state :steps) nil
                           map $ fn (idx)
                             let
-                                t $ * idx (:v state)
+                                t $ * idx
+                                  option:unwrap-or (get state :v) nil
                                 dr $ - r1 r2
                                 dr2 $ - r2 r3
                                 dr3 $ - r3 r4
@@ -538,9 +544,9 @@
           :code $ quote
             defcomp comp-numbers-control (state states)
               let
-                  cursor $ :cursor states
+                  cursor $ option:unwrap-or (get states :cursor) nil
                   params $ [] :r1 :r2 :r3 :r4 :r5 :steps :v
-                  is-round? $ :round? state
+                  is-round? $ option:unwrap-or (get state :round?) nil
                   rand-value $ fn ()
                     if is-round?
                       - (rand-int 300) 100
@@ -621,8 +627,8 @@
           :code $ quote
             defn polar-point (r theta)
               []
-                * r $ js/Math.cos theta
-                * r $ js/Math.sin theta
+                * r $ phlox.core/ffi-cos theta
+                * r $ phlox.core/ffi-sin theta
           :examples $ []
           :schema $ :: 'Dynamic
         |round-value $ %{} 'CodeEntry (:doc |)
@@ -664,7 +670,8 @@
                           :value $ get state param
                           :unit $ case-default param 1 (:step 0.001) (:steps 10)
                           :on-change $ fn (value d!)
-                            d! (:cursor states)
+                            d!
+                              option:unwrap-or (get states :cursor) nil
                               assoc state param $ case-default param value
                                 :r2 $ js/Math.max 1 (js/Math.round value)
                                 :v2 $ js/Math.max 1 (js/Math.round value)
@@ -674,7 +681,8 @@
                 comp-button $ {} (:text |Random)
                   :position $ [] 580 40
                   :on-pointertap $ fn (e d!)
-                    d! (:cursor states)
+                    d!
+                      option:unwrap-or (get states :cursor) nil
                       {}
                         :r2 $ rand-int 200
                         :v2 $ rand 3
@@ -688,15 +696,17 @@
           :code $ quote
             defcomp comp-geocentric-demo (states)
               let
-                  state $ or (:data states) initial-state
+                  state $ or
+                    option:unwrap-or (get states :data) nil
+                    , initial-state
                 container ({})
                   graphics $ {}
                     :position $ [] 400 360
                     :ops $ let
-                        steps $ :steps state
-                        step $ :step state
-                        r2 $ :r2 state
-                        r3 $ :r3 state
+                        steps $ option:unwrap-or (get state :steps) nil
+                        step $ option:unwrap-or (get state :step) nil
+                        r2 $ option:unwrap-or (get state :r2) nil
+                        r3 $ option:unwrap-or (get state :r3) nil
                         trail $ -> (range steps)
                           map $ fn (idx)
                             let
@@ -704,18 +714,18 @@
                               add-path
                                 add-path
                                   []
-                                    * 200 $ js/Math.cos t
-                                    * 200 $ js/Math.sin t
+                                    * 200 $ phlox.core/ffi-cos t
+                                    * 200 $ phlox.core/ffi-sin t
                                   []
-                                    * r2 $ js/Math.cos
-                                      * t $ :v2 state
-                                    * r2 $ js/Math.sin
-                                      * t $ :v2 state
+                                    * r2 $ phlox.core/ffi-cos
+                                      * t $ option:unwrap-or (get state :v2) nil
+                                    * r2 $ phlox.core/ffi-sin
+                                      * t $ option:unwrap-or (get state :v2) nil
                                 []
-                                  * r3 $ js/Math.cos
-                                    * t $ :v3 state
-                                  * r3 $ js/Math.sin
-                                    * t $ :v3 state
+                                  * r3 $ phlox.core/ffi-cos
+                                    * t $ option:unwrap-or (get state :v3) nil
+                                  * r3 $ phlox.core/ffi-sin
+                                    * t $ option:unwrap-or (get state :v3) nil
                       concat
                         []
                           g :move-to $ first trail
@@ -851,7 +861,7 @@
                               fn (x) ([] k base x)
                 []
                   ->
-                    concat $ mapcat result first
+                    concat $ mapcat result app.util/first-list
                     filter-not $ fn (pair)
                       let-sugar
                             [] k point
@@ -860,7 +870,7 @@
                           available $ -> directions
                             filter-not $ fn (x) (get @*grid x)
                         empty? available
-                  mapcat result last
+                  mapcat result app.util/last-list
           :examples $ []
           :schema $ :: 'Dynamic
         |pick-many $ %{} 'CodeEntry (:doc |)
@@ -891,8 +901,9 @@
           :code $ quote
             defcomp comp-harmono-demo (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
                     {}
                       :controls $ -> (range 3)
                         map $ fn (i)
@@ -903,8 +914,10 @@
                             :damping $ rand 2
                       :steps 100
                       :base 0.01
-                  controls $ :controls state
-                  trail $ gen-trail controls (:steps state) (:base state)
+                  controls $ option:unwrap-or (get state :controls) nil
+                  trail $ gen-trail controls
+                    option:unwrap-or (get state :steps) nil
+                    option:unwrap-or (get state :base) nil
                 container
                   {} $ :position ([] 400 300)
                   render-controls cursor states state controls
@@ -935,12 +948,14 @@
                           multiply-path
                             []
                               *
-                                js/Math.sin $ +
-                                  * t $ :frequency control
-                                  :phase control
-                                js/Math.pow js/Math.E $ * -1 (:damping control) t
+                                phlox.core/ffi-sin $ +
+                                  * t $ option:unwrap-or (get control :frequency) nil
+                                  option:unwrap-or (get control :phase) nil
+                                app.util/ffi-pow app.util/ffi-e $ * -1
+                                  option:unwrap-or (get control :damping) nil
+                                  , t
                               , 0
-                            :amplitude control
+                            option:unwrap-or (get control :amplitude) nil
                         reduce ([] 0 0) add-path
                     , final-point
           :examples $ []
@@ -953,7 +968,7 @@
                 comp-slider (>> states :steps)
                   {}
                     :position $ [] 0 0
-                    :value $ :steps state
+                    :value $ option:unwrap-or (get state :steps) nil
                     :unit 10
                     :round? true
                     :min 0
@@ -963,7 +978,7 @@
                 comp-slider (>> states :base)
                   {}
                     :position $ [] 140 0
-                    :value $ :base state
+                    :value $ option:unwrap-or (get state :base) nil
                     :unit 0.001
                     :round? false
                     :min 0
@@ -982,7 +997,7 @@
                           >> states $ str |frequency: idx
                           {}
                             :position $ [] 140 0
-                            :value $ :frequency control
+                            :value $ option:unwrap-or (get control :frequency) nil
                             :unit 0.1
                             :round? true
                             :min 0
@@ -993,7 +1008,7 @@
                           >> states $ str |phase: idx
                           {}
                             :position $ [] 140 50
-                            :value $ :phase control
+                            :value $ option:unwrap-or (get control :phase) nil
                             :unit 0.1
                             :round? false
                             :min 0
@@ -1004,7 +1019,7 @@
                           >> states $ str |damping: idx
                           {}
                             :position $ [] 140 100
-                            :value $ :damping control
+                            :value $ option:unwrap-or (get control :damping) nil
                             :unit 0.01
                             :round? false
                             :min 0
@@ -1022,7 +1037,7 @@
                     [] idx $ comp-drag-point
                       >> states $ str |amplitude: idx
                       {}
-                        :position $ :amplitude control
+                        :position $ option:unwrap-or (get control :amplitude) nil
                         :on-change $ fn (v d!)
                           d! cursor $ assoc-in state ([] :controls idx :amplitude) v
           :examples $ []
@@ -1052,7 +1067,8 @@
                           :round? $ get-round? param
                           :unit $ case-default param 0.1 (:unit 0.001) (:step 1)
                           :on-change $ fn (value d!)
-                            d! (:cursor states)
+                            d!
+                              option:unwrap-or (get states :cursor) nil
                               assoc state param $ case-default param (js/Math.max 0 value)
                                 :m $ js/Math.max 1 (js/Math.round value)
                                 :n $ js/Math.max 1 (js/Math.round value)
@@ -1060,7 +1076,8 @@
                 comp-button $ {} (:text |Random)
                   :position $ [] 580 0
                   :on-pointertap $ fn (e d!)
-                    d! (:cursor states)
+                    d!
+                      option:unwrap-or (get states :cursor) nil
                       {}
                         :m $ rand-int 40
                         :n $ rand-int 40
@@ -1072,24 +1089,26 @@
           :code $ quote
             defcomp comp-oscillo-demo (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states) initial-state
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
+                    , initial-state
                 container ({})
                   graphics $ {}
                     :position $ [] 400 360
                     :ops $ let
-                        step $ :step state
+                        step $ option:unwrap-or (get state :step) nil
                         r 200
-                        m $ :m state
-                        n $ :n state
-                        unit $ :unit state
+                        m $ option:unwrap-or (get state :m) nil
+                        n $ option:unwrap-or (get state :n) nil
+                        unit $ option:unwrap-or (get state :unit) nil
                         trail $ -> (range step)
                           map $ fn (idx)
                             let
                                 t $ * idx unit
                               []
-                                * r $ js/Math.cos (* m t)
-                                * r $ js/Math.sin (* n t)
+                                * r $ phlox.core/ffi-cos (* m t)
+                                * r $ phlox.core/ffi-sin (* n t)
                       concat
                         []
                           g :move-to $ first trail
@@ -1214,8 +1233,9 @@
           :code $ quote
             defcomp comp-rotate-demo (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
                     {}
                       :points $ -> (range 12)
                         map $ fn (idx)
@@ -1225,17 +1245,19 @@
                       :steps 18
                       :base 20
                       :alpha 1
-                  points $ :points state
+                  points $ option:unwrap-or (get state :points) nil
                 container
                   {} $ :position ([] 240 400)
                   create-list :container ({})
                     ->
-                      range $ :steps state
+                      range $ option:unwrap-or (get state :steps) nil
                       map $ fn (idx)
                         [] idx $ graphics
                           {}
-                            :ops $ gen-trail points (:alpha state)
-                            :angle $ * idx (:base state)
+                            :ops $ gen-trail points
+                              option:unwrap-or (get state :alpha) nil
+                            :angle $ * idx
+                              option:unwrap-or (get state :base) nil
                   create-list :container ({})
                     -> points $ map-indexed
                       fn (idx point)
@@ -1323,13 +1345,13 @@
           :code $ quote
             defcomp comp-number-controls (state states)
               let
-                  cursor $ :cursor states
+                  cursor $ option:unwrap-or (get states :cursor) nil
                   selected $ get state :selected
                   segment $ get-in state ([] :segments selected)
                 container ({})
                   comp-slider (>> states :unit)
                     {}
-                      :value $ :unit state
+                      :value $ option:unwrap-or (get state :unit) nil
                       :unit 0.1
                       :min 0
                       :title |unit
@@ -1337,32 +1359,38 @@
                         d! cursor $ assoc state :unit result
                   comp-slider (>> states :selected)
                     {}
-                      :value $ :selected state
+                      :value $ option:unwrap-or (get state :selected) nil
                       :position $ [] 140 0
                       :unit 0.1
                       :round? true
                       :min 0
                       :max $ dec
-                        count $ :segments state
+                        count $ option:unwrap-or (get state :segments) nil
                       :title |selected
                       :on-change $ fn (result d!)
                         d! cursor $ assoc state :selected result
                   comp-slider (>> states :from)
                     {}
                       :value $ get-in state
-                        [] :segments (:selected state) 0
+                        [] :segments
+                          option:unwrap-or (get state :selected) nil
+                          , 0
                       :position $ [] 280 0
                       :unit 1
                       :round? true
                       :title "|from angle"
                       :on-change $ fn (result d!)
                         d! cursor $ assoc-in state
-                          [] :segments (:selected state) 0
+                          [] :segments
+                            option:unwrap-or (get state :selected) nil
+                            , 0
                           , result
                   comp-slider (>> states :to)
                     {}
                       :value $ get-in state
-                        [] :segments (:selected state) 1
+                        [] :segments
+                          option:unwrap-or (get state :selected) nil
+                          , 1
                       :position $ [] 420 0
                       :unit 1
                       :round? true
@@ -1371,7 +1399,9 @@
                       :title |range
                       :on-change $ fn (result d!)
                         d! cursor $ assoc-in state
-                          [] :segments (:selected state) 1
+                          [] :segments
+                            option:unwrap-or (get state :selected) nil
+                            , 1
                           , result
                   comp-button $ {} (:text |Add)
                     :position $ [] 600 0
@@ -1380,7 +1410,8 @@
                         d! cursor $ -> state
                           update :segments $ fn (xs)
                             conj xs $ [] (rand-int 360) (rand-int 360)
-                          assoc :selected $ count (:segments state)
+                          assoc :selected $ count
+                            option:unwrap-or (get state :segments) nil
                   comp-button $ {} (:text |Remove)
                     :position $ [] 660 0
                     :on $ {}
@@ -1397,30 +1428,32 @@
           :code $ quote
             defcomp comp-satellite-demo (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
                     {} (:unit 20)
                       :segments $ [] ([] 0 100) ([] 50 200) ([] 100 180)
                       :selected 0
-                  ratio $ * js/Math.PI (/ 1 180)
+                  ratio $ * phlox.math/ffi-pi (/ 1 180)
                   rad $ fn (x) (* x ratio)
                 container ({}) (comp-number-controls state states)
                   create-list :container
                     {} $ :position ([] 400 400)
-                    -> (:segments state)
+                    ->
+                      option:unwrap-or (get state :segments) nil
                       map-indexed $ fn (idx segment)
                         [] idx $ let
                             r $ + 10
-                              * idx $ :unit state
+                              * idx $ option:unwrap-or (get state :unit) nil
                           graphics $ {}
                             :ops $ []
                               g :line-style $ {}
                                 :color $ if
-                                  = idx $ :selected state
+                                  = idx $ option:unwrap-or (get state :selected) nil
                                   hslx 0 0 100
                                   hslx 20 80 70
                                 :width $ if
-                                  = idx $ :selected state
+                                  = idx $ option:unwrap-or (get state :selected) nil
                                   , 2 2
                                 :alpha 1
                               ; g :begin-fill $ {}
@@ -1429,8 +1462,8 @@
                                 :center $ let
                                     th $ first segment
                                   []
-                                    * r $ js/Math.cos (rad th)
-                                    * r $ js/Math.sin (rad th)
+                                    * r $ phlox.core/ffi-cos (rad th)
+                                    * r $ phlox.core/ffi-sin (rad th)
                                 :radius 4
                                 :angle $ [] 0 360
                               g :arc $ {}
@@ -1444,8 +1477,8 @@
                                 :center $ let
                                     th $ + (first segment) (last segment)
                                   []
-                                    * r $ js/Math.cos (rad th)
-                                    * r $ js/Math.sin (rad th)
+                                    * r $ phlox.core/ffi-cos (rad th)
+                                    * r $ phlox.core/ffi-sin (rad th)
                                 :radius 4
                                 :angle $ [] 0 360
                               g :end-fill nil
@@ -1466,8 +1499,9 @@
           :code $ quote
             defcomp comp-snowflake-demo (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
                     {} (:steps 1)
                       :points $ [] ([] 0 300) ([] 140 300)
                       :shaking? false
@@ -1496,19 +1530,20 @@
                                   last points
                     comp-slider (>> states :steps)
                       {}
-                        :value $ :steps state
+                        :value $ option:unwrap-or (get state :steps) nil
                         :position $ [] 80 0
                         :unit 0.1
                         :title |Steps
                         :min 0
                         :max $ if
-                          >= 3 $ count (:points state)
+                          >= 3 $ count
+                            option:unwrap-or (get state :points) nil
                           , 12 6
                         :round? true
                         :on-change $ fn (value d!)
                           d! cursor $ assoc state :steps value
                     comp-switch $ {}
-                      :value $ :shaking? state
+                      :value $ option:unwrap-or (get state :shaking?) nil
                       :position $ [] 200 0
                       :title |Shake
                       :on-change $ fn (v d!)
@@ -1516,7 +1551,10 @@
                   graphics $ {}
                     :position $ [] 0 0
                     :ops $ let
-                        trail $ fold-curve (:points state) (:steps state) (:shaking? state)
+                        trail $ fold-curve
+                          option:unwrap-or (get state :points) nil
+                          option:unwrap-or (get state :steps) nil
+                          option:unwrap-or (get state :shaking?) nil
                       concat
                         []
                           g :move-to $ first trail
@@ -1527,7 +1565,8 @@
                         -> (rest trail)
                           map-indexed $ fn (idx point) (g :line-to point)
                   create-list :container ({})
-                    -> (:points state)
+                    ->
+                      option:unwrap-or (get state :points) nil
                       map-indexed $ fn (idx point)
                         [] idx $ comp-drag-point (>> states idx)
                           {} (:position point)
@@ -1600,7 +1639,7 @@
                       [] x $ graphics
                         {}
                           :position $ [] 0 0
-                          :rotation $ * 0.010 js/Math.PI x
+                          :rotation $ * 0.010 phlox.math/ffi-pi x
                           :ops $ generate-line-ops
           :examples $ []
           :schema $ :: 'Dynamic
@@ -1610,20 +1649,20 @@
                 x0 2
                 ops $ []
                   g :move-to $ []
-                    + x0 $ * 400 (js/Math.random)
+                    + x0 $ * 400 (phlox.core/ffi-random)
                     , 0
               loop
                   acc ops
                   x x0
                 if (> x 300) acc $ let
                     x1 $ + x
-                      * 80 $ js/Math.random
+                      * 80 $ phlox.core/ffi-random
                     x2 $ + x1
-                      + 4 $ * 8 (js/Math.random)
+                      + 4 $ * 8 (phlox.core/ffi-random)
                   recur
                     conj acc
                       g :line-style $ {}
-                        :color $ * (js/Math.random) (hslx 0 0 100)
+                        :color $ * (phlox.core/ffi-random) (hslx 0 0 100)
                         :width $ if (< x2 160) 2 3
                         :alpha $ if (< x2 80) 0.2 0.9
                       g :line-to $ [] x1 0
@@ -1642,16 +1681,21 @@
           :code $ quote
             defcomp comp-tree-demo (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ option:unwrap-or (get states :cursor) nil
+                  state $ or
+                    option:unwrap-or (get states :data) nil
                     {}
                       :p1 $ [] 0.7 0.2
                       :p2 $ [] 0.84 0.15
                       :p0 $ [] 3 -80
-                  p0 $ :p0 state
+                  p0 $ option:unwrap-or (get state :p0) nil
                   base $ subtract-path ([] 0 0) p0
-                  factor-1 $ divide-path (:p1 state) base
-                  factor-2 $ divide-path (:p2 state) base
+                  factor-1 $ divide-path
+                    option:unwrap-or (get state :p1) nil
+                    , base
+                  factor-2 $ divide-path
+                    option:unwrap-or (get state :p2) nil
+                    , base
                 container
                   {} $ :position ([] 0 200)
                   graphics $ {}
@@ -1667,7 +1711,7 @@
                       concat trail $ generate-branches p0 base 0 factor-1 factor-2
                   comp-drag-point (>> states :p1)
                     {}
-                      :position $ :p1 state
+                      :position $ option:unwrap-or (get state :p1) nil
                       :radius 10
                       :fill $ hslx 200 80 60
                       :alpha 0.4
@@ -1675,7 +1719,7 @@
                         d! cursor $ assoc state :p1 position
                   comp-drag-point (>> states :p2)
                     {}
-                      :position $ :p2 state
+                      :position $ option:unwrap-or (get state :p2) nil
                       :title |end
                       :radius 10
                       :alpha 0.4
@@ -1684,7 +1728,7 @@
                         d! cursor $ assoc state :p2 position
                   comp-drag-point (>> states :p0)
                     {}
-                      :position $ :p0 state
+                      :position $ option:unwrap-or (get state :p0) nil
                       :title |from
                       :radius 10
                       :alpha 0.5
@@ -1768,7 +1812,9 @@
                       [] $ rand-point 80
                     distinct
                 &doseq (p trails)
-                  swap! *grid assoc (first p) true
+                  swap! *grid assoc
+                    option:unwrap-or (first p) 0
+                    , true
                 loop
                     idx 120
                     acc trails
@@ -1860,7 +1906,7 @@
                 println |dispatch! op
               let
                   op-id $ shortid/generate
-                  op-time $ .!now js/Date
+                  op-time $ app.util/ffi-date-now
                 reset! *store $ updater @*store op op-id op-time
           :examples $ []
           :schema $ :: 'Dynamic
@@ -1973,10 +2019,57 @@
                 / (last point) x
           :examples $ []
           :schema $ :: 'Dynamic
+        |ffi-date-now $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn ffi-date-now () $ unsafe-coerce
+              .!now $ unsafe-coerce js/Date JsObject
+              , Number
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |ffi-e $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            def ffi-e $ unsafe-coerce js/Math.E Number
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |ffi-performance-now $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn ffi-performance-now () $ unsafe-coerce js/performance.now Number
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |ffi-pow $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn ffi-pow (base exponent)
+              unsafe-coerce (js/Math.pow base exponent) Number
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |ffi-request-fullscreen $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn ffi-request-fullscreen (target)
+              .!requestFullscreen $ unsafe-coerce target JsObject
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |ffi-round $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn ffi-round (value)
+              unsafe-coerce (js/Math.round value) Number
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |first-list $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn first-list (xs)
+              option:unwrap-or (first xs) (repeat nil 0)
+          :examples $ []
+          :schema $ :: 'Dynamic
         |invert-y $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn invert-y (pair)
               let[] (x y) pair $ [] x (negate y)
+          :examples $ []
+          :schema $ :: 'Dynamic
+        |last-list $ %{} 'CodeEntry (:doc |)
+          :code $ quote
+            defn last-list (xs)
+              option:unwrap-or (last xs) (repeat nil 0)
           :examples $ []
           :schema $ :: 'Dynamic
         |multiply-path $ %{} 'CodeEntry (:doc |)
@@ -2011,17 +2104,17 @@
                   m $ or m n
                 []
                   -
-                    js/Math.round $ * 0.2 n
+                    ffi-round $ * 0.2 n
                     rand-int n
                   -
-                    js/Math.round $ * 0.2 m
+                    ffi-round $ * 0.2 m
                     rand-int m
           :examples $ []
           :schema $ :: 'Dynamic
         |rough-size $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn rough-size (pair)
-              let[] (x y) pair $ + (js/Math.abs x) (js/Math.abs y)
+              let[] (x y) pair $ + (phlox.core/ffi-abs x) (phlox.core/ffi-abs y)
           :examples $ []
           :schema $ :: 'Dynamic
         |subtract-path $ %{} 'CodeEntry (:doc |)
