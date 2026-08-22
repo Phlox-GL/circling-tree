@@ -3,7 +3,7 @@
   :entries $ {}
     :default $ {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!)
       :feature-policy $ {}
-      :modules $ [] |memof/ |lilac/ |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/
+      :modules $ [] |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/
       :type-slots $ {}
   :files $ {}
     |app.comp.bezier-demo $ %{} 'FileEntry
