@@ -1,7 +1,7 @@
 {
   "packageManager": "yarn@4.12.0",
   "name": "phlox",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "a PIXI DSL in ClojureScript",
   "main": "index.js",
   "repository": {
@@ -14,7 +14,7 @@
     "vite": "^6.4.3"
   },
   "dependencies": {
-    "@calcit/procs": "0.15.2",
+    "@calcit/procs": "0.18.1",
     "@calcit/std": "^0.0.2",
     "@quamolit/phlox-utils": "^0.0.2",
     "@quamolit/touch-control": "^0.0.13",
