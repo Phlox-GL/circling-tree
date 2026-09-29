@@ -3,7 +3,7 @@
   :about "|Machine-generated snapshot. Do not edit directly — changes will be overwritten. Use `calcit query` to inspect and `calcit edit`/`calcit tree` to modify. Run `calcit docs agents --contract` before mutations; use `--full` for first orientation or changed contract digest. Manual edits must follow format and schema conventions, then run `calcit edit format`."
   :package |app
   :entries $ {} $ :default
-    {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!)
+    {} (:description |) (:init-fn 'app.main/main!) (:mode :native) (:reload-fn 'app.main/reload!) (:target :browser)
       :feature-policy $ {}
       :modules $ [] |respo.calcit/ |respo-ui.calcit/ |phlox/ |touch-control/
       :type-slots $ {}
@@ -116,7 +116,9 @@
                             {} $ :position $ [] (* x 10) (* y 10)
                             comp-stroke touch-key kind
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Dynamic 'Dynamic
+            :features $ #{} :js-ffi
         'comp-chars-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-chars-demo (touch-key)
             container ({})
@@ -135,7 +137,9 @@
                             comp-char touch-key $ rand-int 6
               comp-reset $ [] -140 40
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
         'comp-stroke $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-stroke (touch-key kind)
             graphics $ {}
@@ -358,7 +362,9 @@
                       :position $ [] 300 0
                       :ops $ generate-circle-ops idx
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
         'generate-circle-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-circle-ops (idx)
             loop
@@ -483,7 +489,9 @@
                   :font-size 20
                   :font-family style/font-fancy
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Dynamic 'Dynamic 'Dynamic 'Dynamic
+            :features $ #{} :js-ffi
         'tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tabs
             [] :sun :circle :rects :walking :grow :chars :cycloid :chord :oscillo :geocentric :rotate :bezier :tree :snowflake :harmono :satellite
@@ -553,20 +561,22 @@
                           :color $ hslx 0 80 70
                           :width 2
                           :alpha 0.7
-                        g :move-to $ or (first trail) ([] 0 0)
+                        g :move-to $ option:unwrap-or (first trail) ([] 0 0)
                       -> trail rest $ mapcat $ fn (p)
                         hint-fn $ {}
                           :args $ [] $ :: 'List 'Number
                           :return $ :: 'List $ :: 'List 'Dynamic
                         [] $ g :line-to p
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :features $ #{} :js-ffi
         'comp-numbers-control $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-numbers-control (state states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
                 params $ [] :r1 :r2 :r3 :r4 :r5 :steps :v
-                is-round? $ option:unwrap-or (get state :round?) nil
+                is-round? $ option:unwrap-or (get state :round?) false
                 rand-value $ fn () $ if is-round?
                   - (rand-int 300) 100
                   - (rand 300) 100
@@ -754,12 +764,15 @@
                       -> trail rest $ map $ fn (point) ([] :line-to point)
                 comp-geocentric-control state states
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :features $ #{} :js-ffi
         'get-unit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-unit (param)
             case-default param 1 (:r2 1) (:r3 0.5) (:v2 0.2) (:v3 0.2) (:steps 100) (:step 0.001)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Number)
+            :args $ [] 'Tag
         'initial-state $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def initial-state
             {} (:r2 100) (:r3 16) (:v2 30) (:v3 260) (:steps 2000) (:step 0.002) (:selected :r2)
@@ -792,7 +805,9 @@
                       :ops $ get-trail-ops trail
                 comp-reset $ [] 0 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
         'expand-directions $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn expand-directions (base)
             []
@@ -1022,7 +1037,9 @@
                         map-indexed $ fn (idx point) (g :line-to point)
                   render-points cursor states state controls
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :features $ #{} :js-ffi
         'gen-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn gen-trail (controls steps base)
             -> (range steps)
@@ -1211,7 +1228,9 @@
                       -> trail rest $ map $ fn (point) ([] :line-to point)
                 comp-oscillo-control state states
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :features $ #{} :js-ffi
         'get-round? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-round? (param) (not= param :unit)
           :examples $ []
@@ -1285,7 +1304,9 @@
                                 :alpha 1
               comp-reset $ [] -40 40
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.rects-demo
           :require
@@ -1311,7 +1332,9 @@
                   :fill $ hslx 0 0 100
                   :font-size 20
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.reset
           :require
@@ -1709,10 +1732,10 @@
                   acc points
                 if (<= t 0) acc $ recur (dec t)
                   let
-                      acc-vec acc
+                      acc-vec $ unsafe-coerce acc $ :: 'List (:: 'List 'Number)
                     concat
-                      [] $ option:unwrap-or (first acc) ([] 0 0)
-                      -> (rest acc)
+                      [] $ option:unwrap-or (first acc-vec) ([] 0 0)
+                      -> (rest acc-vec)
                         map-indexed $ fn (idx point)
                           hint-fn $ {}
                             :args $ [] 'Number $ :: 'List 'Number
@@ -1771,7 +1794,9 @@
                       :rotation $ * 0.010 phlox.math/ffi-pi x
                       :ops $ generate-line-ops
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
         'generate-line-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-line-ops ()
             let
@@ -1899,13 +1924,15 @@
               (> level 8) true
               true $ > (rand 2) 1.4
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Bool)
+            :args $ [] 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.tree-demo
           :require
             [] phlox.core :refer $ [] defcomp >> g hslx rect circle text container graphics create-list
             [] app.util :refer $ [] add-path multiply-path subtract-path divide-path rough-size
             [] phlox.comp.drag-point :refer $ [] comp-drag-point
+            |@calcit/std :refer $ rand
     'app.comp.walking-demo $ %{} 'FileEntry
       :defs $ {}
         '*grid $ %{} 'CodeEntry (:doc |)
@@ -1925,7 +1952,9 @@
                       :ops $ get-trail-ops trail
                 comp-reset $ [] 0 0
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+            :args $ [] 'Dynamic
+            :features $ #{} :js-ffi
         'expand-directions $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn expand-directions (base)
             []
@@ -2238,7 +2267,9 @@
         'ffi-performance-now $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-performance-now () (unsafe-coerce js/performance.now Number)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Number)
+            :args $ []
+            :features $ #{} :js-ffi
         'ffi-pow $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-pow (base exponent)
             unsafe-coerce (js/Math.pow base exponent) Number
