@@ -49,7 +49,7 @@
                       d! $ :: :states cursor $ assoc state :n
                         js/Math.max 1 $ js/Math.round value
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'gen-trail $ %{} 'CodeEntry (:doc |)
@@ -117,8 +117,8 @@
                             {} $ :position $ [] (* x 10) (* y 10)
                             comp-stroke touch-key kind
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
+            :args $ [] 'Dynamic 'Number
             :features $ #{} :js-ffi
         'comp-chars-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-chars-demo (touch-key)
@@ -138,7 +138,7 @@
                             comp-char touch-key $ rand-int 6
               comp-reset $ [] -140 40
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'comp-stroke $ %{} 'CodeEntry (:doc |)
@@ -174,7 +174,7 @@
                     rand-stroke curve-strokes
                     []
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] 'Dynamic 'Number
             :features $ #{} :js-ffi
         'concat-ops $ %{} 'CodeEntry (:doc |)
@@ -294,7 +294,7 @@
                       d! $ :: :states cursor $ assoc state :size
                         js/Math.min 300 $ js/Math.max (js/Math.round n) 4
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'generate-ops $ %{} 'CodeEntry (:doc |)
@@ -364,7 +364,7 @@
                       :position $ [] 300 0
                       :ops $ generate-circle-ops idx
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'generate-circle-ops $ %{} 'CodeEntry (:doc |)
@@ -471,7 +471,7 @@
                   :on $ {} $ :pointertap
                     fn (e d!) (app.util/ffi-request-fullscreen js/document.body)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'comp-tab $ %{} 'CodeEntry (:doc |)
@@ -492,8 +492,8 @@
                   :font-size 20
                   :font-family style/font-fancy
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic 'Dynamic 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
+            :args $ [] 'String 'Tag 'Number 'Bool
             :features $ #{} :js-ffi
         'tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tabs
@@ -571,7 +571,7 @@
                           :return $ :: 'List $ :: 'List 'Dynamic
                         [] $ g :line-to p
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'comp-numbers-control $ %{} 'CodeEntry (:doc |)
@@ -641,7 +641,7 @@
                         :r4 $ rand-value
                         :r5 $ rand-value
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
             :features $ #{} :js-ffi
         'get-round? $ %{} 'CodeEntry (:doc |)
@@ -725,7 +725,7 @@
                       :steps 4000
                       :step 0.1
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
             :features $ #{} :js-ffi
         'comp-geocentric-demo $ %{} 'CodeEntry (:doc |)
@@ -771,7 +771,7 @@
                       -> trail rest $ map $ fn (point) ([] :line-to point)
                 comp-geocentric-control state states
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'get-unit $ %{} 'CodeEntry (:doc |)
@@ -812,7 +812,7 @@
                       :ops $ get-trail-ops trail
                 comp-reset $ [] 0 0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'expand-directions $ %{} 'CodeEntry (:doc |)
@@ -1046,7 +1046,7 @@
                         map-indexed $ fn (idx point) (g :line-to point)
                   render-points cursor states state controls
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'gen-trail $ %{} 'CodeEntry (:doc |)
@@ -1201,7 +1201,7 @@
                       :step 500
                       :unit 0.01
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
             :features $ #{} :js-ffi
         'comp-oscillo-demo $ %{} 'CodeEntry (:doc |)
@@ -1237,7 +1237,7 @@
                       -> trail rest $ map $ fn (point) ([] :line-to point)
                 comp-oscillo-control state states
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'get-round? $ %{} 'CodeEntry (:doc |)
@@ -1313,7 +1313,7 @@
                                 :alpha 1
               comp-reset $ [] -40 40
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
@@ -1342,8 +1342,8 @@
                   :fill $ hslx 0 0 100
                   :font-size 20
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
+            :args $ [] $ :: 'List 'Number
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.reset
@@ -1410,7 +1410,7 @@
                             + -400 $ * idx 140
                             , -440
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'gen-trail $ %{} 'CodeEntry (:doc |)
@@ -1550,7 +1550,7 @@
                               , segments $ butlast segments
                         assoc :selected 0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
             :features $ #{} :js-ffi
         'comp-satellite-demo $ %{} 'CodeEntry (:doc |)
@@ -1617,7 +1617,7 @@
                               :angle $ [] 0 360
                             g :end-fill nil
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
@@ -1727,7 +1727,7 @@
                           :on-change $ fn (position d!)
                             d! $ :: :states cursor $ assoc-in state ([] :points idx) position
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'fold-curve $ %{} 'CodeEntry (:doc |)
@@ -1809,7 +1809,7 @@
                       :rotation $ * 0.010 phlox.math/ffi-pi x
                       :ops $ generate-line-ops
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'generate-line-ops $ %{} 'CodeEntry (:doc |)
@@ -1909,7 +1909,7 @@
                     :on-change $ fn (position d!)
                       d! $ :: :states cursor $ assoc state :p0 position
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'generate-branches $ %{} 'CodeEntry (:doc |)
@@ -1967,7 +1967,7 @@
                       :ops $ get-trail-ops trail
                 comp-reset $ [] 0 0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'expand-directions $ %{} 'CodeEntry (:doc |)
