@@ -118,7 +118,7 @@
                             comp-stroke touch-key kind
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Dynamic 'Number
+            :args $ [] 'Nil 'Number
             :features $ #{} :js-ffi
         'comp-chars-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-chars-demo (touch-key)
@@ -139,7 +139,7 @@
               comp-reset $ [] -140 40
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Dynamic
+            :args $ [] 'Nil
             :features $ #{} :js-ffi
         'comp-stroke $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-stroke (touch-key kind)
@@ -175,7 +175,7 @@
                     []
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Dynamic 'Number
+            :args $ [] 'Nil 'Number
             :features $ #{} :js-ffi
         'concat-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn concat-ops (a b) (concat a b)
@@ -365,7 +365,7 @@
                       :ops $ generate-circle-ops idx
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Dynamic
+            :args $ [] 'Nil
             :features $ #{} :js-ffi
         'generate-circle-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-circle-ops (idx)
@@ -430,7 +430,9 @@
             let
                 tab $ option:unwrap-or (get store :tab) nil
                 states $ option:unwrap-or (get store :states) nil
-                touch-key $ option:unwrap-or (get store :touch-key) nil
+                touch-key $ decode-map-as
+                  option:unwrap-or (get store :touch-key) nil
+                  , 'Nil
               container
                 {} $ :position $ [] -250 -320
                 create-list :container
@@ -784,7 +786,7 @@
           :code $ quote $ def initial-state
             {} (:r2 100) (:r3 16) (:v2 30) (:v3 260) (:steps 2000) (:step 0.002) (:selected :r2)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.geocentric-demo
           :require
@@ -813,7 +815,7 @@
                 comp-reset $ [] 0 0
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Dynamic
+            :args $ [] 'Nil
             :features $ #{} :js-ffi
         'expand-directions $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn expand-directions (base)
@@ -1314,7 +1316,7 @@
               comp-reset $ [] -40 40
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Dynamic
+            :args $ [] 'Nil
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.rects-demo
@@ -1810,7 +1812,7 @@
                       :ops $ generate-line-ops
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Dynamic
+            :args $ [] 'Nil
             :features $ #{} :js-ffi
         'generate-line-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-line-ops ()
@@ -1968,7 +1970,7 @@
                 comp-reset $ [] 0 0
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Dynamic
+            :args $ [] 'Nil
             :features $ #{} :js-ffi
         'expand-directions $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn expand-directions (base)
@@ -2104,7 +2106,7 @@
             let
                 op-id $ shortid/generate
                 op-time $ app.util/ffi-date-now
-              reset! *store $ updater @*store op op-id op-time
+              reset! *store $ updater @*store (decode-map-as op app.schema/Op) op-id op-time
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Enum
@@ -2155,13 +2157,18 @@
             phlox.config :refer $ dev? mobile?
             touch-control.core :refer $ render-control! start-control-loop! replace-control-loop!
     'app.schema $ %{} 'FileEntry
-      :defs $ {} $ 'store
-        %{} 'CodeEntry (:doc |)
+      :defs $ {}
+        'Op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum Op (:tab 'Tag) (:touch 'Nil)
+            :states (:: 'List 'Dynamic) 'Dynamic
+          :examples $ []
+          :schema $ :: 'EnumDef
+        'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             {} (:tab nil)
               :states $ {}
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.style $ %{} 'FileEntry
@@ -2183,7 +2190,7 @@
               _ $ do (eprintln "|unknown op" op) store
           :examples $ []
           :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Enum 'String 'Number
+            :args $ [] (:: 'Map 'Tag 'Dynamic) 'app.schema/Op 'String 'Number
             :return $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater

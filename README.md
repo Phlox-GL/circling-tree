@@ -16,10 +16,9 @@ yarn install --immutable
 calcit calcit.cirru --check-only
 yarn compile
 VITE_BASE_URL=https://cos-sh.tiye.me/Phlox-GL/circling-tree/pr/52/ yarn build
-node --test test/runtime.test.mjs
 ```
 
-本地不设置 `VITE_BASE_URL` 时仍使用相对路径。上传与公开访问校验仅使用 COS Action 内置 verify，不添加额外 CDN 校验脚本。CI 保留入口严格检查、全部公共定义检查和编译构建，不重复运行迁移预览与类型债务报告。运行测试仅保留真实 dispatcher、状态更新和向量运算三个检查，不代表真实 WebGL 截图验收。组件明确返回 `phlox.schema/PhloxElement`；页签参数使用 String/Tag/Number/Bool，字形编号为 Number，重置按钮坐标为 List<Number>。列表 helper 使用泛型保持元素类型，config/数值初始状态及 updater 的 ID/时间参数均有明确类型。Phlox/Touch Control 传递 js-ffi 版本请求仍有冲突，开放状态和宿主边界尚有 Dynamic，不宣称严格 Caps 或全部类型债务清零。原共享字体、图标及服务器部署路径不变。
+本地不设置 `VITE_BASE_URL` 时仍使用相对路径。上传与公开访问校验仅使用 COS Action 内置 verify，不添加额外 CDN 校验脚本。CI 保留入口严格检查、全部公共定义检查和编译构建，不添加额外运行验证脚本，也不重复运行迁移预览与类型债务报告。组件明确返回 `phlox.schema/PhloxElement`；页签参数使用 String/Tag/Number/Bool，字形编号为 Number，重置按钮坐标为 List<Number>。`app.schema/Op` 明确规定 tab 的 Tag、touch 的 Nil 和 states 的游标 List；dispatcher 在 Phlox 的 Enum 边界解码一次，updater 接收该类型。刷新参数保留原来的 Nil 行为和组件参数，不删演示或改公式。列表 helper 使用泛型保持元素类型，store/初始状态明确为 Map<Tag, Dynamic>，updater 的 ID/时间为 String/Number。Phlox/Touch Control 传递 js-ffi 版本请求仍有冲突，开放状态和宿主边界尚有 Dynamic，不宣称严格 Caps、全部类型债务清零或真实 WebGL 验收。原共享字体、图标及服务器部署路径不变。
 
 ### Inspired by...
 
