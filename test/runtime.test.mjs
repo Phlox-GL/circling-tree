@@ -10,7 +10,7 @@ const hooks = registerHooks({ resolve(specifier, context, nextResolve) {
   if (specifier === 'virtual-dom/create-element') specifier += '.js';
   return nextResolve(specifier, context);
 } });
-let app, main, grow, util;
+let app, main, grow, util, demoState;
 try {
   globalThis.window = { navigator: { userAgent: 'Node regression fixture' }, innerWidth: 800, innerHeight: 600, addEventListener() {} };
   globalThis.document = { createElement() { return { getContext() { return { measureText(text) { return { width: text.length }; } }; } }; } };
@@ -18,6 +18,7 @@ try {
   main = await import('../js-out/app.main.mjs');
   grow = await import('../js-out/app.comp.grow-demo.mjs');
   util = await import('../js-out/app.util.mjs');
+  demoState = (await import('../js-out/phlox.core.mjs'))._GT__GT_;
 } finally {
   hooks.deregister();
   for (const [key, descriptor] of Object.entries(previous)) {
@@ -25,7 +26,7 @@ try {
     else Reflect.deleteProperty(globalThis, key);
   }
 }
-const t = c.init_tags(['tab', 'tree', 'states', 'cursor', 'data', 'touch', 'touch-key', 'props', 'children', 'ops', 'move-to', 'line-to', 'bezier-to', 'p1', 'p2', 'to-p', 'on', 'pointertap', 'editor']);
+const t = c.init_tags(['tab', 'tree', 'states', 'cursor', 'data', 'touch', 'touch-key', 'name', 'props', 'children', 'ops', 'move-to', 'line-to', 'bezier-to', 'p1', 'p2', 'to-p', 'on', 'pointertap', 'editor']);
 const read = (value, tag) => c.option_$o_unwrap(c.get(value, tag));
 const nth = (value, index) => c.option_$o_unwrap(c.nth(value, index));
 const op = (tag, ...args) => c._$o__$o_(tag, ...args);
@@ -69,7 +70,8 @@ function checkDrawing(root) {
   return count;
 }
 for (const tab of app.tabs.toArray()) {
-  test(`actual ${tab.value} tab builds finite drawing data with unwrapped coordinates`, () => {
+  test(`actual ${tab.value} tab builds finite drawing data with unwrapped coordinates`, async () => {
+    const demoModule = await import(`../js-out/app.comp.${tab.value}-demo.mjs`);
     const priorDocument = globalThis.document, priorRandom = Math.random;
     let seed = 1597;
     try {
@@ -77,8 +79,18 @@ for (const tab of app.tabs.toArray()) {
       Math.random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
       globalThis.document = { createElement() { return { getContext() { return { measureText(text) { return { width: text.length }; } }; } }; } };
       const root = app.comp_container(c.assoc(store, t.tab, tab));
-      assert.ok(nodes(root).length > 32, 'Keep all 16 navigation entries and actual demo');
-      checkDrawing(root);
+      const selected = nth(nth(read(root, t.children), 1), 1);
+      const demo = nth(nth(read(selected, t.children), 0), 1);
+      seed = 1597;
+      const stateful = ['tree', 'rotate', 'bezier', 'cycloid', 'chord', 'oscillo', 'geocentric', 'snowflake', 'harmono', 'satellite'].includes(tab.value);
+      const expected = demoModule[`comp_${tab.value}_demo`](stateful ? demoState(read(store, t.states), tab) : c.option_$o_unwrap_or(c.get(store, t['touch-key']), null));
+      const actualNodes = nodes(demo), expectedNodes = nodes(expected);
+      assert.ok(actualNodes.length > 1, 'Selected demo must contain drawing nodes');
+      assert.equal(actualNodes.length, expectedNodes.length, 'Selected branch must produce its actual demo, not navigation or fallback');
+      for (let i = 0; i < actualNodes.length; i++) {
+        assert.equal(read(actualNodes[i], t.name), read(expectedNodes[i], t.name));
+      }
+      checkDrawing(demo);
     } finally {
       Math.random = priorRandom;
       if (priorDocument === undefined) delete globalThis.document; else globalThis.document = priorDocument;
