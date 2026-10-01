@@ -15,7 +15,7 @@ caps --ci
 yarn install --immutable
 calcit calcit.cirru --check-only
 yarn compile
-VITE_BASE_URL=https://cos-sh.tiye.me/Phlox-GL/circling-tree/pr/ yarn build
+VITE_BASE_URL=https://cos-sh.tiye.me/Phlox-GL/circling-tree/pr/52/ yarn build
 node --test test/runtime.test.mjs
 ```
 
