@@ -1143,8 +1143,8 @@
                         :on-change $ fn (v d!)
                           d! $ :: :states cursor $ assoc-in state ([] :controls idx :damping) v
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic (:: 'Map 'Dynamic 'Dynamic) (:: 'Map 'Tag 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
+            :args $ [] (:: 'List 'Dynamic) (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
               :: 'List $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'render-points $ %{} 'CodeEntry (:doc |)
@@ -1158,8 +1158,8 @@
                     :on-change $ fn (v d!)
                       d! $ :: :states cursor $ assoc-in state ([] :controls idx :amplitude) v
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic (:: 'Map 'Dynamic 'Dynamic) (:: 'Map 'Tag 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
+            :args $ [] (:: 'List 'Dynamic) (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
               :: 'List $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
@@ -2246,13 +2246,14 @@
             let
                 child-fn $ unsafe-coerce phlox.core/>> $ :: 'Fn
                   {}
-                    :args $ [] (:: 'Map 'Dynamic 'Dynamic) 'Dynamic
-                    :return 'Dynamic
+                    :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
+                    :return $ :: 'Map 'Tag 'Dynamic
               child-fn states key
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] (:: 'Map 'Dynamic 'Dynamic) 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
             :features $ #{} :js-ffi
+            :return $ :: 'Map 'Tag 'Dynamic
         'divide-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn divide-path (p1 p2)
             let-sugar
