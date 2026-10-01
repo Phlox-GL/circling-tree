@@ -181,8 +181,9 @@
           :code $ quote $ defn concat-ops (a b) (concat a b)
           :examples $ []
           :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Dynamic) (:: 'List 'Dynamic)
-            :return $ :: 'List 'Dynamic
+            :args $ [] (:: 'List 'T) (:: 'List 'T)
+            :generics $ [] 'T
+            :return $ :: 'List 'T
         'curve-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def curve-strokes
             []
@@ -211,7 +212,7 @@
                   :radius 10
                   :angle $ [] phlox.math/ffi-pi $ * 1.5 phlox.math/ffi-pi
           :examples $ []
-          :schema $ :: 'List $ :: 'List 'Dynamic
+          :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
         'dot-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dot-strokes
             []
@@ -230,14 +231,14 @@
                   :angle $ [] (- 0 phlox.math/ffi-pi) phlox.math/ffi-pi
                 g :close-path nil
           :examples $ []
-          :schema $ :: 'List $ :: 'List 'Dynamic
+          :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
         'rand-stroke $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-stroke (strokes)
             option:unwrap $ nth strokes $ rand-int (count strokes)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List (:: 'List 'Dynamic)
-            :return $ :: 'List 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'T)
+            :args $ [] $ :: 'List 'T
+            :generics $ [] 'T
         'slash-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def slash-strokes
             []
@@ -249,7 +250,7 @@
                 g :line-to $ [] 0 10
               []
           :examples $ []
-          :schema $ :: 'List $ :: 'List 'Dynamic
+          :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
         'straight-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def straight-strokes
             []
@@ -261,7 +262,7 @@
                 g :line-to $ [] 10 5
               []
           :examples $ []
-          :schema $ :: 'List $ :: 'List 'Dynamic
+          :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.chars-demo
           :require
@@ -332,7 +333,7 @@
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] 'Number
-            :return $ :: 'List 'Dynamic
+            :return $ :: 'List $ :: 'List 'Dynamic
         'shuffle $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn shuffle (xs) (js/console.warn "|TODO shuffle" xs) xs
           :examples $ []
@@ -498,7 +499,7 @@
           :code $ quote $ def tabs
             [] :sun :circle :rects :walking :grow :chars :cycloid :chord :oscillo :geocentric :rotate :bezier :tree :snowflake :harmono :satellite
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'List 'Tag
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
@@ -1248,7 +1249,7 @@
           :code $ quote $ def initial-state
             {} (:step 1000) (:unit 0.01) (:m 13) (:n 3)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Map 'Tag 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.oscillo-demo
           :require
@@ -2021,7 +2022,7 @@
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] $ :: 'List (:: 'List 'Number)
-            :return $ :: 'List 'Dynamic
+            :return $ :: 'List $ :: 'List 'Dynamic
         'iterate-trails $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn iterate-trails (trails)
             -> trails $ map $ fn (trail)
@@ -2085,7 +2086,7 @@
           :code $ quote $ def site
             {} (:dev-ui |http://localhost:8100/main-fonts.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main-fonts.css) (:cdn-url |http://cdn.tiye.me/circling-tree/) (:title "|Circling Tree") (:icon |http://cdn.tiye.me/logo/quamolit.png) (:storage-key |circling-tree)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Map 'Tag 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
           :require $ |mobile-detect :default mobile-detect
@@ -2168,7 +2169,7 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ def font-fancy "|Josefin Sans, Helvetica Neue, sans-serif"
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.style
     'app.updater $ %{} 'FileEntry
@@ -2182,7 +2183,7 @@
               _ $ do (eprintln "|unknown op" op) store
           :examples $ []
           :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Enum 'Dynamic 'Dynamic
+            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Enum 'String 'Number
             :return $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater

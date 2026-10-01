@@ -19,7 +19,7 @@ VITE_BASE_URL=https://cos-sh.tiye.me/Phlox-GL/circling-tree/pr/52/ yarn build
 node --test test/runtime.test.mjs
 ```
 
-本地不设置 `VITE_BASE_URL` 时仍使用相对路径。上传与公开访问校验使用 COS Action 内置 verify 配置，不添加额外 CDN 校验脚本。功能测试使用真实编译组件/Phlox 绘图数据和浏览器宿主 fixture，不代表真实 WebGL 截图验收。Phlox/Touch Control 传递 js-ffi 版本请求仍有冲突，不宣称严格 Caps 通过。原共享字体、图标及服务器部署路径不变。
+本地不设置 `VITE_BASE_URL` 时仍使用相对路径。上传与公开访问校验仅使用 COS Action 内置 verify，不添加额外 CDN 校验脚本。运行测试仅保留真实 dispatcher、状态更新和向量运算三个检查，不代表真实 WebGL 截图验收。列表 helper 使用泛型保持元素类型，tab/config/数值初始状态及 updater 的 ID/时间参数均有明确类型。Phlox/Touch Control 传递 js-ffi 版本请求仍有冲突，不宣称严格 Caps 或全部类型债务清零。原共享字体、图标及服务器部署路径不变。
 
 ### Inspired by...
 
