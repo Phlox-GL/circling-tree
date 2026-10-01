@@ -2106,7 +2106,7 @@
             let
                 op-id $ shortid/generate
                 op-time $ app.util/ffi-date-now
-              reset! *store $ updater @*store (decode-map-as op app.schema/Op) op-id op-time
+              reset! *store $ updater @*store (app.schema/normalize-op op) op-id op-time
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Enum
@@ -2163,6 +2163,21 @@
             :states (:: 'List 'Dynamic) 'Dynamic
           :examples $ []
           :schema $ :: 'EnumDef
+        'normalize-op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn normalize-op (op)
+            match op
+              (:tab tab)
+                Op :tab $ decode-map-as tab 'Tag
+              (:touch token)
+                Op :touch $ decode-map-as token 'Nil
+              (:states cursor state)
+                Op :states
+                  decode-map-as cursor $ :: 'List 'Dynamic
+                  , state
+              _ $ raise "|Unknown application operation"
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Op)
+            :args $ [] 'Enum
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             {} (:tab nil)
