@@ -11,10 +11,11 @@
   "author": "jiyinyiyong",
   "license": "MIT",
   "scripts": {
-    "compile": "calcit calcit.cirru js",
-    "build": "vite build",
-    "release": "yarn compile && yarn build",
-    "dev": "calcit calcit.cirru js && vite"
+    "compile": "calcit",
+    "watch": "calcit -w",
+    "build": "yarn compile && vite build",
+    "release": "yarn build",
+    "dev": "yarn compile && vite"
   },
   "devDependencies": {
     "vite": "^8.3.1"
