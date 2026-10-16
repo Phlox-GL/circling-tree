@@ -24,13 +24,13 @@
               container ({})
                 graphics $ {}
                   :position $ [] 0 0
-                  :ops $ let-sugar
-                        [] p1 p2 q1 q2
-                        decode-map-as
-                          option:unwrap-or (get state :points) nil
-                          :: 'List $ :: 'List 'Number
-                      n $ app.util/state-number state :n
-                    gen-trail p1 p2 q1 q2 n
+                  :ops $ let[] (p1 p2 q1 q2)
+                    decode-map-as
+                      option:unwrap-or (get state :points) nil
+                      :: 'List $ :: 'List 'Number
+                    let
+                        n $ app.util/state-number state :n
+                      gen-trail p1 p2 q1 q2 n
                 create-list :container ({})
                   ->
                     decode-map-as
@@ -455,11 +455,7 @@
                       , item idx $ = tab item
                 container
                   {} $ :position $ [] 280 80
-                  case-default tab
-                    text $ {}
-                      :text $ str "|Unknown " tab
-                      :style $ {} $ :fill (hslx 0 0 100)
-                      :position $ [] 0 0
+                  match tab
                     :sun $ comp-sun-demo touch-key
                     nil $ comp-sun-demo touch-key
                     :circle $ comp-circle-demo touch-key
@@ -477,6 +473,10 @@
                     :snowflake $ comp-snowflake-demo $ >> states :snowflake
                     :harmono $ comp-harmono-demo $ >> states :harmono
                     :satellite $ comp-satellite-demo $ >> states :satellite
+                    _ $ text $ {}
+                      :text $ str "|Unknown " tab
+                      :style $ {} $ :fill (hslx 0 0 100)
+                      :position $ [] 0 0
                 circle $ {}
                   :position $ [] 80 560
                   :fill $ hslx 200 90 30
@@ -673,7 +673,7 @@
             :args $ [] 'Tag
         'get-unit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-unit (param)
-            case-default param 1 (:r1 0.2) (:r2 0.1) (:r3 0.04) (:r4 0.04) (:r5 0.04) (:steps 20) (:v 0.001)
+            match param (:r1 0.2) (:r2 0.1) (:r3 0.04) (:r4 0.04) (:r5 0.04) (:steps 20) (:v 0.001) (_ 1)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] 'Tag
@@ -689,9 +689,11 @@
             :return $ :: 'List 'Number
         'round-value $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn round-value (v param)
-            case-default param v $ :steps $ decode-map-as
-              js/Math.max 0 $ js/Math.round v
-              , 'Number
+            match param
+              :steps $ decode-map-as
+                js/Math.max 0 $ js/Math.round v
+                , 'Number
+              _ v
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] 'Number 'Tag
@@ -725,11 +727,11 @@
                         :title $ to-string param
                         :position $ [] (* idx 140) 0
                         :value $ option:unwrap $ get state param
-                        :unit $ case-default param 1 (:step 0.001) (:steps 10)
+                        :unit $ match param (:step 0.001) (:steps 10) (_ 1)
                         :on-change $ fn (value d!)
                           d! $ :: :states
                             option:unwrap-or (get states :cursor) nil
-                            assoc state param $ case-default param value
+                            assoc state param $ match param
                               :r2 $ decode-map-as
                                 js/Math.max 1 $ js/Math.round value
                                 , 'Number
@@ -743,6 +745,7 @@
                                 js/Math.max 1 $ js/Math.round value
                                 , 'Number
                               :steps $ decode-map-as (js/Math.round value) 'Number
+                              _ value
               comp-button $ {} (:text |Random)
                 :position $ [] 580 40
                 :on-pointertap $ fn (e d!)
@@ -805,7 +808,7 @@
             :features $ #{} :js-ffi
         'get-unit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-unit (param)
-            case-default param 1 (:r2 1) (:r3 0.5) (:v2 0.2) (:v3 0.2) (:steps 100) (:step 0.001)
+            match param (:r2 1) (:r3 0.5) (:v2 0.2) (:v3 0.2) (:steps 100) (:step 0.001) (_ 1)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] 'Tag
@@ -825,7 +828,7 @@
     'app.comp.grow-demo $ %{} 'FileEntry
       :defs $ {}
         '*grid $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *grid ({})
+          :code $ quote $ defref *grid ({})
           :examples $ []
           :schema $ :: 'Ref $ :: 'Map (:: 'List 'Number) 'Bool
         'comp-grow-demo $ %{} 'CodeEntry (:doc |)
@@ -996,14 +999,14 @@
           :code $ quote $ defn pick-many (xs)
             if
               = 3 $ count xs
-              case-default
+              match
                 decode-map-as (rand-int 3) 'Number
-                , xs
-                  0 $ slice xs 1
-                  1 $ []
-                    option:unwrap $ nth xs 0
-                    option:unwrap $ nth xs 2
-                  2 $ slice xs 0 2
+                0 $ slice xs 1
+                1 $ []
+                  option:unwrap $ nth xs 0
+                  option:unwrap $ nth xs 2
+                2 $ slice xs 0 2
+                _ xs
               , xs
           :examples $ []
           :schema $ :: 'Fn $ {}
@@ -1199,12 +1202,11 @@
                         :title $ to-string param
                         :position $ [] (* 140 idx) 0
                         :round? $ get-round? param
-                        :unit $ case-default param 0.1 (:unit 0.001) (:step 1)
+                        :unit $ match param (:unit 0.001) (:step 1) (_ 0.1)
                         :on-change $ fn (value d!)
                           d! $ :: :states
                             option:unwrap-or (get states :cursor) nil
-                            assoc state param $ case-default param
-                              decode-map-as (js/Math.max 0 value) 'Number
+                            assoc state param $ match param
                               :m $ decode-map-as
                                 js/Math.max 1 $ js/Math.round value
                                 , 'Number
@@ -1214,6 +1216,7 @@
                               :step $ decode-map-as
                                 js/Math.max 1 $ js/Math.round value
                                 , 'Number
+                              _ $ decode-map-as (js/Math.max 0 value) 'Number
               comp-button $ {} (:text |Random)
                 :position $ [] 580 0
                 :on-pointertap $ fn (e d!)
@@ -1433,17 +1436,18 @@
                         {}
                           :title $ to-string param
                           :value $ option:unwrap $ get state param
-                          :unit $ case-default param 1 (:steps 0.4) (:alpha 0.004) (:base 0.2)
+                          :unit $ match param (:steps 0.4) (:alpha 0.004) (:base 0.2) (_ 1)
                           :round? $ get-round? param
                           :on-change $ fn (v d!)
                             d! $ :: :states cursor $ assoc state param
-                              case-default param v
+                              match param
                                 :steps $ decode-map-as
                                   js/Math.max 1 $ js/Math.round v
                                   , 'Number
                                 :alpha $ decode-map-as
                                   js/Math.max 0 $ js/Math.min 1 v
                                   , 'Number
+                                _ v
                           :position $ []
                             + -400 $ * idx 140
                             , -440
@@ -2009,7 +2013,7 @@
     'app.comp.walking-demo $ %{} 'FileEntry
       :defs $ {}
         '*grid $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *grid ({})
+          :code $ quote $ defref *grid ({})
           :examples $ []
           :schema $ :: 'Ref $ :: 'Map (:: 'List 'Number) 'Bool
         'comp-walking-demo $ %{} 'CodeEntry (:doc |)
@@ -2157,7 +2161,7 @@
     'app.main $ %{} 'FileEntry
       :defs $ {}
         '*store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *store schema/store
+          :code $ quote $ defref *store schema/store
           :examples $ []
           :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
@@ -2296,11 +2300,7 @@
           :schema $ :: 'Trait
         'add-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn add-path (p1 p2)
-            let-sugar
-                  [] a b
-                  , p1
-                ([] x y) p2
-              [] (+ a x) (+ b y)
+            let[] (a b) p1 $ let[] (x y) p2 $ [] (+ a x) (+ b y)
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'Number) (:: 'List 'Number)
@@ -2313,10 +2313,7 @@
             :return $ :: 'Map 'Dynamic 'Dynamic
         'divide-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn divide-path (p1 p2)
-            let-sugar
-                  [] x y
-                  , p1
-                ([] a b) p2
+            let[] (x y) p1 $ let[] (a b) p2 $ let
                 inverted $ / 1 $ + (* a a) (* b b)
               []
                 * inverted $ + (* x a) (* y b)
@@ -2412,13 +2409,9 @@
             :return $ :: 'List 'A
         'multiply-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn multiply-path (p1 p2)
-            let-sugar
-                  [] a b
-                  , p1
-                ([] x y) p2
-              []
-                - (* a x) (* b y)
-                + (* a y) (* b x)
+            let[] (a b) p1 $ let[] (x y) p2 $ []
+              - (* a x) (* b y)
+              + (* a y) (* b x)
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'Number) (:: 'List 'Number)
@@ -2470,11 +2463,7 @@
             :args $ [] (:: 'Map 'Tag 'Dynamic) 'Tag
         'subtract-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn subtract-path (p1 p2)
-            let-sugar
-                  [] a b
-                  , p1
-                ([] x y) p2
-              [] (- a x) (- b y)
+            let[] (a b) p1 $ let[] (x y) p2 $ [] (- a x) (- b y)
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'Number) (:: 'List 'Number)
