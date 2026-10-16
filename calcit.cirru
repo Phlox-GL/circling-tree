@@ -87,11 +87,11 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.bezier-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point add-path subtract-path divide-x multiply-path
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point add-path subtract-path divide-x multiply-path
+            phlox.comp.drag-point :refer $ comp-drag-point
+            phlox.comp.slider :refer $ comp-slider
     'app.comp.chars-demo $ %{} 'FileEntry
       :defs $ {}
         'comp-char $ %{} 'CodeEntry (:doc |)
@@ -266,10 +266,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.chars-demo
           :require
-            [] phlox.core :refer $ [] defcomp hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point rand-nth
-            [] app.style :as style
+            phlox.core :refer $ defcomp hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point rand-nth
+            app.style :as style
             |@calcit/std :refer $ rand rand-int
     'app.comp.chord-demo $ %{} 'FileEntry
       :defs $ {}
@@ -345,10 +345,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.chord-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point rand-color
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point rand-color
+            phlox.comp.slider :refer $ comp-slider
             |@calcit/std :refer $ rand rand-int
     'app.comp.circle-demo $ %{} 'FileEntry
       :defs $ {}
@@ -409,8 +409,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.circle-demo
           :require
-            [] phlox.core :refer $ [] defcomp hslx rect circle text container graphics create-list g
-            [] app.comp.reset :refer $ [] comp-reset
+            phlox.core :refer $ defcomp hslx rect circle text container graphics create-list g
+            app.comp.reset :refer $ comp-reset
             |@calcit/std :refer $ rand rand-int
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
@@ -683,12 +683,12 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.cycloid-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point add-path subtract-path multiply-path
-            [] phlox.comp.button :refer $ [] comp-button
-            [] phlox.comp.slider :refer $ [] comp-slider
-            [] phlox.comp.switch :refer $ [] comp-switch
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point add-path subtract-path multiply-path
+            phlox.comp.button :refer $ comp-button
+            phlox.comp.slider :refer $ comp-slider
+            phlox.comp.switch :refer $ comp-switch
             |@calcit/std :refer $ rand rand-int
     'app.comp.geocentric-demo $ %{} 'FileEntry
       :defs $ {}
@@ -790,10 +790,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.geocentric-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.util :refer $ [] rand-point rand-color add-path
-            [] phlox.comp.button :refer $ [] comp-button
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.util :refer $ rand-point rand-color add-path
+            phlox.comp.button :refer $ comp-button
+            phlox.comp.slider :refer $ comp-slider
             |@calcit/std :refer $ rand rand-int
     'app.comp.grow-demo $ %{} 'FileEntry
       :defs $ {}
@@ -1002,12 +1002,12 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.grow-demo
           :require
-            [] phlox.core :refer $ [] defcomp g hslx rect circle text container graphics create-list
-            [] app.util :refer $ [] add-path multiply-path
-            [] app.comp.reset :refer $ [] comp-reset
-            [] clojure.core.rrb-vector :refer $ [] catvec
-            [] |shortid :as shortid
-            [] app.util :refer $ [] rand-point
+            phlox.core :refer $ defcomp g hslx rect circle text container graphics create-list
+            app.util :refer $ add-path multiply-path
+            app.comp.reset :refer $ comp-reset
+            clojure.core.rrb-vector :refer $ catvec
+            |shortid :as shortid
+            app.util :refer $ rand-point
             |@calcit/std :refer $ rand rand-int
     'app.comp.harmono-demo $ %{} 'FileEntry
       :defs $ {}
@@ -1165,10 +1165,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.harmono-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.util :refer $ [] rand-point rand-color add-path multiply-path
-            [] phlox.comp.slider :refer $ [] comp-slider
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.util :refer $ rand-point rand-color add-path multiply-path
+            phlox.comp.slider :refer $ comp-slider
+            phlox.comp.drag-point :refer $ comp-drag-point
             |@calcit/std :refer $ rand
     'app.comp.oscillo-demo $ %{} 'FileEntry
       :defs $ {}
@@ -1255,10 +1255,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.oscillo-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.util :refer $ [] rand-point rand-color
-            [] phlox.comp.button :refer $ [] comp-button
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.util :refer $ rand-point rand-color
+            phlox.comp.button :refer $ comp-button
+            phlox.comp.slider :refer $ comp-slider
             |@calcit/std :refer $ rand rand-int
     'app.comp.rects-demo $ %{} 'FileEntry
       :defs $ {} $ 'comp-rects-demo
@@ -1321,9 +1321,9 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.rects-demo
           :require
-            [] phlox.core :refer $ [] defcomp hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point
+            phlox.core :refer $ defcomp hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point
             |@calcit/std :refer $ rand rand-int
     'app.comp.reset $ %{} 'FileEntry
       :defs $ {} $ 'comp-reset
@@ -1350,8 +1350,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.reset
           :require
-            [] phlox.core :refer $ [] defcomp hslx rect circle text container graphics create-list
-            [] app.style :as style
+            phlox.core :refer $ defcomp hslx rect circle text container graphics create-list
+            app.style :as style
     'app.comp.rotate-demo $ %{} 'FileEntry
       :defs $ {}
         'comp-rotate-demo $ %{} 'CodeEntry (:doc |)
@@ -1460,11 +1460,11 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.rotate-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point
+            phlox.comp.drag-point :refer $ comp-drag-point
+            phlox.comp.slider :refer $ comp-slider
             |@calcit/std :refer $ rand rand-int
     'app.comp.satellite-demo $ %{} 'FileEntry
       :defs $ {}
@@ -1625,11 +1625,11 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.satellite-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point
-            [] phlox.comp.slider :refer $ [] comp-slider
-            [] phlox.comp.button :refer $ [] comp-button
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point
+            phlox.comp.slider :refer $ comp-slider
+            phlox.comp.button :refer $ comp-button
             |@calcit/std :refer $ rand rand-int
     'app.comp.snowflake-demo $ %{} 'FileEntry
       :defs $ {}
@@ -1749,7 +1749,7 @@
                   acc points
                 if (<= t 0) acc $ recur (dec t)
                   let
-                      acc-vec $ unsafe-coerce acc $ :: 'List (:: 'List 'Number)
+                      acc-vec acc
                     concat
                       [] $ option:unwrap-or (first acc-vec) ([] 0 0)
                       -> (rest acc-vec)
@@ -1759,9 +1759,7 @@
                             :return $ :: 'List $ :: 'List 'Number
                             :features $ #{} :js-ffi
                           let
-                              from $ unsafe-coerce
-                                option:unwrap-or (get acc-vec idx) nil
-                                :: 'List 'Number
+                              from $ option:unwrap $ get acc-vec idx
                             -> template-points $ map $ fn (pi)
                               hint-fn $ {}
                                 :args $ [] $ :: 'List 'Number
@@ -1788,13 +1786,13 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.snowflake-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point add-path subtract-path divide-x multiply-path divide-path invert-y
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
-            [] phlox.comp.button :refer $ [] comp-button
-            [] phlox.comp.slider :refer $ [] comp-slider
-            [] phlox.comp.switch :refer $ [] comp-switch
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point add-path subtract-path divide-x multiply-path divide-path invert-y
+            phlox.comp.drag-point :refer $ comp-drag-point
+            phlox.comp.button :refer $ comp-button
+            phlox.comp.slider :refer $ comp-slider
+            phlox.comp.switch :refer $ comp-switch
     'app.comp.sun-demo $ %{} 'FileEntry
       :defs $ {}
         'comp-sun-demo $ %{} 'CodeEntry (:doc |)
@@ -1830,8 +1828,7 @@
                     x2 $ + x1 $ + 4
                       * 8 $ phlox.core/ffi-random
                   recur
-                    conj
-                      unsafe-coerce acc $ :: 'List 'Dynamic
+                    conj acc
                       g :line-style $ {}
                         :color $ * (phlox.core/ffi-random) (hslx 0 0 100)
                         :width $ if (< x2 160) 2 3
@@ -1847,8 +1844,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.sun-demo
           :require
-            [] phlox.core :refer $ [] defcomp g hslx rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
+            phlox.core :refer $ defcomp g hslx rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
     'app.comp.tree-demo $ %{} 'FileEntry
       :defs $ {}
         'comp-tree-demo $ %{} 'CodeEntry (:doc |)
@@ -1946,9 +1943,9 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.tree-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> g hslx rect circle text container graphics create-list
-            [] app.util :refer $ [] add-path multiply-path subtract-path divide-path rough-size
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
+            phlox.core :refer $ defcomp >> g hslx rect circle text container graphics create-list
+            app.util :refer $ add-path multiply-path subtract-path divide-path rough-size
+            phlox.comp.drag-point :refer $ comp-drag-point
             |@calcit/std :refer $ rand
     'app.comp.walking-demo $ %{} 'FileEntry
       :defs $ {}
@@ -1993,7 +1990,7 @@
                   distinct
               &doseq (p trails)
                 swap! *grid assoc
-                  option:unwrap-or (first p) 0
+                  option:unwrap $ first p
                   , true
               loop
                   idx 120
@@ -2077,10 +2074,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.walking-demo
           :require
-            [] phlox.core :refer $ [] defcomp g hslx rect circle text container graphics create-list
-            [] app.util :refer $ [] add-path multiply-path
-            [] app.comp.reset :refer $ [] comp-reset
-            [] clojure.core.rrb-vector :refer $ [] catvec
+            phlox.core :refer $ defcomp g hslx rect circle text container graphics create-list
+            app.util :refer $ add-path multiply-path
+            app.comp.reset :refer $ comp-reset
+            clojure.core.rrb-vector :refer $ catvec
             |@calcit/std :refer $ rand rand-int rand-nth
     'app.config $ %{} 'FileEntry
       :defs $ {} $ 'site
@@ -2107,6 +2104,7 @@
                 op-id $ shortid/generate
                 op-time $ app.util/ffi-date-now
               reset! *store $ updater @*store (app.schema/normalize-op op) op-id op-time
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Enum
@@ -2209,7 +2207,7 @@
             :return $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ [] phlox.cursor :refer $ [] update-states
+          :require $ phlox.cursor :refer $ update-states
     'app.util $ %{} 'FileEntry
       :defs $ {}
         'DateHost $ %{} 'CodeEntry (:doc |)
