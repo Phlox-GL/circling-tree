@@ -38,11 +38,12 @@ jobs:
       with:
         tools: calcit,caps
         caps-version: "0.1.1"
+        deps-file: deps.cirru
 
     - name: Resolve immutable dependencies
       run: |
         set -euo pipefail
-        caps --ci
+        caps --strict --ci
         yarn install --immutable
         caps verify --toolchain
 
@@ -55,8 +56,8 @@ jobs:
         test ! -e package.cirru
         calcit calcit.cirru edit format
         git diff --exit-code -- calcit.cirru
-        calcit calcit.cirru --check-only
-        calcit calcit.cirru analyze check-public \
+        calcit calcit.cirru --check-only --all-defs
+        calcit calcit.cirru --check-only \
           --ns app.comp.bezier-demo --ns app.comp.chars-demo \
           --ns app.comp.chord-demo --ns app.comp.circle-demo \
           --ns app.comp.container --ns app.comp.cycloid-demo \
@@ -69,6 +70,7 @@ jobs:
           --ns app.config --ns app.main --ns app.schema \
           --ns app.style --ns app.updater --ns app.util \
           --summary-only --format json
+        calcit calcit.cirru fix --workflow strict --verify
 
     - name: Select CDN asset path
       id: asset-path

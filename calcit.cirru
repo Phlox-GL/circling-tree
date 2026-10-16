@@ -14,24 +14,26 @@
           :code $ quote $ defcomp comp-bezier-demo (states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  {}
-                    :points $ [] ([] 40 100) ([] 200 100) ([] 200 400) ([] 40 400)
-                    :n 80
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    {}
+                      :points $ [] ([] 40 100) ([] 200 100) ([] 200 400) ([] 40 400)
+                      :n 80
+                  :: 'Map 'Tag 'Dynamic
               container ({})
                 graphics $ {}
                   :position $ [] 0 0
-                  :ops $ let-sugar
-                        [] p1 p2 q1 q2
-                        unsafe-coerce
-                          option:unwrap-or (get state :points) nil
-                          :: 'List $ :: 'List 'Number
-                      n $ option:unwrap-or (get state :n) nil
-                    gen-trail p1 p2 q1 q2 n
+                  :ops $ let[] (p1 p2 q1 q2)
+                    decode-map-as
+                      option:unwrap-or (get state :points) nil
+                      :: 'List $ :: 'List 'Number
+                    let
+                        n $ app.util/state-number state :n
+                      gen-trail p1 p2 q1 q2 n
                 create-list :container ({})
                   ->
-                    unsafe-coerce
+                    decode-map-as
                       option:unwrap-or (get state :points) nil
                       :: 'List $ :: 'List 'Number
                     map-indexed $ fn (idx point)
@@ -42,7 +44,7 @@
                 comp-slider (app.util/child-states states :n)
                   {} (:title |n)
                     :position $ [] 0 -40
-                    :value $ option:unwrap-or (get state :n) nil
+                    :value $ app.util/state-number state :n
                     :unit 0.3
                     :round? true
                     :on-change $ fn (value d!)
@@ -50,7 +52,7 @@
                         js/Math.max 1 $ js/Math.round value
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
         'gen-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn gen-trail (p1 p2 q1 q2 n)
@@ -87,11 +89,11 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.bezier-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point add-path subtract-path divide-x multiply-path
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point add-path subtract-path divide-x multiply-path
+            phlox.comp.drag-point :refer $ comp-drag-point
+            phlox.comp.slider :refer $ comp-slider
     'app.comp.chars-demo $ %{} 'FileEntry
       :defs $ {}
         'comp-char $ %{} 'CodeEntry (:doc |)
@@ -135,7 +137,7 @@
                         [] (str x |+ y)
                           container
                             {} $ :position $ [] (* x 54) (* y 54)
-                            comp-char touch-key $ rand-int 6
+                            comp-char touch-key $ decode-map-as (rand-int 6) 'Number
               comp-reset $ [] -140 40
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
@@ -151,28 +153,30 @@
                   :width 1
                   :alpha 1
                 ; rand-stroke $ [] (rand-stroke curve-strokes) (rand-stroke straight-strokes) (rand-stroke slash-strokes)
-                case kind
-                  0 $ concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
-                  1 $ concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
-                  2 $ rand-stroke $ []
-                    concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
-                    concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
-                    rand-stroke dot-strokes
-                    []
-                  3 $ rand-stroke $ [] (rand-stroke curve-strokes) (rand-stroke dot-strokes) ([])
-                  4 $ rand-stroke $ []
-                    concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
-                    concat-ops (rand-stroke curve-strokes) (rand-stroke curve-strokes)
-                    rand-stroke dot-strokes
-                    []
-                  5 $ rand-stroke $ []
-                    concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
-                    rand-stroke curve-strokes
-                    []
-                  rand-stroke $ []
-                    concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
-                    rand-stroke curve-strokes
-                    []
+                decode-map-as
+                  case kind
+                    0 $ concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
+                    1 $ concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
+                    2 $ rand-stroke $ []
+                      concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
+                      concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
+                      rand-stroke dot-strokes
+                      []
+                    3 $ rand-stroke $ [] (rand-stroke curve-strokes) (rand-stroke dot-strokes) ([])
+                    4 $ rand-stroke $ []
+                      concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
+                      concat-ops (rand-stroke curve-strokes) (rand-stroke curve-strokes)
+                      rand-stroke dot-strokes
+                      []
+                    5 $ rand-stroke $ []
+                      concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
+                      rand-stroke curve-strokes
+                      []
+                    rand-stroke $ []
+                      concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
+                      rand-stroke curve-strokes
+                      []
+                  :: 'List $ :: 'List 'Dynamic
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
             :args $ [] 'Nil 'Number
@@ -234,7 +238,9 @@
           :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
         'rand-stroke $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-stroke (strokes)
-            option:unwrap $ nth strokes $ rand-int (count strokes)
+            option:unwrap $ nth strokes $ decode-map-as
+              rand-int $ count strokes
+              , 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'T)
             :args $ [] $ :: 'List 'T
@@ -266,10 +272,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.chars-demo
           :require
-            [] phlox.core :refer $ [] defcomp hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point rand-nth
-            [] app.style :as style
+            phlox.core :refer $ defcomp hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point rand-nth
+            app.style :as style
             |@calcit/std :refer $ rand rand-int
     'app.comp.chord-demo $ %{} 'FileEntry
       :defs $ {}
@@ -277,16 +283,18 @@
           :code $ quote $ defcomp comp-chord-demo (states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  {} $ :size 20
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    {} $ :size 20
+                  :: 'Map 'Tag 'Dynamic
               container ({})
                 graphics $ {}
                   :position $ [] 200 320
-                  :ops $ generate-ops $ option:unwrap-or (get state :size) nil
+                  :ops $ generate-ops $ app.util/state-number state :size
                 comp-slider (>> states :size)
                   {}
-                    :value $ option:unwrap-or (get state :size) nil
+                    :value $ app.util/state-number state :size
                     :title |Size
                     :unit 0.1
                     :round? true
@@ -295,7 +303,7 @@
                         js/Math.min 300 $ js/Math.max (js/Math.round n) 4
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
         'generate-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-ops (size)
@@ -308,7 +316,9 @@
                   :return $ :: 'List $ :: 'List 'Dynamic
                 let
                     t $ * 2 phlox.math/ffi-pi idx $ / 1 shares
-                    t2 $ rand $ * 2 phlox.math/ffi-pi
+                    t2 $ decode-map-as
+                      rand $ * 2 phlox.math/ffi-pi
+                      , 'Number
                     color $ hslx
                       * 180 t $ / 1 phlox.math/ffi-pi
                       , 100 60
@@ -345,10 +355,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.chord-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point rand-color
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point rand-color
+            phlox.comp.slider :refer $ comp-slider
             |@calcit/std :refer $ rand rand-int
     'app.comp.circle-demo $ %{} 'FileEntry
       :defs $ {}
@@ -373,7 +383,7 @@
                 angle 0
                 acc $ []
               if
-                > angle $ + phlox.math/ffi-pi -0.3 $ rand 1.4
+                > angle $ + phlox.math/ffi-pi -0.3 $ decode-map-as (rand 1.4) 'Number
                 , acc $ let
                     ratio $ / 1 $ inc idx
                     a1 $ + angle $ * 0.4 ratio
@@ -381,8 +391,7 @@
                     r0 $ / 180 phlox.math/ffi-pi
                   recur
                     + a2 $ * 0.2 ratio
-                    conj
-                      unsafe-coerce acc $ :: 'List 'Dynamic
+                    conj acc
                       g :line-style $ {}
                         :color $ * (phlox.core/ffi-random) (hslx 0 0 100)
                         :width 6
@@ -409,18 +418,19 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.circle-demo
           :require
-            [] phlox.core :refer $ [] defcomp hslx rect circle text container graphics create-list g
-            [] app.comp.reset :refer $ [] comp-reset
+            phlox.core :refer $ defcomp hslx rect circle text container graphics create-list g
+            app.comp.reset :refer $ comp-reset
             |@calcit/std :refer $ rand rand-int
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
         'cap-name $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn cap-name (x)
-            str
-              unsafe-coerce
-                js/String.prototype.toUpperCase.call $ &str:nth x 0
-                , 'String
-              &str:slice x 1 $ count x
+            match (get x 0)
+              (:none) x
+              (:some initial)
+                str
+                  decode-map-as (js/String.prototype.toUpperCase.call initial) 'String
+                  slice x 1
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
             :args $ [] 'String
@@ -429,7 +439,9 @@
           :code $ quote $ defcomp comp-container (store)
             let
                 tab $ option:unwrap-or (get store :tab) nil
-                states $ option:unwrap-or (get store :states) nil
+                states $ decode-map-as
+                  option:unwrap-or (get store :states) nil
+                  :: 'Map 'Dynamic 'Dynamic
                 touch-key $ decode-map-as
                   option:unwrap-or (get store :touch-key) nil
                   , 'Nil
@@ -439,15 +451,11 @@
                   {} $ :position $ [] 40 40
                   -> tabs $ map-indexed $ fn (idx item)
                     [] idx $ comp-tab
-                      cap-name $ turn-string item
+                      cap-name $ to-string item
                       , item idx $ = tab item
                 container
                   {} $ :position $ [] 280 80
-                  case-default tab
-                    text $ {}
-                      :text $ str "|Unknown " tab
-                      :style $ {} $ :fill (hslx 0 0 100)
-                      :position $ [] 0 0
+                  match tab
                     :sun $ comp-sun-demo touch-key
                     nil $ comp-sun-demo touch-key
                     :circle $ comp-circle-demo touch-key
@@ -465,6 +473,10 @@
                     :snowflake $ comp-snowflake-demo $ >> states :snowflake
                     :harmono $ comp-harmono-demo $ >> states :harmono
                     :satellite $ comp-satellite-demo $ >> states :satellite
+                    _ $ text $ {}
+                      :text $ str "|Unknown " tab
+                      :style $ {} $ :fill (hslx 0 0 100)
+                      :position $ [] 0 0
                 circle $ {}
                   :position $ [] 80 560
                   :fill $ hslx 200 90 30
@@ -530,23 +542,25 @@
           :code $ quote $ defcomp comp-cycloid-demo (states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  {} (:r1 312) (:r2 80) (:r3 96) (:r4 20) (:r5 8) (:steps 2000) (:v 0.11) (:round? true)
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    {} (:r1 312) (:r2 80) (:r3 96) (:r4 20) (:r5 8) (:steps 2000) (:v 0.11) (:round? true)
+                  :: 'Map 'Tag 'Dynamic
               container ({}) (comp-numbers-control state states)
                 graphics $ {}
                   :position $ [] 400 400
                   :ops $ let
-                      r1 $ option:unwrap-or (get state :r1) nil
-                      r2 $ option:unwrap-or (get state :r2) nil
-                      r3 $ option:unwrap-or (get state :r3) nil
-                      r4 $ option:unwrap-or (get state :r4) nil
-                      r5 $ option:unwrap-or (get state :r5) nil
+                      r1 $ app.util/state-number state :r1
+                      r2 $ app.util/state-number state :r2
+                      r3 $ app.util/state-number state :r3
+                      r4 $ app.util/state-number state :r4
+                      r5 $ app.util/state-number state :r5
                       trail $ ->
-                        range $ option:unwrap-or (get state :steps) nil
+                        range $ app.util/state-number state :steps
                         map $ fn (idx)
                           let
-                              t $ * idx $ option:unwrap-or (get state :v) nil
+                              t $ * idx $ app.util/state-number state :v
                               dr $ - r1 r2
                               dr2 $ - r2 r3
                               dr3 $ - r3 r4
@@ -574,7 +588,7 @@
                         [] $ g :line-to p
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
         'comp-numbers-control $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-numbers-control (state states)
@@ -583,8 +597,12 @@
                 params $ [] :r1 :r2 :r3 :r4 :r5 :steps :v
                 is-round? $ option:unwrap-or (get state :round?) false
                 rand-value $ fn () $ if is-round?
-                  - (rand-int 300) 100
-                  - (rand 300) 100
+                  -
+                    decode-map-as (rand-int 300) 'Number
+                    , 100
+                  -
+                    decode-map-as (rand 300) 'Number
+                    , 100
               container
                 {} $ :position $ [] -40 -80
                 create-list :container ({})
@@ -595,9 +613,10 @@
                         :position $ [] (* idx 130) 30
                         :unit $ get-unit param
                         :round? $ if is-round? (get-round? param) false
-                        :title $ turn-string param
+                        :title $ to-string param
                         :on-change $ fn (v d!)
-                          d! $ :: :states cursor $ assoc state param (round-value v param)
+                          d! $ :: :states cursor $ assoc state param
+                            round-value (decode-map-as v 'Number) param
                 comp-switch $ {} (:value is-round?) (:title "|Round value?")
                   :position $ [] 0 100
                   :on-change $ fn (e d!)
@@ -644,7 +663,7 @@
                         :r5 $ rand-value
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
+            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
             :features $ #{} :js-ffi
         'get-round? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-round? (param)
@@ -654,7 +673,7 @@
             :args $ [] 'Tag
         'get-unit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-unit (param)
-            case-default param 1 (:r1 0.2) (:r2 0.1) (:r3 0.04) (:r4 0.04) (:r5 0.04) (:steps 20) (:v 0.001)
+            match param (:r1 0.2) (:r2 0.1) (:r3 0.04) (:r4 0.04) (:r5 0.04) (:steps 20) (:v 0.001) (_ 1)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] 'Tag
@@ -670,7 +689,11 @@
             :return $ :: 'List 'Number
         'round-value $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn round-value (v param)
-            case-default param v $ :steps $ js/Math.max 0 (js/Math.round v)
+            match param
+              :steps $ decode-map-as
+                js/Math.max 0 $ js/Math.round v
+                , 'Number
+              _ v
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] 'Number 'Tag
@@ -683,12 +706,12 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.cycloid-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point add-path subtract-path multiply-path
-            [] phlox.comp.button :refer $ [] comp-button
-            [] phlox.comp.slider :refer $ [] comp-slider
-            [] phlox.comp.switch :refer $ [] comp-switch
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point add-path subtract-path multiply-path
+            phlox.comp.button :refer $ comp-button
+            phlox.comp.slider :refer $ comp-slider
+            phlox.comp.switch :refer $ comp-switch
             |@calcit/std :refer $ rand rand-int
     'app.comp.geocentric-demo $ %{} 'FileEntry
       :defs $ {}
@@ -701,49 +724,60 @@
                   map-indexed $ fn (idx param)
                     [] idx $ comp-slider (>> states param)
                       {}
-                        :title $ turn-string param
+                        :title $ to-string param
                         :position $ [] (* idx 140) 0
                         :value $ option:unwrap $ get state param
-                        :unit $ case-default param 1 (:step 0.001) (:steps 10)
+                        :unit $ match param (:step 0.001) (:steps 10) (_ 1)
                         :on-change $ fn (value d!)
                           d! $ :: :states
                             option:unwrap-or (get states :cursor) nil
-                            assoc state param $ case-default param value
-                              :r2 $ js/Math.max 1 $ js/Math.round value
-                              :v2 $ js/Math.max 1 $ js/Math.round value
-                              :r3 $ js/Math.max 1 $ js/Math.round value
-                              :v3 $ js/Math.max 1 $ js/Math.round value
-                              :steps $ js/Math.round value
+                            assoc state param $ match param
+                              :r2 $ decode-map-as
+                                js/Math.max 1 $ js/Math.round value
+                                , 'Number
+                              :v2 $ decode-map-as
+                                js/Math.max 1 $ js/Math.round value
+                                , 'Number
+                              :r3 $ decode-map-as
+                                js/Math.max 1 $ js/Math.round value
+                                , 'Number
+                              :v3 $ decode-map-as
+                                js/Math.max 1 $ js/Math.round value
+                                , 'Number
+                              :steps $ decode-map-as (js/Math.round value) 'Number
+                              _ value
               comp-button $ {} (:text |Random)
                 :position $ [] 580 40
                 :on-pointertap $ fn (e d!)
                   d! $ :: :states
                     option:unwrap-or (get states :cursor) nil
                     {}
-                      :r2 $ rand-int 200
-                      :v2 $ rand 3
-                      :r3 $ rand-int 200
-                      :v3 $ rand 3
+                      :r2 $ decode-map-as (rand-int 200) 'Number
+                      :v2 $ decode-map-as (rand 3) 'Number
+                      :r3 $ decode-map-as (rand-int 200) 'Number
+                      :v3 $ decode-map-as (rand 3) 'Number
                       :steps 4000
                       :step 0.1
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
+            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
             :features $ #{} :js-ffi
         'comp-geocentric-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-geocentric-demo (states)
             let
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  , initial-state
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    , initial-state
+                  :: 'Map 'Tag 'Dynamic
               container ({})
                 graphics $ {}
                   :position $ [] 400 360
                   :ops $ let
-                      steps $ option:unwrap-or (get state :steps) nil
-                      step $ option:unwrap-or (get state :step) nil
-                      r2 $ option:unwrap-or (get state :r2) nil
-                      r3 $ option:unwrap-or (get state :r3) nil
+                      steps $ app.util/state-number state :steps
+                      step $ app.util/state-number state :step
+                      r2 $ app.util/state-number state :r2
+                      r3 $ app.util/state-number state :r3
                       trail $ -> (range steps)
                         map $ fn (idx)
                           let
@@ -754,15 +788,11 @@
                                   * 200 $ phlox.core/ffi-cos t
                                   * 200 $ phlox.core/ffi-sin t
                                 []
-                                  * r2 $ phlox.core/ffi-cos $ * t
-                                    option:unwrap-or (get state :v2) nil
-                                  * r2 $ phlox.core/ffi-sin $ * t
-                                    option:unwrap-or (get state :v2) nil
+                                  * r2 $ phlox.core/ffi-cos $ * t (app.util/state-number state :v2)
+                                  * r2 $ phlox.core/ffi-sin $ * t (app.util/state-number state :v2)
                               []
-                                * r3 $ phlox.core/ffi-cos $ * t
-                                  option:unwrap-or (get state :v3) nil
-                                * r3 $ phlox.core/ffi-sin $ * t
-                                  option:unwrap-or (get state :v3) nil
+                                * r3 $ phlox.core/ffi-cos $ * t (app.util/state-number state :v3)
+                                * r3 $ phlox.core/ffi-sin $ * t (app.util/state-number state :v3)
                     concat
                       []
                         g :move-to $ option:unwrap-or (first trail) ([] 0 0)
@@ -774,11 +804,11 @@
                 comp-geocentric-control state states
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
         'get-unit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-unit (param)
-            case-default param 1 (:r2 1) (:r3 0.5) (:v2 0.2) (:v3 0.2) (:steps 100) (:step 0.001)
+            match param (:r2 1) (:r3 0.5) (:v2 0.2) (:v3 0.2) (:steps 100) (:step 0.001) (_ 1)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] 'Tag
@@ -790,15 +820,15 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.geocentric-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.util :refer $ [] rand-point rand-color add-path
-            [] phlox.comp.button :refer $ [] comp-button
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.util :refer $ rand-point rand-color add-path
+            phlox.comp.button :refer $ comp-button
+            phlox.comp.slider :refer $ comp-slider
             |@calcit/std :refer $ rand rand-int
     'app.comp.grow-demo $ %{} 'FileEntry
       :defs $ {}
         '*grid $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *grid ({})
+          :code $ quote $ defref *grid ({})
           :examples $ []
           :schema $ :: 'Ref $ :: 'Map (:: 'List 'Number) 'Bool
         'comp-grow-demo $ %{} 'CodeEntry (:doc |)
@@ -834,54 +864,37 @@
             let
                 trails $ -> (range 12)
                   map $ fn (x) (rand-point 140 60)
-                  , distinct
+                  distinct
               &doseq (point trails) (swap! *grid assoc point true)
               loop
                   idx 50
                   points-with-keys $ map trails $ fn (x)
-                    [] (shortid/generate) x
+                    []
+                      decode-map-as (shortid/generate) 'String
+                      , x
                   acc $ []
                 if (= 0 idx)
-                  unsafe-coerce
-                    ->
-                      unsafe-coerce acc $ :: 'List $ :: 'List 'Dynamic
-                      group-by $ fn (item)
-                        hint-fn $ {}
-                          :args $ [] $ :: 'List 'Dynamic
-                          :return 'Dynamic
-                        option:unwrap-or (first item) nil
-                      , &map:to-list
-                        unsafe-coerce $ :: 'List $ :: 'List 'Dynamic
-                        map $ fn (pair)
-                          hint-fn $ {}
-                            :args $ [] $ :: 'List 'Dynamic
-                            :return $ :: 'List $ :: 'List 'Dynamic
-                          unsafe-coerce
-                            option:unwrap-or (last pair) nil
-                            :: 'List $ :: 'List 'Dynamic
-                        map $ fn (group)
-                          hint-fn $ {}
-                            :args $ [] $ :: 'List (:: 'List 'Dynamic)
-                            :return $ :: 'List $ :: 'List (:: 'List 'Number)
-                          -> group $ map $ fn (piece)
-                            hint-fn $ {}
-                              :args $ [] $ :: 'List 'Dynamic
-                              :return $ :: 'List $ :: 'List 'Number
-                            unsafe-coerce (slice piece 1)
-                              :: 'List $ :: 'List 'Number
-                    :: 'List $ :: 'List $ :: 'List (:: 'List 'Number)
+                  -> acc
+                    group-by $ fn (item)
+                      decode-map-as
+                        option:unwrap $ first item
+                        , 'String
+                    .map-list $ fn (pair)
+                      hint-fn $ {}
+                        :args $ [] $ :: 'List 'Dynamic
+                        :return $ :: 'List $ :: 'List (:: 'List 'Number)
+                      ->
+                        decode-map-as
+                          option:unwrap $ last pair
+                          :: 'List $ :: 'List 'Dynamic
+                        map $ fn (piece)
+                          decode-map-as (slice piece 1)
+                            :: 'List $ :: 'List 'Number
                   let
-                      result $ iterate-trails $ unsafe-coerce points-with-keys
-                        :: 'List $ :: 'List 'Dynamic
-                      new-points-keys $ unsafe-coerce
-                        option:unwrap-or (first result) ([])
-                        :: 'List $ :: 'List 'Dynamic
-                      pieces $ unsafe-coerce
-                        option:unwrap-or (last result) ([])
-                        :: 'List $ :: 'List 'Dynamic
-                    recur (dec idx) new-points-keys $ concat
-                      unsafe-coerce acc $ :: 'List $ :: 'List 'Dynamic
-                      , pieces
+                      result $ iterate-trails points-with-keys
+                      new-points-keys $ option:unwrap $ first result
+                      pieces $ option:unwrap $ last result
+                    recur (dec idx) new-points-keys $ concat acc pieces
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ []
@@ -893,33 +906,30 @@
             let
                 zoom-in $ [] 6 0
               concat
-                unsafe-coerce
-                  [] $ g :line-style $ {}
-                    :color $ hslx (rand 360)
-                      + 20 $ rand-int 80
-                      + 20 $ rand-int 80
-                    :width 2
-                    :alpha 1
-                  :: 'List 'Dynamic
-                unsafe-coerce
-                  -> trail rest $ mapcat $ fn (stop)
-                    hint-fn $ {}
-                      :args $ [] $ :: 'List (:: 'List 'Number)
-                      :return $ :: 'List 'Dynamic
-                    []
-                      g :move-to $ multiply-path
-                        option:unwrap-or (first stop) ([] 0 0)
-                        , zoom-in
-                      g :line-to $ multiply-path
-                        option:unwrap-or (last stop) ([] 0 0)
-                        , zoom-in
-                  :: 'List 'Dynamic
+                [] $ g :line-style $ {}
+                  :color $ hslx
+                    decode-map-as (rand 360) 'Number
+                    + 20 $ decode-map-as (rand-int 80) 'Number
+                    + 20 $ decode-map-as (rand-int 80) 'Number
+                  :width 2
+                  :alpha 1
+                -> trail rest $ mapcat $ fn (stop)
+                  hint-fn $ {}
+                    :args $ [] $ :: 'List (:: 'List 'Number)
+                    :return $ :: 'List $ :: 'List 'Dynamic
+                  []
+                    g :move-to $ multiply-path
+                      option:unwrap-or (first stop) ([] 0 0)
+                      , zoom-in
+                    g :line-to $ multiply-path
+                      option:unwrap-or (last stop) ([] 0 0)
+                      , zoom-in
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] $ :: 'List
               :: 'List $ :: 'List 'Number
             :features $ #{} :js-ffi
-            :return $ :: 'List 'Dynamic
+            :return $ :: 'List $ :: 'List 'Dynamic
         'iterate-trails $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn iterate-trails (points)
             let
@@ -930,7 +940,7 @@
                       :return $ :: 'List $ :: 'List (:: 'List 'Dynamic)
                     let
                         k $ option:unwrap-or (first pair) nil
-                        base $ unsafe-coerce
+                        base $ decode-map-as
                           option:unwrap-or (nth pair 1) nil
                           :: 'List 'Number
                         directions $ expand-directions base
@@ -944,7 +954,9 @@
                             hint-fn $ {}
                               :args $ [] $ :: 'List 'Number
                               :return 'Bool
-                            > (rand) 0.43
+                            >
+                              decode-map-as (rand) 'Number
+                              , 0.43
                         picked $ pick-many available
                       &doseq (x picked) (swap! *grid assoc x true)
                       []
@@ -966,7 +978,7 @@
                       :args $ [] $ :: 'List 'Dynamic
                       :return 'Bool
                     let
-                        point $ unsafe-coerce
+                        point $ decode-map-as
                           option:unwrap-or (nth pair 1) nil
                           :: 'List 'Number
                         directions $ expand-directions point
@@ -987,12 +999,14 @@
           :code $ quote $ defn pick-many (xs)
             if
               = 3 $ count xs
-              case-default (rand-int 3) xs
+              match
+                decode-map-as (rand-int 3) 'Number
                 0 $ slice xs 1
                 1 $ []
                   option:unwrap $ nth xs 0
                   option:unwrap $ nth xs 2
                 2 $ slice xs 0 2
+                _ xs
               , xs
           :examples $ []
           :schema $ :: 'Fn $ {}
@@ -1002,35 +1016,39 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.grow-demo
           :require
-            [] phlox.core :refer $ [] defcomp g hslx rect circle text container graphics create-list
-            [] app.util :refer $ [] add-path multiply-path
-            [] app.comp.reset :refer $ [] comp-reset
-            [] clojure.core.rrb-vector :refer $ [] catvec
-            [] |shortid :as shortid
-            [] app.util :refer $ [] rand-point
+            phlox.core :refer $ defcomp g hslx rect circle text container graphics create-list
+            app.util :refer $ add-path multiply-path
+            app.comp.reset :refer $ comp-reset
+            clojure.core.rrb-vector :refer $ catvec
+            |shortid :as shortid
+            app.util :refer $ rand-point
             |@calcit/std :refer $ rand rand-int
     'app.comp.harmono-demo $ %{} 'FileEntry
       :defs $ {}
         'comp-harmono-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-harmono-demo (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  {}
-                    :controls $ -> (range 3)
-                      map $ fn (i)
-                        {}
-                          :amplitude $ rand-point 40
-                          :frequency $ rand 10
-                          :phase 6
-                          :damping $ rand 2
-                    :steps 100
-                    :base 0.01
-                controls $ option:unwrap-or (get state :controls) nil
-                trail $ gen-trail controls
-                  option:unwrap-or (get state :steps) nil
-                  option:unwrap-or (get state :base) nil
+                cursor $ decode-map-as
+                  option:unwrap-or (get states :cursor) nil
+                  :: 'List 'Dynamic
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    {}
+                      :controls $ -> (range 3)
+                        map $ fn (i)
+                          {}
+                            :amplitude $ rand-point 40
+                            :frequency $ decode-map-as (rand 10) 'Number
+                            :phase 6
+                            :damping $ decode-map-as (rand 2) 'Number
+                      :steps 100
+                      :base 0.01
+                  :: 'Map 'Tag 'Dynamic
+                controls $ decode-map-as
+                  option:unwrap-or (get state :controls) nil
+                  :: 'List $ :: 'Map 'Tag 'Dynamic
+                trail $ gen-trail controls (app.util/state-number state :steps) (app.util/state-number state :base)
               container
                 {} $ :position $ [] 400 300
                 render-controls cursor states state controls
@@ -1049,7 +1067,7 @@
                   render-points cursor states state controls
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
         'gen-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn gen-trail (controls steps base)
@@ -1063,13 +1081,13 @@
                           []
                             *
                               phlox.core/ffi-sin $ +
-                                * t $ option:unwrap-or (get control :frequency) nil
-                                option:unwrap-or (get control :phase) nil
-                              app.util/ffi-pow app.util/ffi-e $ * -1
-                                option:unwrap-or (get control :damping) nil
-                                , t
+                                * t $ app.util/state-number control :frequency
+                                app.util/state-number control :phase
+                              app.util/ffi-pow app.util/ffi-e $ * -1 (app.util/state-number control :damping) t
                             , 0
-                          option:unwrap-or (get control :amplitude) nil
+                          decode-map-as
+                            option:unwrap-or (get control :amplitude) nil
+                            :: 'List 'Number
                       reduce ([] 0 0) add-path
                   , final-point
           :examples $ []
@@ -1144,7 +1162,7 @@
                           d! $ :: :states cursor $ assoc-in state ([] :controls idx :damping) v
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'List 'Dynamic) (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
+            :args $ [] (:: 'List 'Dynamic) (:: 'Map 'Dynamic 'Dynamic) (:: 'Map 'Tag 'Dynamic)
               :: 'List $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
         'render-points $ %{} 'CodeEntry (:doc |)
@@ -1159,16 +1177,16 @@
                       d! $ :: :states cursor $ assoc-in state ([] :controls idx :amplitude) v
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'List 'Dynamic) (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
+            :args $ [] (:: 'List 'Dynamic) (:: 'Map 'Dynamic 'Dynamic) (:: 'Map 'Tag 'Dynamic)
               :: 'List $ :: 'Map 'Tag 'Dynamic
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.harmono-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.util :refer $ [] rand-point rand-color add-path multiply-path
-            [] phlox.comp.slider :refer $ [] comp-slider
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.util :refer $ rand-point rand-color add-path multiply-path
+            phlox.comp.slider :refer $ comp-slider
+            phlox.comp.drag-point :refer $ comp-drag-point
             |@calcit/std :refer $ rand
     'app.comp.oscillo-demo $ %{} 'FileEntry
       :defs $ {}
@@ -1181,47 +1199,56 @@
                     [] idx $ comp-slider (>> states param)
                       {}
                         :value $ option:unwrap $ get state param
-                        :title $ turn-string param
+                        :title $ to-string param
                         :position $ [] (* 140 idx) 0
                         :round? $ get-round? param
-                        :unit $ case-default param 0.1 (:unit 0.001) (:step 1)
+                        :unit $ match param (:unit 0.001) (:step 1) (_ 0.1)
                         :on-change $ fn (value d!)
                           d! $ :: :states
                             option:unwrap-or (get states :cursor) nil
-                            assoc state param $ case-default param (js/Math.max 0 value)
-                              :m $ js/Math.max 1 $ js/Math.round value
-                              :n $ js/Math.max 1 $ js/Math.round value
-                              :step $ js/Math.max 1 $ js/Math.round value
+                            assoc state param $ match param
+                              :m $ decode-map-as
+                                js/Math.max 1 $ js/Math.round value
+                                , 'Number
+                              :n $ decode-map-as
+                                js/Math.max 1 $ js/Math.round value
+                                , 'Number
+                              :step $ decode-map-as
+                                js/Math.max 1 $ js/Math.round value
+                                , 'Number
+                              _ $ decode-map-as (js/Math.max 0 value) 'Number
               comp-button $ {} (:text |Random)
                 :position $ [] 580 0
                 :on-pointertap $ fn (e d!)
                   d! $ :: :states
                     option:unwrap-or (get states :cursor) nil
                     {}
-                      :m $ rand-int 40
-                      :n $ rand-int 40
+                      :m $ decode-map-as (rand-int 40) 'Number
+                      :n $ decode-map-as (rand-int 40) 'Number
                       :step 500
                       :unit 0.01
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
+            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
             :features $ #{} :js-ffi
         'comp-oscillo-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-oscillo-demo (states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  , initial-state
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    , initial-state
+                  :: 'Map 'Tag 'Dynamic
               container ({})
                 graphics $ {}
                   :position $ [] 400 360
                   :ops $ let
-                      step $ option:unwrap-or (get state :step) nil
+                      step $ app.util/state-number state :step
                       r 200
-                      m $ option:unwrap-or (get state :m) nil
-                      n $ option:unwrap-or (get state :n) nil
-                      unit $ option:unwrap-or (get state :unit) nil
+                      m $ app.util/state-number state :m
+                      n $ app.util/state-number state :n
+                      unit $ app.util/state-number state :unit
                       trail $ -> (range step)
                         map $ fn (idx)
                           let
@@ -1240,7 +1267,7 @@
                 comp-oscillo-control state states
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
         'get-round? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-round? (param) (not= param :unit)
@@ -1255,10 +1282,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.oscillo-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.util :refer $ [] rand-point rand-color
-            [] phlox.comp.button :refer $ [] comp-button
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.util :refer $ rand-point rand-color
+            phlox.comp.button :refer $ comp-button
+            phlox.comp.slider :refer $ comp-slider
             |@calcit/std :refer $ rand rand-int
     'app.comp.rects-demo $ %{} 'FileEntry
       :defs $ {} $ 'comp-rects-demo
@@ -1279,38 +1306,44 @@
                             {} $ :position $ [] (* x 60) (* y 60)
                             rect $ {}
                               :size $ []
-                                * 15 $ rand-int 16
-                                * 15 $ rand-int 16
-                              :angle $ * 45 $ rand-int 4
+                                * 15 $ decode-map-as (rand-int 16) 'Number
+                                * 15 $ decode-map-as (rand-int 16) 'Number
+                              :angle $ * 45 $ decode-map-as (rand-int 4) 'Number
                               :position $ []
-                                * 15 $ rand-int 4
-                                * 15 $ rand-int 4
+                                * 15 $ decode-map-as (rand-int 4) 'Number
+                                * 15 $ decode-map-as (rand-int 4) 'Number
                               :line-style $ {}
-                                :color $ rand $ hslx 0 0 100
-                                :width $ rand-int 4
+                                :color $ decode-map-as
+                                  rand $ hslx 0 0 100
+                                  , 'Number
+                                :width $ decode-map-as (rand-int 4) 'Number
                                 :alpha 1
                               :alpha 1
                             rect $ {}
                               :size $ []
-                                * 15 $ rand-int 5
-                                * 15 $ rand-int 5
+                                * 15 $ decode-map-as (rand-int 5) 'Number
+                                * 15 $ decode-map-as (rand-int 5) 'Number
                               :position $ []
-                                * 15 $ rand-int 6
-                                * 15 $ rand-int 6
-                              :fill $ rand $ hslx 0 0 100
-                              :angle $ * 45 $ rand-int 4
+                                * 15 $ decode-map-as (rand-int 6) 'Number
+                                * 15 $ decode-map-as (rand-int 6) 'Number
+                              :fill $ decode-map-as
+                                rand $ hslx 0 0 100
+                                , 'Number
+                              :angle $ * 45 $ decode-map-as (rand-int 4) 'Number
                               :alpha 0.9
                             rect $ {}
                               :size $ []
-                                * 15 $ inc $ rand-int 2
-                                * 15 $ inc $ rand-int 2
+                                * 15 $ inc $ decode-map-as (rand-int 2) 'Number
+                                * 15 $ inc $ decode-map-as (rand-int 2) 'Number
                               :position $ []
-                                * 15 $ rand-int 16
-                                * 15 $ rand-int 16
-                              :angle $ * 45 $ rand-int 4
-                              :alpha $ rand 1
+                                * 15 $ decode-map-as (rand-int 16) 'Number
+                                * 15 $ decode-map-as (rand-int 16) 'Number
+                              :angle $ * 45 $ decode-map-as (rand-int 4) 'Number
+                              :alpha $ decode-map-as (rand 1) 'Number
                               :line-style $ {}
-                                :color $ rand $ hslx 0 0 100
+                                :color $ decode-map-as
+                                  rand $ hslx 0 0 100
+                                  , 'Number
                                 :width 2
                                 :alpha 1
               comp-reset $ [] -40 40
@@ -1321,9 +1354,9 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.rects-demo
           :require
-            [] phlox.core :refer $ [] defcomp hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point
+            phlox.core :refer $ defcomp hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point
             |@calcit/std :refer $ rand rand-int
     'app.comp.reset $ %{} 'FileEntry
       :defs $ {} $ 'comp-reset
@@ -1350,37 +1383,39 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.reset
           :require
-            [] phlox.core :refer $ [] defcomp hslx rect circle text container graphics create-list
-            [] app.style :as style
+            phlox.core :refer $ defcomp hslx rect circle text container graphics create-list
+            app.style :as style
     'app.comp.rotate-demo $ %{} 'FileEntry
       :defs $ {}
         'comp-rotate-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-rotate-demo (states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  {}
-                    :points $ -> (range 12)
-                      map $ fn (idx)
-                        []
-                          + 200 $ rand 100
-                          rand 100
-                    :steps 18
-                    :base 20
-                    :alpha 1
-                points $ unsafe-coerce
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    {}
+                      :points $ -> (range 12)
+                        map $ fn (idx)
+                          []
+                            + 200 $ decode-map-as (rand 100) 'Number
+                            decode-map-as (rand 100) 'Number
+                      :steps 18
+                      :base 20
+                      :alpha 1
+                  :: 'Map 'Tag 'Dynamic
+                points $ decode-map-as
                   option:unwrap-or (get state :points) nil
                   :: 'List $ :: 'List 'Number
               container
                 {} $ :position $ [] 240 400
                 create-list :container ({})
                   ->
-                    range $ option:unwrap-or (get state :steps) nil
+                    range $ app.util/state-number state :steps
                     map $ fn (idx)
                       [] idx $ graphics $ {}
-                        :ops $ gen-trail points $ option:unwrap-or (get state :alpha) nil
-                        :angle $ * idx $ option:unwrap-or (get state :base) nil
+                        :ops $ gen-trail points $ app.util/state-number state :alpha
+                        :angle $ * idx $ app.util/state-number state :base
                 create-list :container ({})
                   -> points $ map-indexed $ fn (idx point)
                     [] idx $ comp-drag-point (app.util/child-states states idx)
@@ -1399,21 +1434,26 @@
                     map-indexed $ fn (idx param)
                       [] param $ comp-slider (app.util/child-states states param)
                         {}
-                          :title $ turn-string param
+                          :title $ to-string param
                           :value $ option:unwrap $ get state param
-                          :unit $ case-default param 1 (:steps 0.4) (:alpha 0.004) (:base 0.2)
+                          :unit $ match param (:steps 0.4) (:alpha 0.004) (:base 0.2) (_ 1)
                           :round? $ get-round? param
                           :on-change $ fn (v d!)
                             d! $ :: :states cursor $ assoc state param
-                              case-default param v
-                                :steps $ js/Math.max 1 $ js/Math.round v
-                                :alpha $ js/Math.max 0 $ js/Math.min 1 v
+                              match param
+                                :steps $ decode-map-as
+                                  js/Math.max 1 $ js/Math.round v
+                                  , 'Number
+                                :alpha $ decode-map-as
+                                  js/Math.max 0 $ js/Math.min 1 v
+                                  , 'Number
+                                _ v
                           :position $ []
                             + -400 $ * idx 140
                             , -440
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
         'gen-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn gen-trail (points alpha)
@@ -1460,11 +1500,11 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.rotate-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
-            [] phlox.comp.slider :refer $ [] comp-slider
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point
+            phlox.comp.drag-point :refer $ comp-drag-point
+            phlox.comp.slider :refer $ comp-slider
             |@calcit/std :refer $ rand rand-int
     'app.comp.satellite-demo $ %{} 'FileEntry
       :defs $ {}
@@ -1472,7 +1512,7 @@
           :code $ quote $ defcomp comp-number-controls (state states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
-                selected $ get state :selected
+                selected $ app.util/state-number state :selected
                 segment $ get-in state $ [] :segments selected
               container ({})
                 comp-slider (>> states :unit)
@@ -1485,38 +1525,34 @@
                       d! $ :: :states cursor $ assoc state :unit result
                 comp-slider (>> states :selected)
                   {}
-                    :value $ option:unwrap-or (get state :selected) nil
+                    :value $ app.util/state-number state :selected
                     :position $ [] 140 0
                     :unit 0.1
                     :round? true
                     :min 0
                     :max $ dec $ count
-                      option:unwrap-or (get state :segments) nil
+                      decode-map-as
+                        option:unwrap-or (get state :segments) nil
+                        :: 'List $ :: 'List 'Number
                     :title |selected
                     :on-change $ fn (result d!)
                       d! $ :: :states cursor $ assoc state :selected result
                 comp-slider (>> states :from)
                   {}
                     :value $ option:unwrap $ get-in state
-                      [] :segments
-                        option:unwrap-or (get state :selected) nil
-                        , 0
+                      [] :segments (app.util/state-number state :selected) 0
                     :position $ [] 280 0
                     :unit 1
                     :round? true
                     :title "|from angle"
                     :on-change $ fn (result d!)
                       d! $ :: :states cursor $ assoc-in state
-                        [] :segments
-                          option:unwrap-or (get state :selected) nil
-                          , 0
+                        [] :segments (app.util/state-number state :selected) 0
                         , result
                 comp-slider (>> states :to)
                   {}
                     :value $ option:unwrap $ get-in state
-                      [] :segments
-                        option:unwrap-or (get state :selected) nil
-                        , 1
+                      [] :segments (app.util/state-number state :selected) 1
                     :position $ [] 420 0
                     :unit 1
                     :round? true
@@ -1525,9 +1561,7 @@
                     :title |range
                     :on-change $ fn (result d!)
                       d! $ :: :states cursor $ assoc-in state
-                        [] :segments
-                          option:unwrap-or (get state :selected) nil
-                          , 1
+                        [] :segments (app.util/state-number state :selected) 1
                         , result
                 comp-button $ {} (:text |Add)
                   :position $ [] 600 0
@@ -1536,9 +1570,13 @@
                       d! $ :: :states cursor $ -> state
                         update :segments $ fn (xs)
                           let
-                              segments $ unsafe-coerce xs $ :: 'List (:: 'List 'Number)
-                            conj segments $ [] (rand-int 360) (rand-int 360)
-                        assoc :selected $ count $ option:unwrap-or (get state :segments) nil
+                              segments $ decode-map-as xs $ :: 'List (:: 'List 'Number)
+                            conj segments $ []
+                              decode-map-as (rand-int 360) 'Number
+                              decode-map-as (rand-int 360) 'Number
+                        assoc :selected $ count $ decode-map-as
+                          option:unwrap-or (get state :segments) nil
+                          :: 'List $ :: 'List 'Number
                 comp-button $ {} (:text |Remove)
                   :position $ [] 660 0
                   :on $ {} $ :pointertap
@@ -1546,46 +1584,51 @@
                       d! $ :: :states cursor $ -> state
                         update :segments $ fn (xs)
                           let
-                              segments $ unsafe-coerce xs $ :: 'List (:: 'List 'Number)
+                              segments $ decode-map-as xs $ :: 'List (:: 'List 'Number)
                             if
                               < (count segments) 2
                               , segments $ butlast segments
                         assoc :selected 0
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Tag 'Dynamic)
+            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
             :features $ #{} :js-ffi
         'comp-satellite-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-satellite-demo (states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  {} (:unit 20)
-                    :segments $ [] ([] 0 100) ([] 50 200) ([] 100 180)
-                    :selected 0
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    {} (:unit 20)
+                      :segments $ [] ([] 0 100) ([] 50 200) ([] 100 180)
+                      :selected 0
+                  :: 'Map 'Tag 'Dynamic
                 ratio $ * phlox.math/ffi-pi $ / 1 180
-                rad $ fn (x) (* x ratio)
+                rad $ fn (x)
+                  hint-fn $ {}
+                    :args $ [] 'Number
+                    :return 'Number
+                  * x ratio
               container ({}) (comp-number-controls state states)
                 create-list :container
                   {} $ :position $ [] 400 400
                   ->
-                    unsafe-coerce
+                    decode-map-as
                       option:unwrap-or (get state :segments) nil
                       :: 'List $ :: 'List 'Number
                     map-indexed $ fn (idx segment)
                       [] idx $ let
-                          r $ + 10 $ * idx
-                            option:unwrap-or (get state :unit) nil
+                          r $ + 10 $ * idx (app.util/state-number state :unit)
                         graphics $ {} $ :ops
                           []
                             g :line-style $ {}
                               :color $ if
-                                = idx $ option:unwrap-or (get state :selected) nil
+                                = idx $ app.util/state-number state :selected
                                 hslx 0 0 100
                                 hslx 20 80 70
                               :width $ if
-                                = idx $ option:unwrap-or (get state :selected) nil
+                                = idx $ app.util/state-number state :selected
                                 , 2 2
                               :alpha 1
                             ; g :begin-fill $ {} $ :color (hslx 20 80 70)
@@ -1601,7 +1644,7 @@
                               :center $ [] 0 0
                               :radius r
                               :angle $ let
-                                  segment $ unsafe-coerce
+                                  segment $ decode-map-as
                                     option:unwrap $ get-in state $ [] :segments idx
                                     :: 'List 'Number
                                   a $ option:unwrap-or (first segment) 0
@@ -1620,16 +1663,16 @@
                             g :end-fill nil
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.satellite-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point
-            [] phlox.comp.slider :refer $ [] comp-slider
-            [] phlox.comp.button :refer $ [] comp-button
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point
+            phlox.comp.slider :refer $ comp-slider
+            phlox.comp.button :refer $ comp-button
             |@calcit/std :refer $ rand rand-int
     'app.comp.snowflake-demo $ %{} 'FileEntry
       :defs $ {}
@@ -1637,11 +1680,13 @@
           :code $ quote $ defcomp comp-snowflake-demo (states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  {} (:steps 1)
-                    :points $ [] ([] 0 300) ([] 140 300)
-                    :shaking? false
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    {} (:steps 1)
+                      :points $ [] ([] 0 300) ([] 140 300)
+                      :shaking? false
+                  :: 'Map 'Tag 'Dynamic
               container ({})
                 container
                   {} $ :position $ [] -100 -60
@@ -1656,7 +1701,7 @@
                               :return 'Dynamic
                               :features $ #{} :js-ffi
                             let
-                                ps $ unsafe-coerce points $ :: 'List (:: 'List 'Number)
+                                ps $ decode-map-as points $ :: 'List (:: 'List 'Number)
                                 tail $ option:unwrap-or (last ps) ([] 0 0)
                               conj (butlast ps)
                                 add-path tail $ [] -80 -60
@@ -1672,7 +1717,7 @@
                               :return 'Dynamic
                               :features $ #{} :js-ffi
                             let
-                                ps $ unsafe-coerce points $ :: 'List (:: 'List 'Number)
+                                ps $ decode-map-as points $ :: 'List (:: 'List 'Number)
                               if
                                 <= (count ps) 2
                                 , ps $ conj
@@ -1680,19 +1725,23 @@
                                   option:unwrap-or (last ps) ([] 0 0)
                   comp-slider (app.util/child-states states :steps)
                     {}
-                      :value $ option:unwrap-or (get state :steps) nil
+                      :value $ app.util/state-number state :steps
                       :position $ [] 80 0
                       :unit 0.1
                       :title |Steps
                       :min 0
                       :max $ if
-                        >= 3 $ count $ option:unwrap-or (get state :points) nil
+                        >= 3 $ count $ decode-map-as
+                          option:unwrap-or (get state :points) nil
+                          :: 'List $ :: 'List 'Number
                         , 12 6
                       :round? true
                       :on-change $ fn (value d!)
                         d! $ :: :states cursor $ assoc state :steps value
                   comp-switch $ {}
-                    :value $ option:unwrap-or (get state :shaking?) nil
+                    :value $ decode-map-as
+                      option:unwrap-or (get state :shaking?) nil
+                      , 'Bool
                     :position $ [] 200 0
                     :title |Shake
                     :on-change $ fn (v d!)
@@ -1701,11 +1750,13 @@
                   :position $ [] 0 0
                   :ops $ let
                       trail $ fold-curve
-                        unsafe-coerce
+                        decode-map-as
                           option:unwrap-or (get state :points) nil
                           :: 'List $ :: 'List 'Number
-                        option:unwrap-or (get state :steps) nil
-                        option:unwrap-or (get state :shaking?) nil
+                        app.util/state-number state :steps
+                        decode-map-as
+                          option:unwrap-or (get state :shaking?) nil
+                          , 'Bool
                     concat
                       []
                         g :move-to $ option:unwrap-or (first trail) ([] 0 0)
@@ -1717,7 +1768,7 @@
                         map-indexed $ fn (idx point) (g :line-to point)
                 create-list :container ({})
                   ->
-                    unsafe-coerce
+                    decode-map-as
                       option:unwrap-or (get state :points) nil
                       :: 'List $ :: 'List 'Number
                     map-indexed $ fn (idx point)
@@ -1730,7 +1781,7 @@
                             d! $ :: :states cursor $ assoc-in state ([] :points idx) position
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
         'fold-curve $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn fold-curve (points steps shaking?)
@@ -1749,7 +1800,7 @@
                   acc points
                 if (<= t 0) acc $ recur (dec t)
                   let
-                      acc-vec $ unsafe-coerce acc $ :: 'List (:: 'List 'Number)
+                      acc-vec acc
                     concat
                       [] $ option:unwrap-or (first acc-vec) ([] 0 0)
                       -> (rest acc-vec)
@@ -1759,9 +1810,7 @@
                             :return $ :: 'List $ :: 'List 'Number
                             :features $ #{} :js-ffi
                           let
-                              from $ unsafe-coerce
-                                option:unwrap-or (get acc-vec idx) nil
-                                :: 'List 'Number
+                              from $ option:unwrap $ get acc-vec idx
                             -> template-points $ map $ fn (pi)
                               hint-fn $ {}
                                 :args $ [] $ :: 'List 'Number
@@ -1788,13 +1837,13 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.snowflake-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> hslx g rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
-            [] app.util :refer $ [] rand-point add-path subtract-path divide-x multiply-path divide-path invert-y
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
-            [] phlox.comp.button :refer $ [] comp-button
-            [] phlox.comp.slider :refer $ [] comp-slider
-            [] phlox.comp.switch :refer $ [] comp-switch
+            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
+            app.util :refer $ rand-point add-path subtract-path divide-x multiply-path divide-path invert-y
+            phlox.comp.drag-point :refer $ comp-drag-point
+            phlox.comp.button :refer $ comp-button
+            phlox.comp.slider :refer $ comp-slider
+            phlox.comp.switch :refer $ comp-switch
     'app.comp.sun-demo $ %{} 'FileEntry
       :defs $ {}
         'comp-sun-demo $ %{} 'CodeEntry (:doc |)
@@ -1830,8 +1879,7 @@
                     x2 $ + x1 $ + 4
                       * 8 $ phlox.core/ffi-random
                   recur
-                    conj
-                      unsafe-coerce acc $ :: 'List 'Dynamic
+                    conj acc
                       g :line-style $ {}
                         :color $ * (phlox.core/ffi-random) (hslx 0 0 100)
                         :width $ if (< x2 160) 2 3
@@ -1847,46 +1895,54 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.sun-demo
           :require
-            [] phlox.core :refer $ [] defcomp g hslx rect circle text container graphics create-list
-            [] app.comp.reset :refer $ [] comp-reset
+            phlox.core :refer $ defcomp g hslx rect circle text container graphics create-list
+            app.comp.reset :refer $ comp-reset
     'app.comp.tree-demo $ %{} 'FileEntry
       :defs $ {}
         'comp-tree-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-tree-demo (states)
             let
                 cursor $ option:unwrap-or (get states :cursor) nil
-                state $ or
-                  option:unwrap-or (get states :data) nil
-                  {}
-                    :p1 $ [] 0.7 0.2
-                    :p2 $ [] 0.84 0.15
-                    :p0 $ [] 3 -80
-                p0 $ option:unwrap-or (get state :p0) nil
+                state $ decode-map-as
+                  or
+                    option:unwrap-or (get states :data) nil
+                    {}
+                      :p1 $ [] 0.7 0.2
+                      :p2 $ [] 0.84 0.15
+                      :p0 $ [] 3 -80
+                  :: 'Map 'Tag 'Dynamic
+                p0 $ decode-map-as
+                  option:unwrap-or (get state :p0) nil
+                  :: 'List 'Number
                 base $ subtract-path ([] 0 0) p0
                 factor-1 $ divide-path
-                  option:unwrap-or (get state :p1) nil
+                  decode-map-as
+                    option:unwrap-or (get state :p1) nil
+                    :: 'List 'Number
                   , base
                 factor-2 $ divide-path
-                  option:unwrap-or (get state :p2) nil
+                  decode-map-as
+                    option:unwrap-or (get state :p2) nil
+                    :: 'List 'Number
                   , base
               container
                 {} $ :position $ [] 0 200
                 graphics $ {}
                   :position $ [] 0 0
                   :ops $ let
-                      trail $ unsafe-coerce
-                        []
-                          [] :move-to $ [] 0 0
-                          [] :line-style $ {}
-                            :color $ hslx 0 0 100
-                            :width 1
-                            :alpha 1
-                          [] :line-to p0
-                        :: 'List 'Dynamic
+                      trail $ []
+                        [] :move-to $ [] 0 0
+                        [] :line-style $ {}
+                          :color $ hslx 0 0 100
+                          :width 1
+                          :alpha 1
+                        [] :line-to p0
                     concat trail $ generate-branches p0 base 0 factor-1 factor-2
                 comp-drag-point (>> states :p1)
                   {}
-                    :position $ option:unwrap-or (get state :p1) nil
+                    :position $ decode-map-as
+                      option:unwrap-or (get state :p1) nil
+                      :: 'List 'Number
                     :radius 10
                     :fill $ hslx 200 80 60
                     :alpha 0.4
@@ -1894,7 +1950,9 @@
                       d! $ :: :states cursor $ assoc state :p1 position
                 comp-drag-point (>> states :p2)
                   {}
-                    :position $ option:unwrap-or (get state :p2) nil
+                    :position $ decode-map-as
+                      option:unwrap-or (get state :p2) nil
+                      :: 'List 'Number
                     :title |end
                     :radius 10
                     :alpha 0.4
@@ -1903,7 +1961,9 @@
                       d! $ :: :states cursor $ assoc state :p2 position
                 comp-drag-point (>> states :p0)
                   {}
-                    :position $ option:unwrap-or (get state :p0) nil
+                    :position $ decode-map-as
+                      option:unwrap-or (get state :p0) nil
+                      :: 'List 'Number
                     :title |from
                     :radius 10
                     :alpha 0.5
@@ -1912,7 +1972,7 @@
                       d! $ :: :states cursor $ assoc state :p0 position
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
+            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
             :features $ #{} :js-ffi
         'generate-branches $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-branches (from arrow level factor-1 factor-2)
@@ -1920,9 +1980,7 @@
                 next-from $ add-path from arrow
                 next-p1 $ add-path next-from $ multiply-path factor-1 arrow
                 next-p2 $ add-path next-from $ multiply-path factor-2 arrow
-                trail $ unsafe-coerce
-                  [] (g :move-to next-p1) (g :line-to next-from) (g :line-to next-p2)
-                  :: 'List 'Dynamic
+                trail $ [] (g :move-to next-p1) (g :line-to next-from) (g :line-to next-p2)
                 too-deep? $ or (> level 8)
                   < (rough-size arrow) 4
               if too-deep? trail $ concat trail
@@ -1932,28 +1990,30 @@
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'Number) (:: 'List 'Number) 'Number (:: 'List 'Number) (:: 'List 'Number)
             :features $ #{} :js-ffi
-            :return $ :: 'List 'Dynamic
+            :return $ :: 'List $ :: 'List 'Dynamic
         'should-shrink? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn should-shrink? (level)
             cond
                 < level 4
                 , false
               (> level 8) true
-              true $ > (rand 2) 1.4
+              true $ >
+                decode-map-as (rand 2) 'Number
+                , 1.4
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Bool)
             :args $ [] 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.tree-demo
           :require
-            [] phlox.core :refer $ [] defcomp >> g hslx rect circle text container graphics create-list
-            [] app.util :refer $ [] add-path multiply-path subtract-path divide-path rough-size
-            [] phlox.comp.drag-point :refer $ [] comp-drag-point
+            phlox.core :refer $ defcomp >> g hslx rect circle text container graphics create-list
+            app.util :refer $ add-path multiply-path subtract-path divide-path rough-size
+            phlox.comp.drag-point :refer $ comp-drag-point
             |@calcit/std :refer $ rand
     'app.comp.walking-demo $ %{} 'FileEntry
       :defs $ {}
         '*grid $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *grid ({})
+          :code $ quote $ defref *grid ({})
           :examples $ []
           :schema $ :: 'Ref $ :: 'Map (:: 'List 'Number) 'Bool
         'comp-walking-demo $ %{} 'CodeEntry (:doc |)
@@ -1993,7 +2053,7 @@
                   distinct
               &doseq (p trails)
                 swap! *grid assoc
-                  option:unwrap-or (first p) 0
+                  option:unwrap $ first p
                   , true
               loop
                   idx 120
@@ -2013,7 +2073,9 @@
                     option:unwrap-or (first trail) ([] 0 0)
                     , zoom-in
                   g :line-style $ {}
-                    :color $ rand-int $ hslx 0 0 90
+                    :color $ decode-map-as
+                      rand-int $ hslx 0 0 90
+                      , 'Number
                     :width 2
                     :alpha 1
                 -> trail rest $ map $ fn (stop)
@@ -2062,14 +2124,18 @@
             :return $ :: 'List $ :: 'List (:: 'List 'Number)
         'pick-one $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pick-one (xs)
-            option:unwrap $ nth xs $ rand-int (count xs)
+            option:unwrap $ nth xs $ decode-map-as
+              rand-int $ count xs
+              , 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'A)
             :args $ [] $ :: 'List 'A
             :generics $ [] 'A
         'rand-point $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-point (n)
-            [] (rand-int n) (rand-int n)
+            []
+              decode-map-as (rand-int n) 'Number
+              decode-map-as (rand-int n) 'Number
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] 'Number
@@ -2077,10 +2143,10 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.walking-demo
           :require
-            [] phlox.core :refer $ [] defcomp g hslx rect circle text container graphics create-list
-            [] app.util :refer $ [] add-path multiply-path
-            [] app.comp.reset :refer $ [] comp-reset
-            [] clojure.core.rrb-vector :refer $ [] catvec
+            phlox.core :refer $ defcomp g hslx rect circle text container graphics create-list
+            app.util :refer $ add-path multiply-path
+            app.comp.reset :refer $ comp-reset
+            clojure.core.rrb-vector :refer $ catvec
             |@calcit/std :refer $ rand rand-int rand-nth
     'app.config $ %{} 'FileEntry
       :defs $ {} $ 'site
@@ -2095,7 +2161,7 @@
     'app.main $ %{} 'FileEntry
       :defs $ {}
         '*store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *store schema/store
+          :code $ quote $ defref *store schema/store
           :examples $ []
           :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
@@ -2104,9 +2170,10 @@
               (:states _ _) nil
               _ $ println |dispatch! op
             let
-                op-id $ shortid/generate
+                op-id $ decode-map-as (shortid/generate) 'String
                 op-time $ app.util/ffi-date-now
               reset! *store $ updater @*store (app.schema/normalize-op op) op-id op-time
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Enum
@@ -2115,7 +2182,7 @@
           :code $ quote $ defn main! () (; js/console.log PIXI)
             -> (new FontFaceObserver "|Josefin Sans") (phlox.core/ffi-load-font)
               phlox.core/ffi-then $ fn (e) (render-app!)
-            add-watch *store :change $ fn (s p) (render-app!)
+            add-watch! *store :change $ fn (s p) (render-app!)
             ; println |code $ -> @phlox-core/*app .-renderer .-plugins .-interaction .-interactionFrequency
             when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "|App Started"
@@ -2126,12 +2193,13 @@
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
-              do (clear-phlox-caches!) (remove-watch *store :change)
-                add-watch *store :change $ fn (store prev) (render-app!)
+              do (clear-phlox-caches!) (remove-watch! *store :change)
+                add-watch! *store :change $ fn (store prev) (render-app!)
                 render-app!
                 when mobile? (replace-control-loop! 8 on-control-event) (render-control!)
                 hud! |ok~ |Ok
               hud! |error build-errors
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
@@ -2209,7 +2277,7 @@
             :return $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ [] phlox.cursor :refer $ [] update-states
+          :require $ phlox.cursor :refer $ update-states
     'app.util $ %{} 'FileEntry
       :defs $ {}
         'DateHost $ %{} 'CodeEntry (:doc |)
@@ -2232,34 +2300,20 @@
           :schema $ :: 'Trait
         'add-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn add-path (p1 p2)
-            let-sugar
-                  [] a b
-                  , p1
-                ([] x y) p2
-              [] (+ a x) (+ b y)
+            let[] (a b) p1 $ let[] (x y) p2 $ [] (+ a x) (+ b y)
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'Number) (:: 'List 'Number)
             :return $ :: 'List 'Number
         'child-states $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn child-states (states key)
-            let
-                child-fn $ unsafe-coerce phlox.core/>> $ :: 'Fn
-                  {}
-                    :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
-                    :return $ :: 'Map 'Tag 'Dynamic
-              child-fn states key
+          :code $ quote $ defn child-states (states key) (phlox.core/>> states key)
           :examples $ []
           :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic
-            :features $ #{} :js-ffi
-            :return $ :: 'Map 'Tag 'Dynamic
+            :args $ [] (:: 'Map 'Dynamic 'Dynamic) 'Dynamic
+            :return $ :: 'Map 'Dynamic 'Dynamic
         'divide-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn divide-path (p1 p2)
-            let-sugar
-                  [] x y
-                  , p1
-                ([] a b) p2
+            let[] (x y) p1 $ let[] (a b) p2 $ let
                 inverted $ / 1 $ + (* a a) (* b b)
               []
                 * inverted $ + (* x a) (* y b)
@@ -2283,7 +2337,7 @@
             :return $ :: 'List 'Number
         'ffi-date-now $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-date-now ()
-            .now! $ unsafe-coerce js/Date DateHost
+            decode-map-as (js/Date.now) 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ []
@@ -2293,20 +2347,21 @@
           :examples $ []
           :schema $ :: 'Number
         'ffi-math-e $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn ffi-math-e () (unsafe-coerce js/Math.E Number)
+          :code $ quote $ defn ffi-math-e () (decode-map-as js/Math.E 'Number)
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ []
             :features $ #{} :js-ffi
         'ffi-performance-now $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn ffi-performance-now () (unsafe-coerce js/performance.now Number)
+          :code $ quote $ defn ffi-performance-now ()
+            decode-map-as (js/performance.now) 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ []
             :features $ #{} :js-ffi
         'ffi-pow $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-pow (base exponent)
-            unsafe-coerce (js/Math.pow base exponent) Number
+            decode-map-as (js/Math.pow base exponent) 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] 'Number 'Number
@@ -2320,14 +2375,16 @@
             :features $ #{} :js-ffi
         'ffi-round $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-round (value)
-            unsafe-coerce (js/Math.round value) Number
+            decode-map-as (js/Math.round value) 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] 'Number
             :features $ #{} :js-ffi
         'first-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn first-list (xs)
-            option:unwrap-or (first xs) (repeat nil 0)
+            match (first xs)
+              (:none) ([])
+              (:some child) child
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] $ :: 'List (:: 'List 'A)
@@ -2342,7 +2399,9 @@
             :return $ :: 'List 'Number
         'last-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn last-list (xs)
-            option:unwrap-or (last xs) (repeat nil 0)
+            match (last xs)
+              (:none) ([])
+              (:some child) child
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] $ :: 'List (:: 'List 'A)
@@ -2350,25 +2409,24 @@
             :return $ :: 'List 'A
         'multiply-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn multiply-path (p1 p2)
-            let-sugar
-                  [] a b
-                  , p1
-                ([] x y) p2
-              []
-                - (* a x) (* b y)
-                + (* a y) (* b x)
+            let[] (a b) p1 $ let[] (x y) p2 $ []
+              - (* a x) (* b y)
+              + (* a y) (* b x)
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'Number) (:: 'List 'Number)
             :return $ :: 'List 'Number
         'rand-color $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn rand-color () (rand-int 0xffffff)
+          :code $ quote $ defn rand-color ()
+            decode-map-as (rand-int 0xffffff) 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ []
         'rand-nth $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-nth (xs)
-            option:unwrap $ nth xs $ rand-int (count xs)
+            option:unwrap $ nth xs $ decode-map-as
+              rand-int $ count xs
+              , 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'A)
             :args $ [] $ :: 'List 'A
@@ -2376,16 +2434,14 @@
         'rand-point $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-point (n & ms)
             let
-                m $ unsafe-coerce
-                  option:unwrap-or (first ms) n
-                  , 'Number
+                m $ option:unwrap-or (first ms) n
               []
                 -
                   ffi-round $ * 0.2 n
-                  rand-int n
+                  decode-map-as (rand-int n) 'Number
                 -
                   ffi-round $ * 0.2 m
-                  rand-int m
+                  decode-map-as (rand-int m) 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:rest 'Number)
             :args $ [] 'Number
@@ -2397,13 +2453,17 @@
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
             :args $ [] $ :: 'List 'Number
+        'state-number $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn state-number (state key)
+            decode-map-as
+              option:unwrap-or (get state key) nil
+              , 'Number
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Number)
+            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Tag
         'subtract-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn subtract-path (p1 p2)
-            let-sugar
-                  [] a b
-                  , p1
-                ([] x y) p2
-              [] (- a x) (- b y)
+            let[] (a b) p1 $ let[] (x y) p2 $ [] (- a x) (- b y)
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ [] (:: 'List 'Number) (:: 'List 'Number)
