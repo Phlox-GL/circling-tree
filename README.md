@@ -8,7 +8,7 @@ Circling Tree(WIP)
 
 WIP
 
-使用配对 Calcit/procs 0.30.1-alpha.4、Node.js 24 与 Yarn 4.18.0；0.30.1 尚无稳定版，不将 alpha 写成正式版。模块要求 Phlox 0.7.15、Touch Control 0.0.31、js-ffi 0.2.3；迁移分支需等 Phlox 0.7.15 正式 tag 发布后才可独立安装。仅维护 `calcit.cirru` / `deps.cirru`，CI 禁止旧 `compact.cirru` / `package.cirru` 回流。
+使用配对 Calcit/procs 0.30.1-alpha.4、Node.js 24 与 Yarn 4.18.0；0.30.1 尚无稳定版，不将 alpha 写成正式版。模块固定正式 tag Phlox 0.7.15、Touch Control 0.0.31、js-ffi 0.2.3。仅维护 `calcit.cirru` / `deps.cirru`，CI 禁止旧 `compact.cirru` / `package.cirru` 回流。
 
 ```bash
 caps --strict --ci
