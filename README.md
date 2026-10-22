@@ -10,6 +10,8 @@ WIP
 
 使用配对正式 Calcit/procs 0.30.1、Node.js 24 与 Yarn 4.18.0。模块固定已发布正式 tag Phlox 0.7.16、Touch Control 0.0.32、js-ffi 0.2.5，严格 Caps 安装，不使用本地候选或提交 hash。应用 Snapshot、绘图公式、状态合同及已有 `hud!` 热更新提示保持不变。仅维护 `calcit.cirru` / `deps.cirru`，CI 禁止旧 `compact.cirru` / `package.cirru` 回流。
 
+Pixi 保持 7.x，固定正式 7.4.3：旧 7.2.4 的 assets 包要求 umbrella 包未提供的 utils peer，7.4.3 已修正该声明。复用上游正式修复，不加 packageExtensions、重复 utils 依赖或忽略 peer 警告；升级后的实际图形仍需单独验收。
+
 ```bash
 caps --strict --ci
 yarn install --immutable
