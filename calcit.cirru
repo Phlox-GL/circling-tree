@@ -2289,15 +2289,6 @@
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :now! |now
           :schema $ :: 'Trait
-        'FullscreenHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait FullscreenHost
-            .request-fullscreen! $ :: 'Fn $ {}
-              :args $ [] 'app.util/FullscreenHost
-              :return 'Dynamic
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
-            :names $ {} $ :request-fullscreen! |requestFullscreen
-          :schema $ :: 'Trait
         'add-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn add-path (p1 p2)
             let[] (a b) p1 $ let[] (x y) p2 $ [] (+ a x) (+ b y)
@@ -2368,9 +2359,9 @@
             :features $ #{} :js-ffi
         'ffi-request-fullscreen $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-request-fullscreen (target)
-            .request-fullscreen! $ unsafe-coerce target FullscreenHost
+            browser/element-request-fullscreen! $ browser/element-host target
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'ffi-round $ %{} 'CodeEntry (:doc |)
@@ -2470,4 +2461,6 @@
             :return $ :: 'List 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.util
-          :require $ |@calcit/std :refer $ rand rand-int
+          :require
+            |@calcit/std :refer $ rand rand-int
+            js-ffi.browser :as browser
