@@ -8,7 +8,15 @@ Circling Tree(WIP)
 
 WIP
 
-使用配对正式 Calcit/procs 0.30.1、Node.js 24 与 Yarn 4.18.0。模块固定已发布正式 tag Phlox 0.7.16、Touch Control 0.0.32、js-ffi 0.2.5，严格 Caps 安装，不使用本地候选或提交 hash。绘图公式、状态合同及已有 `hud!` 热更新提示保持不变；全屏边界复用 JS-FFI 的真实 DOM 校验及 Unit 适配器，删除本地重复 trait 和最后一处 unsafe。仅维护 `calcit.cirru` / `deps.cirru`，CI 禁止旧 `compact.cirru` / `package.cirru` 回流。
+使用配对正式 Calcit/procs 0.30.1、Node.js 24 与 Yarn 4.18.0。模块固定已发布正式 tag Phlox 0.7.18、Touch Control 0.0.33、js-ffi 0.2.6，严格 Caps 安装，不使用本地候选或提交 hash。绘图公式、状态合同及已有 `hud!` 热更新提示保持不变；全屏边界复用 JS-FFI 的真实 DOM 校验及 Unit 适配器，删除本地重复 trait 和最后一处 unsafe。仅维护 `calcit.cirru` / `deps.cirru`，CI 禁止旧 `compact.cirru` / `package.cirru` 回流。
+
+本轮把源码85处 `option:unwrap-or` 与30处 `option:unwrap` 改为公开
+`.unwrap-or` / `.unwrap`，并将9处已声明或解码为List的 `count` 改为公开 `.len`。
+仅替换调用头，不改参数、默认值、随机调用或求值顺序。
+完整核对104个定义及附着元数据；原项目没有附着测试或examples，不把空测试当验收。
+严格消费者需整图更新并重新生成JS，不混装旧模块。Pointed Prompt 正常输入提交不变，
+异常宿主 value 不再静默回落为空串。既有 IAB 静态标题可见性问题仍按 Phlox #71 跟踪，
+不因为依赖升级宣称已修复，也不添加 renderer 缓存绕过。
 
 Pixi 保持 7.x，固定正式 7.4.3：旧 7.2.4 的 assets 包要求 umbrella 包未提供的 utils peer，7.4.3 已修正该声明。复用上游正式修复，不加 packageExtensions、重复 utils 依赖或忽略 peer 警告；升级后的实际图形仍需单独验收。
 
