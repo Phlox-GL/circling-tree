@@ -55,7 +55,7 @@ jobs:
         test ! -e compact.cirru
         test ! -e package.cirru
         calcit calcit.cirru edit format
-        git diff --exit-code -- calcit.cirru
+        git diff --quiet --exit-code -- calcit.cirru
         calcit calcit.cirru --check-only --all-defs
         calcit calcit.cirru --check-only \
           --ns app.comp.bezier-demo --ns app.comp.chars-demo \
@@ -95,6 +95,15 @@ jobs:
       run: |
         set -euo pipefail
         yarn build
+
+    - name: Retain tested PR preview
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v7.0.0
+      with:
+        name: circling-tree-preview
+        path: dist
+        if-no-files-found: error
+        retention-days: 7
 
     - name: Check current production revision
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'

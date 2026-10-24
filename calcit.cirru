@@ -13,10 +13,10 @@
         'comp-bezier-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-bezier-demo (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     {}
                       :points $ [] ([] 40 100) ([] 200 100) ([] 200 400) ([] 40 400)
                       :n 80
@@ -26,7 +26,7 @@
                   :position $ [] 0 0
                   :ops $ let[] (p1 p2 q1 q2)
                     decode-map-as
-                      option:unwrap-or (get state :points) nil
+                      .unwrap-or (get state :points) nil
                       :: 'List $ :: 'List 'Number
                     let
                         n $ app.util/state-number state :n
@@ -34,7 +34,7 @@
                 create-list :container ({})
                   ->
                     decode-map-as
-                      option:unwrap-or (get state :points) nil
+                      .unwrap-or (get state :points) nil
                       :: 'List $ :: 'List 'Number
                     map-indexed $ fn (idx point)
                       [] idx $ comp-drag-point (app.util/child-states states idx)
@@ -238,8 +238,8 @@
           :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
         'rand-stroke $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-stroke (strokes)
-            option:unwrap $ nth strokes $ decode-map-as
-              rand-int $ count strokes
+            .unwrap $ nth strokes $ decode-map-as
+              rand-int $ .len strokes
               , 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'T)
@@ -282,10 +282,10 @@
         'comp-chord-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-chord-demo (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     {} $ :size 20
                   :: 'Map 'Tag 'Dynamic
               container ({})
@@ -438,12 +438,12 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (store)
             let
-                tab $ option:unwrap-or (get store :tab) nil
+                tab $ .unwrap-or (get store :tab) nil
                 states $ decode-map-as
-                  option:unwrap-or (get store :states) nil
+                  .unwrap-or (get store :states) nil
                   :: 'Map 'Dynamic 'Dynamic
                 touch-key $ decode-map-as
-                  option:unwrap-or (get store :touch-key) nil
+                  .unwrap-or (get store :touch-key) nil
                   , 'Nil
               container
                 {} $ :position $ [] -250 -320
@@ -541,10 +541,10 @@
         'comp-cycloid-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-cycloid-demo (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     {} (:r1 312) (:r2 80) (:r3 96) (:r4 20) (:r5 8) (:steps 2000) (:v 0.11) (:round? true)
                   :: 'Map 'Tag 'Dynamic
               container ({}) (comp-numbers-control state states)
@@ -580,7 +580,7 @@
                           :color $ hslx 0 80 70
                           :width 2
                           :alpha 0.7
-                        g :move-to $ option:unwrap-or (first trail) ([] 0 0)
+                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
                       -> trail rest $ mapcat $ fn (p)
                         hint-fn $ {}
                           :args $ [] $ :: 'List 'Number
@@ -593,9 +593,9 @@
         'comp-numbers-control $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-numbers-control (state states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 params $ [] :r1 :r2 :r3 :r4 :r5 :steps :v
-                is-round? $ option:unwrap-or (get state :round?) false
+                is-round? $ .unwrap-or (get state :round?) false
                 rand-value $ fn () $ if is-round?
                   -
                     decode-map-as (rand-int 300) 'Number
@@ -609,7 +609,7 @@
                   -> params $ map-indexed $ fn (idx param)
                     [] idx $ comp-slider (app.util/child-states states idx)
                       {}
-                        :value $ option:unwrap $ get state param
+                        :value $ .unwrap $ get state param
                         :position $ [] (* idx 130) 30
                         :unit $ get-unit param
                         :round? $ if is-round? (get-round? param) false
@@ -726,11 +726,11 @@
                       {}
                         :title $ to-string param
                         :position $ [] (* idx 140) 0
-                        :value $ option:unwrap $ get state param
+                        :value $ .unwrap $ get state param
                         :unit $ match param (:step 0.001) (:steps 10) (_ 1)
                         :on-change $ fn (value d!)
                           d! $ :: :states
-                            option:unwrap-or (get states :cursor) nil
+                            .unwrap-or (get states :cursor) nil
                             assoc state param $ match param
                               :r2 $ decode-map-as
                                 js/Math.max 1 $ js/Math.round value
@@ -750,7 +750,7 @@
                 :position $ [] 580 40
                 :on-pointertap $ fn (e d!)
                   d! $ :: :states
-                    option:unwrap-or (get states :cursor) nil
+                    .unwrap-or (get states :cursor) nil
                     {}
                       :r2 $ decode-map-as (rand-int 200) 'Number
                       :v2 $ decode-map-as (rand 3) 'Number
@@ -767,7 +767,7 @@
             let
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     , initial-state
                   :: 'Map 'Tag 'Dynamic
               container ({})
@@ -795,7 +795,7 @@
                                 * r3 $ phlox.core/ffi-sin $ * t (app.util/state-number state :v3)
                     concat
                       []
-                        g :move-to $ option:unwrap-or (first trail) ([] 0 0)
+                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
                         g :line-style $ {}
                           :color $ hslx 0 80 80
                           :width 2
@@ -877,7 +877,7 @@
                   -> acc
                     group-by $ fn (item)
                       decode-map-as
-                        option:unwrap $ first item
+                        .unwrap $ first item
                         , 'String
                     .map-list $ fn (pair)
                       hint-fn $ {}
@@ -885,15 +885,15 @@
                         :return $ :: 'List $ :: 'List (:: 'List 'Number)
                       ->
                         decode-map-as
-                          option:unwrap $ last pair
+                          .unwrap $ last pair
                           :: 'List $ :: 'List 'Dynamic
                         map $ fn (piece)
                           decode-map-as (slice piece 1)
                             :: 'List $ :: 'List 'Number
                   let
                       result $ iterate-trails points-with-keys
-                      new-points-keys $ option:unwrap $ first result
-                      pieces $ option:unwrap $ last result
+                      new-points-keys $ .unwrap $ first result
+                      pieces $ .unwrap $ last result
                     recur (dec idx) new-points-keys $ concat acc pieces
           :examples $ []
           :schema $ :: 'Fn $ {}
@@ -919,10 +919,10 @@
                     :return $ :: 'List $ :: 'List 'Dynamic
                   []
                     g :move-to $ multiply-path
-                      option:unwrap-or (first stop) ([] 0 0)
+                      .unwrap-or (first stop) ([] 0 0)
                       , zoom-in
                     g :line-to $ multiply-path
-                      option:unwrap-or (last stop) ([] 0 0)
+                      .unwrap-or (last stop) ([] 0 0)
                       , zoom-in
           :examples $ []
           :schema $ :: 'Fn $ {}
@@ -939,9 +939,9 @@
                       :args $ [] $ :: 'List 'Dynamic
                       :return $ :: 'List $ :: 'List (:: 'List 'Dynamic)
                     let
-                        k $ option:unwrap-or (first pair) nil
+                        k $ .unwrap-or (first pair) nil
                         base $ decode-map-as
-                          option:unwrap-or (nth pair 1) nil
+                          .unwrap-or (nth pair 1) nil
                           :: 'List 'Number
                         directions $ expand-directions base
                         available $ -> directions
@@ -949,7 +949,7 @@
                             hint-fn $ {}
                               :args $ [] $ :: 'List 'Number
                               :return 'Bool
-                            option:unwrap-or (get @*grid x) false
+                            .unwrap-or (get @*grid x) false
                           filter $ fn (x)
                             hint-fn $ {}
                               :args $ [] $ :: 'List 'Number
@@ -979,7 +979,7 @@
                       :return 'Bool
                     let
                         point $ decode-map-as
-                          option:unwrap-or (nth pair 1) nil
+                          .unwrap-or (nth pair 1) nil
                           :: 'List 'Number
                         directions $ expand-directions point
                         available $ -> directions $ filter-not
@@ -987,7 +987,7 @@
                             hint-fn $ {}
                               :args $ [] $ :: 'List 'Number
                               :return 'Bool
-                            option:unwrap-or (get @*grid x) false
+                            .unwrap-or (get @*grid x) false
                       empty? available
                 mapcat result app.util/last-list
           :examples $ []
@@ -998,13 +998,13 @@
         'pick-many $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pick-many (xs)
             if
-              = 3 $ count xs
+              = 3 $ .len xs
               match
                 decode-map-as (rand-int 3) 'Number
                 0 $ slice xs 1
                 1 $ []
-                  option:unwrap $ nth xs 0
-                  option:unwrap $ nth xs 2
+                  .unwrap $ nth xs 0
+                  .unwrap $ nth xs 2
                 2 $ slice xs 0 2
                 _ xs
               , xs
@@ -1029,11 +1029,11 @@
           :code $ quote $ defcomp comp-harmono-demo (states)
             let
                 cursor $ decode-map-as
-                  option:unwrap-or (get states :cursor) nil
+                  .unwrap-or (get states :cursor) nil
                   :: 'List 'Dynamic
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     {}
                       :controls $ -> (range 3)
                         map $ fn (i)
@@ -1046,7 +1046,7 @@
                       :base 0.01
                   :: 'Map 'Tag 'Dynamic
                 controls $ decode-map-as
-                  option:unwrap-or (get state :controls) nil
+                  .unwrap-or (get state :controls) nil
                   :: 'List $ :: 'Map 'Tag 'Dynamic
                 trail $ gen-trail controls (app.util/state-number state :steps) (app.util/state-number state :base)
               container
@@ -1057,7 +1057,7 @@
                     :position $ [] 0 80
                     :ops $ concat
                       []
-                        g :move-to $ option:unwrap-or (first trail) ([] 0 0)
+                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
                         g :line-style $ {}
                           :color $ hslx 0 0 100
                           :width 1
@@ -1086,7 +1086,7 @@
                               app.util/ffi-pow app.util/ffi-e $ * -1 (app.util/state-number control :damping) t
                             , 0
                           decode-map-as
-                            option:unwrap-or (get control :amplitude) nil
+                            .unwrap-or (get control :amplitude) nil
                             :: 'List 'Number
                       reduce ([] 0 0) add-path
                   , final-point
@@ -1104,7 +1104,7 @@
               comp-slider (app.util/child-states states :steps)
                 {}
                   :position $ [] 0 0
-                  :value $ option:unwrap-or (get state :steps) nil
+                  :value $ .unwrap-or (get state :steps) nil
                   :unit 10
                   :round? true
                   :min 0
@@ -1114,7 +1114,7 @@
               comp-slider (app.util/child-states states :base)
                 {}
                   :position $ [] 140 0
-                  :value $ option:unwrap-or (get state :base) nil
+                  :value $ .unwrap-or (get state :base) nil
                   :unit 0.001
                   :round? false
                   :min 0
@@ -1131,7 +1131,7 @@
                       app.util/child-states states $ str |frequency: idx
                       {}
                         :position $ [] 140 0
-                        :value $ option:unwrap-or (get control :frequency) nil
+                        :value $ .unwrap-or (get control :frequency) nil
                         :unit 0.1
                         :round? true
                         :min 0
@@ -1142,7 +1142,7 @@
                       app.util/child-states states $ str |phase: idx
                       {}
                         :position $ [] 140 50
-                        :value $ option:unwrap-or (get control :phase) nil
+                        :value $ .unwrap-or (get control :phase) nil
                         :unit 0.1
                         :round? false
                         :min 0
@@ -1153,7 +1153,7 @@
                       app.util/child-states states $ str |damping: idx
                       {}
                         :position $ [] 140 100
-                        :value $ option:unwrap-or (get control :damping) nil
+                        :value $ .unwrap-or (get control :damping) nil
                         :unit 0.01
                         :round? false
                         :min 0
@@ -1172,7 +1172,7 @@
                 [] idx $ comp-drag-point
                   app.util/child-states states $ str |amplitude: idx
                   {}
-                    :position $ option:unwrap-or (get control :amplitude) nil
+                    :position $ .unwrap-or (get control :amplitude) nil
                     :on-change $ fn (v d!)
                       d! $ :: :states cursor $ assoc-in state ([] :controls idx :amplitude) v
           :examples $ []
@@ -1198,14 +1198,14 @@
                   map-indexed $ fn (idx param)
                     [] idx $ comp-slider (>> states param)
                       {}
-                        :value $ option:unwrap $ get state param
+                        :value $ .unwrap $ get state param
                         :title $ to-string param
                         :position $ [] (* 140 idx) 0
                         :round? $ get-round? param
                         :unit $ match param (:unit 0.001) (:step 1) (_ 0.1)
                         :on-change $ fn (value d!)
                           d! $ :: :states
-                            option:unwrap-or (get states :cursor) nil
+                            .unwrap-or (get states :cursor) nil
                             assoc state param $ match param
                               :m $ decode-map-as
                                 js/Math.max 1 $ js/Math.round value
@@ -1221,7 +1221,7 @@
                 :position $ [] 580 0
                 :on-pointertap $ fn (e d!)
                   d! $ :: :states
-                    option:unwrap-or (get states :cursor) nil
+                    .unwrap-or (get states :cursor) nil
                     {}
                       :m $ decode-map-as (rand-int 40) 'Number
                       :n $ decode-map-as (rand-int 40) 'Number
@@ -1234,10 +1234,10 @@
         'comp-oscillo-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-oscillo-demo (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     , initial-state
                   :: 'Map 'Tag 'Dynamic
               container ({})
@@ -1258,7 +1258,7 @@
                               * r $ phlox.core/ffi-sin $ * n t
                     concat
                       []
-                        g :move-to $ option:unwrap-or (first trail) ([] 0 0)
+                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
                         g :line-style $ {}
                           :color $ rand-color
                           :width 2
@@ -1390,10 +1390,10 @@
         'comp-rotate-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-rotate-demo (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     {}
                       :points $ -> (range 12)
                         map $ fn (idx)
@@ -1405,7 +1405,7 @@
                       :alpha 1
                   :: 'Map 'Tag 'Dynamic
                 points $ decode-map-as
-                  option:unwrap-or (get state :points) nil
+                  .unwrap-or (get state :points) nil
                   :: 'List $ :: 'List 'Number
               container
                 {} $ :position $ [] 240 400
@@ -1435,7 +1435,7 @@
                       [] param $ comp-slider (app.util/child-states states param)
                         {}
                           :title $ to-string param
-                          :value $ option:unwrap $ get state param
+                          :value $ .unwrap $ get state param
                           :unit $ match param (:steps 0.4) (:alpha 0.004) (:base 0.2) (_ 1)
                           :round? $ get-round? param
                           :on-change $ fn (v d!)
@@ -1458,33 +1458,33 @@
         'gen-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn gen-trail (points alpha)
             []
-              g :move-to $ option:unwrap $ get points 0
+              g :move-to $ .unwrap $ get points 0
               g :line-style $ {}
                 :color $ hslx 0 100 70
                 :width 2
                 :alpha alpha
               g :bezier-to $ {}
-                :p1 $ option:unwrap $ get points 1
-                :p2 $ option:unwrap $ get points 2
-                :to-p $ option:unwrap $ get points 3
-              g :move-to $ option:unwrap $ get points 4
+                :p1 $ .unwrap $ get points 1
+                :p2 $ .unwrap $ get points 2
+                :to-p $ .unwrap $ get points 3
+              g :move-to $ .unwrap $ get points 4
               g :line-style $ {}
                 :color $ hslx 120 100 70
                 :width 2
                 :alpha alpha
               g :bezier-to $ {}
-                :p1 $ option:unwrap $ get points 5
-                :p2 $ option:unwrap $ get points 6
-                :to-p $ option:unwrap $ get points 7
-              g :move-to $ option:unwrap $ get points 8
+                :p1 $ .unwrap $ get points 5
+                :p2 $ .unwrap $ get points 6
+                :to-p $ .unwrap $ get points 7
+              g :move-to $ .unwrap $ get points 8
               g :line-style $ {}
                 :color $ hslx 240 100 70
                 :width 2
                 :alpha alpha
               g :bezier-to $ {}
-                :p1 $ option:unwrap $ get points 9
-                :p2 $ option:unwrap $ get points 10
-                :to-p $ option:unwrap $ get points 11
+                :p1 $ .unwrap $ get points 9
+                :p2 $ .unwrap $ get points 10
+                :to-p $ .unwrap $ get points 11
           :examples $ []
           :schema $ :: 'Fn $ {}
             :args $ []
@@ -1511,13 +1511,13 @@
         'comp-number-controls $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-number-controls (state states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 selected $ app.util/state-number state :selected
                 segment $ get-in state $ [] :segments selected
               container ({})
                 comp-slider (>> states :unit)
                   {}
-                    :value $ option:unwrap-or (get state :unit) nil
+                    :value $ .unwrap-or (get state :unit) nil
                     :unit 0.1
                     :min 0
                     :title |unit
@@ -1530,16 +1530,16 @@
                     :unit 0.1
                     :round? true
                     :min 0
-                    :max $ dec $ count
+                    :max $ dec $ .len
                       decode-map-as
-                        option:unwrap-or (get state :segments) nil
+                        .unwrap-or (get state :segments) nil
                         :: 'List $ :: 'List 'Number
                     :title |selected
                     :on-change $ fn (result d!)
                       d! $ :: :states cursor $ assoc state :selected result
                 comp-slider (>> states :from)
                   {}
-                    :value $ option:unwrap $ get-in state
+                    :value $ .unwrap $ get-in state
                       [] :segments (app.util/state-number state :selected) 0
                     :position $ [] 280 0
                     :unit 1
@@ -1551,7 +1551,7 @@
                         , result
                 comp-slider (>> states :to)
                   {}
-                    :value $ option:unwrap $ get-in state
+                    :value $ .unwrap $ get-in state
                       [] :segments (app.util/state-number state :selected) 1
                     :position $ [] 420 0
                     :unit 1
@@ -1574,8 +1574,8 @@
                             conj segments $ []
                               decode-map-as (rand-int 360) 'Number
                               decode-map-as (rand-int 360) 'Number
-                        assoc :selected $ count $ decode-map-as
-                          option:unwrap-or (get state :segments) nil
+                        assoc :selected $ .len $ decode-map-as
+                          .unwrap-or (get state :segments) nil
                           :: 'List $ :: 'List 'Number
                 comp-button $ {} (:text |Remove)
                   :position $ [] 660 0
@@ -1586,7 +1586,7 @@
                           let
                               segments $ decode-map-as xs $ :: 'List (:: 'List 'Number)
                             if
-                              < (count segments) 2
+                              < (.len segments) 2
                               , segments $ butlast segments
                         assoc :selected 0
           :examples $ []
@@ -1596,10 +1596,10 @@
         'comp-satellite-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-satellite-demo (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     {} (:unit 20)
                       :segments $ [] ([] 0 100) ([] 50 200) ([] 100 180)
                       :selected 0
@@ -1615,7 +1615,7 @@
                   {} $ :position $ [] 400 400
                   ->
                     decode-map-as
-                      option:unwrap-or (get state :segments) nil
+                      .unwrap-or (get state :segments) nil
                       :: 'List $ :: 'List 'Number
                     map-indexed $ fn (idx segment)
                       [] idx $ let
@@ -1634,7 +1634,7 @@
                             ; g :begin-fill $ {} $ :color (hslx 20 80 70)
                             g :arc $ {}
                               :center $ let
-                                  th $ option:unwrap-or (first segment) 0
+                                  th $ .unwrap-or (first segment) 0
                                 []
                                   * r $ phlox.core/ffi-cos $ rad th
                                   * r $ phlox.core/ffi-sin $ rad th
@@ -1645,15 +1645,15 @@
                               :radius r
                               :angle $ let
                                   segment $ decode-map-as
-                                    option:unwrap $ get-in state $ [] :segments idx
+                                    .unwrap $ get-in state $ [] :segments idx
                                     :: 'List 'Number
-                                  a $ option:unwrap-or (first segment) 0
-                                  b $ option:unwrap-or (last segment) 0
+                                  a $ .unwrap-or (first segment) 0
+                                  b $ .unwrap-or (last segment) 0
                                 [] a $ + a b
                             g :arc $ {}
                               :center $ let
-                                  a $ option:unwrap-or (first segment) 0
-                                  b $ option:unwrap-or (last segment) 0
+                                  a $ .unwrap-or (first segment) 0
+                                  b $ .unwrap-or (last segment) 0
                                   th $ + a b
                                 []
                                   * r $ phlox.core/ffi-cos $ rad th
@@ -1679,10 +1679,10 @@
         'comp-snowflake-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-snowflake-demo (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     {} (:steps 1)
                       :points $ [] ([] 0 300) ([] 140 300)
                       :shaking? false
@@ -1702,7 +1702,7 @@
                               :features $ #{} :js-ffi
                             let
                                 ps $ decode-map-as points $ :: 'List (:: 'List 'Number)
-                                tail $ option:unwrap-or (last ps) ([] 0 0)
+                                tail $ .unwrap-or (last ps) ([] 0 0)
                               conj (butlast ps)
                                 add-path tail $ [] -80 -60
                                 , tail
@@ -1719,10 +1719,10 @@
                             let
                                 ps $ decode-map-as points $ :: 'List (:: 'List 'Number)
                               if
-                                <= (count ps) 2
+                                <= (.len ps) 2
                                 , ps $ conj
                                   butlast $ butlast ps
-                                  option:unwrap-or (last ps) ([] 0 0)
+                                  .unwrap-or (last ps) ([] 0 0)
                   comp-slider (app.util/child-states states :steps)
                     {}
                       :value $ app.util/state-number state :steps
@@ -1731,8 +1731,8 @@
                       :title |Steps
                       :min 0
                       :max $ if
-                        >= 3 $ count $ decode-map-as
-                          option:unwrap-or (get state :points) nil
+                        >= 3 $ .len $ decode-map-as
+                          .unwrap-or (get state :points) nil
                           :: 'List $ :: 'List 'Number
                         , 12 6
                       :round? true
@@ -1740,7 +1740,7 @@
                         d! $ :: :states cursor $ assoc state :steps value
                   comp-switch $ {}
                     :value $ decode-map-as
-                      option:unwrap-or (get state :shaking?) nil
+                      .unwrap-or (get state :shaking?) nil
                       , 'Bool
                     :position $ [] 200 0
                     :title |Shake
@@ -1751,15 +1751,15 @@
                   :ops $ let
                       trail $ fold-curve
                         decode-map-as
-                          option:unwrap-or (get state :points) nil
+                          .unwrap-or (get state :points) nil
                           :: 'List $ :: 'List 'Number
                         app.util/state-number state :steps
                         decode-map-as
-                          option:unwrap-or (get state :shaking?) nil
+                          .unwrap-or (get state :shaking?) nil
                           , 'Bool
                     concat
                       []
-                        g :move-to $ option:unwrap-or (first trail) ([] 0 0)
+                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
                         g :line-style $ {}
                           :color $ hslx 0 0 100
                           :width 1
@@ -1769,7 +1769,7 @@
                 create-list :container ({})
                   ->
                     decode-map-as
-                      option:unwrap-or (get state :points) nil
+                      .unwrap-or (get state :points) nil
                       :: 'List $ :: 'List 'Number
                     map-indexed $ fn (idx point)
                       [] idx $ comp-drag-point (app.util/child-states states idx)
@@ -1786,14 +1786,14 @@
         'fold-curve $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn fold-curve (points steps shaking?)
             let
-                first-point $ option:unwrap-or (first points) ([] 0 0)
+                first-point $ .unwrap-or (first points) ([] 0 0)
                 template-points $ -> (rest points)
                   map $ fn (point)
                     hint-fn $ {}
                       :args $ [] $ :: 'List 'Number
                       :return $ :: 'List 'Number
                     subtract-path point first-point
-                template-path $ option:unwrap-or (last template-points) ([] 1 0)
+                template-path $ .unwrap-or (last template-points) ([] 1 0)
                 inverted $ divide-path ([] 1 0) template-path
               loop
                   t steps
@@ -1802,7 +1802,7 @@
                   let
                       acc-vec acc
                     concat
-                      [] $ option:unwrap-or (first acc-vec) ([] 0 0)
+                      [] $ .unwrap-or (first acc-vec) ([] 0 0)
                       -> (rest acc-vec)
                         map-indexed $ fn (idx point)
                           hint-fn $ {}
@@ -1810,7 +1810,7 @@
                             :return $ :: 'List $ :: 'List 'Number
                             :features $ #{} :js-ffi
                           let
-                              from $ option:unwrap $ get acc-vec idx
+                              from $ .unwrap $ get acc-vec idx
                             -> template-points $ map $ fn (pi)
                               hint-fn $ {}
                                 :args $ [] $ :: 'List 'Number
@@ -1902,27 +1902,27 @@
         'comp-tree-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-tree-demo (states)
             let
-                cursor $ option:unwrap-or (get states :cursor) nil
+                cursor $ .unwrap-or (get states :cursor) nil
                 state $ decode-map-as
                   or
-                    option:unwrap-or (get states :data) nil
+                    .unwrap-or (get states :data) nil
                     {}
                       :p1 $ [] 0.7 0.2
                       :p2 $ [] 0.84 0.15
                       :p0 $ [] 3 -80
                   :: 'Map 'Tag 'Dynamic
                 p0 $ decode-map-as
-                  option:unwrap-or (get state :p0) nil
+                  .unwrap-or (get state :p0) nil
                   :: 'List 'Number
                 base $ subtract-path ([] 0 0) p0
                 factor-1 $ divide-path
                   decode-map-as
-                    option:unwrap-or (get state :p1) nil
+                    .unwrap-or (get state :p1) nil
                     :: 'List 'Number
                   , base
                 factor-2 $ divide-path
                   decode-map-as
-                    option:unwrap-or (get state :p2) nil
+                    .unwrap-or (get state :p2) nil
                     :: 'List 'Number
                   , base
               container
@@ -1941,7 +1941,7 @@
                 comp-drag-point (>> states :p1)
                   {}
                     :position $ decode-map-as
-                      option:unwrap-or (get state :p1) nil
+                      .unwrap-or (get state :p1) nil
                       :: 'List 'Number
                     :radius 10
                     :fill $ hslx 200 80 60
@@ -1951,7 +1951,7 @@
                 comp-drag-point (>> states :p2)
                   {}
                     :position $ decode-map-as
-                      option:unwrap-or (get state :p2) nil
+                      .unwrap-or (get state :p2) nil
                       :: 'List 'Number
                     :title |end
                     :radius 10
@@ -1962,7 +1962,7 @@
                 comp-drag-point (>> states :p0)
                   {}
                     :position $ decode-map-as
-                      option:unwrap-or (get state :p0) nil
+                      .unwrap-or (get state :p0) nil
                       :: 'List 'Number
                     :title |from
                     :radius 10
@@ -2053,7 +2053,7 @@
                   distinct
               &doseq (p trails)
                 swap! *grid assoc
-                  option:unwrap $ first p
+                  .unwrap $ first p
                   , true
               loop
                   idx 120
@@ -2070,7 +2070,7 @@
               concat
                 []
                   g :move-to $ multiply-path
-                    option:unwrap-or (first trail) ([] 0 0)
+                    .unwrap-or (first trail) ([] 0 0)
                     , zoom-in
                   g :line-style $ {}
                     :color $ decode-map-as
@@ -2105,7 +2105,7 @@
                             hint-fn $ {}
                               :args $ [] $ :: 'List 'Number
                               :return 'Bool
-                            option:unwrap-or (get @*grid x) false
+                            .unwrap-or (get @*grid x) false
                       if
                         not $ empty? available
                         let
@@ -2114,8 +2114,8 @@
                           [] picked
                         []
                 let
-                    tail-next $ pick-next $ option:unwrap-or (last trail) ([] 0 0)
-                    head-next $ pick-next $ option:unwrap-or (first trail) ([] 0 0)
+                    tail-next $ pick-next $ .unwrap-or (last trail) ([] 0 0)
+                    head-next $ pick-next $ .unwrap-or (first trail) ([] 0 0)
                   concat head-next trail tail-next
           :examples $ []
           :schema $ :: 'Fn $ {}
@@ -2124,8 +2124,8 @@
             :return $ :: 'List $ :: 'List (:: 'List 'Number)
         'pick-one $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pick-one (xs)
-            option:unwrap $ nth xs $ decode-map-as
-              rand-int $ count xs
+            .unwrap $ nth xs $ decode-map-as
+              rand-int $ .len xs
               , 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'A)
@@ -2317,10 +2317,10 @@
           :code $ quote $ defn divide-x (point x)
             []
               /
-                option:unwrap-or (first point) 0
+                .unwrap-or (first point) 0
                 , x
               /
-                option:unwrap-or (last point) 0
+                .unwrap-or (last point) 0
                 , x
           :examples $ []
           :schema $ :: 'Fn $ {}
@@ -2415,8 +2415,8 @@
             :args $ []
         'rand-nth $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-nth (xs)
-            option:unwrap $ nth xs $ decode-map-as
-              rand-int $ count xs
+            .unwrap $ nth xs $ decode-map-as
+              rand-int $ .len xs
               , 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'A)
@@ -2425,7 +2425,7 @@
         'rand-point $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-point (n & ms)
             let
-                m $ option:unwrap-or (first ms) n
+                m $ .unwrap-or (first ms) n
               []
                 -
                   ffi-round $ * 0.2 n
@@ -2447,7 +2447,7 @@
         'state-number $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn state-number (state key)
             decode-map-as
-              option:unwrap-or (get state key) nil
+              .unwrap-or (get state key) nil
               , 'Number
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Number)
