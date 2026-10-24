@@ -14,7 +14,7 @@ function inventory(){
   assert.equal(defs.length,104);assert.equal(defs.reduce((n,d)=>n+d.tests.length,0),0);
   assert.equal(defs.reduce((n,d)=>n+d.examples.length,0),0);return defs;
 }
-const aliases={'option:unwrap':'.unwrap','option:unwrap-or':'.unwrap-or','option:some?':'.some?','option:none?':'.none?'};
+const aliases={'option:unwrap':'.unwrap','option:unwrap-or':'.unwrap-or','option:some?':'.some?','option:none?':'.none?','count':'.len'};
 function select(defs,check){
   const ops=[],counts={};
   function walk(node,path,id){
@@ -38,7 +38,8 @@ if(process.argv[2]==='inventory'){
 assert.equal(run('-v').trim(),'0.30.1');run('docs','agents','--contract');
 const before=inventory(),config=q('config'),namespaces=q('ns').namespaces.map(ns=>q('ns',ns));
 assert.deepEqual(before,JSON.parse(readFileSync('acceptance/reviewed.json','utf8')));
-const expected=structuredClone(before),{ops,counts}=select(expected,true);assert.ok(ops.length>0);
+const expected=structuredClone(before),{ops,counts}=select(expected,true);
+assert.deepEqual(counts,{'option:unwrap-or':85,'option:unwrap':30,'count':9});assert.equal(ops.length,124);
 writeFileSync('acceptance/before.json',JSON.stringify(before,null,2));
 writeFileSync('acceptance/operations.json',JSON.stringify(ops,null,2));writeFileSync('acceptance/counts.json',JSON.stringify(counts,null,2));
 const args=['edit','transaction','--file','acceptance/operations.json','--format','json'];
