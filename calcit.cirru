@@ -1005,7 +1005,7 @@
                 1 $ []
                   .unwrap $ nth xs 0
                   .unwrap $ nth xs 2
-                2 $ slice xs 0 2
+                2 $ slice xs 0 $ Option :some 2
                 _ xs
               , xs
           :examples $ []
@@ -1539,8 +1539,9 @@
                       d! $ :: :states cursor $ assoc state :selected result
                 comp-slider (>> states :from)
                   {}
-                    :value $ .unwrap $ get-in state
-                      [] :segments (app.util/state-number state :selected) 0
+                    :value $ .unwrap-or
+                      get-in state $ [] :segments (app.util/state-number state :selected) 0
+                      , 0
                     :position $ [] 280 0
                     :unit 1
                     :round? true
@@ -1551,8 +1552,9 @@
                         , result
                 comp-slider (>> states :to)
                   {}
-                    :value $ .unwrap $ get-in state
-                      [] :segments (app.util/state-number state :selected) 1
+                    :value $ .unwrap-or
+                      get-in state $ [] :segments (app.util/state-number state :selected) 1
+                      , 0
                     :position $ [] 420 0
                     :unit 1
                     :round? true
@@ -1645,7 +1647,9 @@
                               :radius r
                               :angle $ let
                                   segment $ decode-map-as
-                                    .unwrap $ get-in state $ [] :segments idx
+                                    .unwrap-or
+                                      get-in state $ [] :segments idx
+                                      []
                                     :: 'List 'Number
                                   a $ .unwrap-or (first segment) 0
                                   b $ .unwrap-or (last segment) 0
