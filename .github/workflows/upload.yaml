@@ -2,7 +2,7 @@ name: Upload
 
 on:
   push:
-    branches: [main]
+    branches: [main, prepare/circling-tree-public031]
   pull_request: {}
 
 permissions:
@@ -47,6 +47,9 @@ jobs:
         yarn install --immutable
         caps verify --toolchain
 
+    - name: Prepare public methods with official Calcit
+      run: node prepare-source.mjs
+
     - name: Validate Calcit snapshot and types
       run: |
         set -euo pipefail
@@ -55,7 +58,7 @@ jobs:
         test ! -e compact.cirru
         test ! -e package.cirru
         calcit calcit.cirru edit format
-        git diff --exit-code -- calcit.cirru
+        test "$(git hash-object calcit.cirru)" = "$(cat acceptance/snapshot-blob.txt)"
         calcit calcit.cirru --check-only --all-defs
         calcit calcit.cirru --check-only \
           --ns app.comp.bezier-demo --ns app.comp.chars-demo \
@@ -95,6 +98,18 @@ jobs:
       run: |
         set -euo pipefail
         yarn build
+
+    - name: Preserve official source preparation
+      if: always()
+      uses: actions/upload-artifact@v7.0.0
+      with:
+        name: circling-tree-source-prepared
+        path: |
+          calcit.cirru
+          acceptance
+          dist
+        if-no-files-found: error
+        retention-days: 3
 
     - name: Check current production revision
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
