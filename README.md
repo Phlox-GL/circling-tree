@@ -8,7 +8,7 @@ Circling Tree(WIP)
 
 WIP
 
-当前使用已发布的配对预发布 Calcit/procs 0.31.0-alpha.7、Node.js 24 与 Yarn 4.18.0。模块固定已发布 tag Phlox 0.8.0-alpha.1、Touch Control 0.0.33、js-ffi 0.2.6，严格 Caps 安装，不使用本地候选或提交 hash。绘图公式、状态合同及已有 `hud!` 热更新提示保持不变；全屏边界复用 JS-FFI 的真实 DOM 校验及 Unit 适配器，删除本地重复 trait 和最后一处 unsafe。仅维护 `calcit.cirru` / `deps.cirru`，CI 禁止旧 `compact.cirru` / `package.cirru` 回流。
+本候选升级到正式 Calcit/procs 0.31.0，Node.js 24 与 Yarn 4.18.0 保持。依赖图同步为 Phlox 0.8.0-alpha.3、Touch Control 0.0.34、js-ffi 0.2.7（Phlox 间接使用 Pointed Prompt 0.0.23）。消费者应整图更新、重新生成 JS 并重启开发服务；本候选已通过真实发布 tags 的严格 Caps 安装，不使用本地候选或提交 hash 代替发布依赖。绘图公式、状态合同及已有 `hud!` 热更新提示保持不变；全屏边界复用 JS-FFI 的真实 DOM 校验及 Unit 适配器，删除本地重复 trait 和最后一处 unsafe。仅维护 `calcit.cirru` / `deps.cirru`，CI 禁止旧 `compact.cirru` / `package.cirru` 回流。
 
 此前迁移把源码85处 `option:unwrap-or` 与30处 `option:unwrap` 改为公开
 `.unwrap-or` / `.unwrap`，并将9处已声明或解码为List的 `count` 改为公开 `.len`。
@@ -18,7 +18,7 @@ WIP
 异常宿主 value 不再静默回落为空串。既有 IAB 静态标题可见性问题仍按 Phlox #71 跟踪，
 不因为依赖升级宣称已修复，也不添加 renderer 缓存绕过。
 
-Pixi 保持 7.x，固定正式 7.4.3：旧 7.2.4 的 assets 包要求 umbrella 包未提供的 utils peer，7.4.3 已修正该声明。复用上游正式修复，不加 packageExtensions、重复 utils 依赖或忽略 peer 警告；升级后的实际图形仍需单独验收。
+Pixi 保持 7.x，固定正式 7.4.3：旧 7.2.4 的 assets 包要求 umbrella 包未提供的 utils peer，7.4.3 已修正该声明。复用上游正式修复，不加 packageExtensions、重复 utils 依赖或忽略 peer 警告；升级后的实际图形须在本次精确发布依赖图下单独验收。
 
 ```bash
 caps --strict --ci
@@ -34,6 +34,8 @@ VITE_BASE_URL=https://cos-sh.tiye.me/Phlox-GL/circling-tree/ yarn build
 本地不设置 `VITE_BASE_URL` 时仍使用相对路径。上传与公开访问校验仅使用 COS Action 内置 verify，不添加额外 CDN 校验脚本。CI 保留全定义、公共定义、完整 strict 和原构建，不重复迁移预览/债务报告，也不新建测试框架。原项目没有附带单元测试；浏览器交互仍须单独验收，不能用编译成功代替。共享字体、图标、生产 COS/CDN 与服务器部署路径不变。
 
 组件和绘图 helper 返回真实 `phlox.schema/PhloxElement`，操作使用已有 nominal `app.schema/Op`，store 与业务 data 仍为 `Map<Tag, Dynamic>`。状态树的 key 混合 Tag 元数据、数字索引及字符串分支，因此其边界如实声明 `Map<Dynamic, Dynamic>`；`child-states` 直接调用 Phlox `>>`，不再伪造 Fn，也不转换 key 类型。Number、坐标和宿主标量使用实际值检查，全屏输入在真实 DOM 边界校验，应用源码 unsafe 为零，不宣称零 Dynamic。默认值、刷新 Nil、随机调用参数/顺序（包括零参数 rand 的 0–100 区间）及绘图公式保持；不新增 compiler 特例或放宽门禁。
+
+本轮 Snapshot 与 alpha.7 main 完全相同，真实发布图的完整 strict、全部/公共定义、不可变安装和构建均通过；实际页面确认场景切换、Bezier 控制点拖动重绘及刷新启动，无捕获到的 console error。不把这组验收扩大为所有场景、移动平台或零动态边界承诺。
 
 ### Inspired by...
 
