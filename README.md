@@ -4,7 +4,22 @@ Circling Tree(WIP)
 
 > Rendering tree patterns
 
-### Usage
+### 0.32.1 迁移候选：使用者影响
+
+CLI/runtime 配对正式 `0.32.1`，依赖声明对齐 Phlox `0.8.0`、Touch Control
+`0.0.35`、js-ffi `0.2.9`。Phlox 间接使用 Pointed Prompt `0.0.24`。这些库
+均已发布正式标签；本候选从正式 tag 全新严格安装四模块依赖图，未使用本地候选或 hash 替代模块版本。远端 CI 仍需本次 PR 验收。
+升级需要整图同步、重新生成 JS 并重启开发服务。
+
+此前官方格式工具转换 27 处旧类型表达式；本轮0321补丁配对不改Snapshot，102个项目定义的代码、schema和原附带元数据保持不变。
+绘图公式、随机调用、状态边界、HUD、Pixi 版本和部署路径不变。全定义检查、
+完整 strict（无诊断）、315个全定义、102 个公共定义、不可变安装及 Vite 构建通过。
+正式发布图构建的全部三个dist文件与本轮Phlox消费者实际验收产物逐字节一致；
+该产物已验证Sun/Circle/Bezier场景切换、Bezier控制点拖动重绘和刷新，控制台
+没有warning/error；不扩大为所有场景或移动平台验收。原项目没有附着测试，
+不新增空测试门禁。
+
+### 历史：0.31.0 Usage
 
 WIP
 

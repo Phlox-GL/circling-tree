@@ -51,9 +51,7 @@
                       d! $ :: :states cursor $ assoc state :n
                         js/Math.max 1 $ js/Math.round value
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'gen-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn gen-trail (p1 p2 q1 q2 n)
             let
@@ -62,9 +60,8 @@
               ->
                 range $ inc n
                 mapcat $ fn (idx)
-                  hint-fn $ {}
-                    :args $ [] 'Number
-                    :return $ :: 'List $ :: 'List 'Dynamic
+                  hint-fn $ Fn Number $ ->
+                    List $ List Dynamic
                   let
                       p3 $ add-path p1 $ multiply-path p-unit ([] idx 0)
                       q3 $ add-path q2 $ multiply-path q-unit ([] idx 0)
@@ -82,10 +79,9 @@
                         :alpha 0.9
                       g :line-to q3
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Number) (:: 'List 'Number) (:: 'List 'Number) (:: 'List 'Number) 'Number
-            :features $ #{} :js-ffi
-            :return $ :: 'List 'Dynamic
+          :schema $ quote $ Fn (List Number) (List Number) (List Number) (List Number) Number
+            -> $ List Dynamic
+            :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.bezier-demo
           :require
@@ -109,9 +105,8 @@
               create-list :container ({})
                 -> (range 4)
                   mapcat $ fn (y)
-                    hint-fn $ {}
-                      :args $ [] 'Number
-                      :return $ :: 'List $ :: 'List 'Dynamic
+                    hint-fn $ Fn Number $ ->
+                      List $ List Dynamic
                     -> (range 4)
                       map $ fn (x)
                         [] (str x |+ y)
@@ -119,9 +114,7 @@
                             {} $ :position $ [] (* x 10) (* y 10)
                             comp-stroke touch-key kind
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Nil 'Number
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Nil Number (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-chars-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-chars-demo (touch-key)
             container ({})
@@ -129,9 +122,8 @@
                 {} $ :position $ [] 0 0
                 -> (range 10)
                   mapcat $ fn (y)
-                    hint-fn $ {}
-                      :args $ [] 'Number
-                      :return $ :: 'List $ :: 'List 'Dynamic
+                    hint-fn $ Fn Number $ ->
+                      List $ List Dynamic
                     -> (range 10)
                       map $ fn (x)
                         [] (str x |+ y)
@@ -140,9 +132,7 @@
                             comp-char touch-key $ decode-map-as (rand-int 6) 'Number
               comp-reset $ [] -140 40
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Nil
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-stroke $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-stroke (touch-key kind)
             graphics $ {}
@@ -178,16 +168,13 @@
                       []
                   :: 'List $ :: 'List 'Dynamic
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Nil 'Number
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Nil Number (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'concat-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn concat-ops (a b) (concat a b)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'T) (:: 'List 'T)
-            :generics $ [] 'T
-            :return $ :: 'List 'T
+          :schema $ quote $ Fn (List T) (List T)
+            -> $ List T
+            :generics T
         'curve-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def curve-strokes
             []
@@ -216,7 +203,8 @@
                   :radius 10
                   :angle $ [] phlox.math/ffi-pi $ * 1.5 phlox.math/ffi-pi
           :examples $ []
-          :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
+          :schema $ quote $ List
+            List $ List Dynamic
         'dot-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dot-strokes
             []
@@ -235,16 +223,15 @@
                   :angle $ [] (- 0 phlox.math/ffi-pi) phlox.math/ffi-pi
                 g :close-path nil
           :examples $ []
-          :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
+          :schema $ quote $ List
+            List $ List Dynamic
         'rand-stroke $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-stroke (strokes)
             .unwrap $ nth strokes $ decode-map-as
               rand-int $ .len strokes
               , 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'T)
-            :args $ [] $ :: 'List 'T
-            :generics $ [] 'T
+          :schema $ quote $ Fn (List T) (-> T) (:generics T)
         'slash-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def slash-strokes
             []
@@ -256,7 +243,8 @@
                 g :line-to $ [] 0 10
               []
           :examples $ []
-          :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
+          :schema $ quote $ List
+            List $ List Dynamic
         'straight-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def straight-strokes
             []
@@ -268,7 +256,8 @@
                 g :line-to $ [] 10 5
               []
           :examples $ []
-          :schema $ :: 'List $ :: 'List (:: 'List 'Dynamic)
+          :schema $ quote $ List
+            List $ List Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.chars-demo
           :require
@@ -302,18 +291,15 @@
                       d! $ :: :states cursor $ assoc state :size
                         js/Math.min 300 $ js/Math.max (js/Math.round n) 4
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'generate-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-ops (size)
             let
                 r 320
                 shares $ + 2 size
               -> (range shares) shuffle $ mapcat $ fn (idx)
-                hint-fn $ {}
-                  :args $ [] 'Number
-                  :return $ :: 'List $ :: 'List 'Dynamic
+                hint-fn $ Fn Number $ ->
+                  List $ List Dynamic
                 let
                     t $ * 2 phlox.math/ffi-pi idx $ / 1 shares
                     t2 $ decode-map-as
@@ -341,17 +327,15 @@
                         phlox.core/ffi-abs $ - t t2
                         , phlox.math/ffi-pi
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'Number
-            :return $ :: 'List $ :: 'List 'Dynamic
+          :schema $ quote $ Fn Number
+            -> $ List $ List Dynamic
         'shuffle $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn shuffle (xs) (js/console.warn "|TODO shuffle" xs) xs
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List 'A
-            :features $ #{} :js-ffi
-            :generics $ [] 'A
-            :return $ :: 'List 'A
+          :schema $ quote $ Fn (List A)
+            -> $ List A
+            :generics A
+            :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.chord-demo
           :require
@@ -374,9 +358,7 @@
                       :position $ [] 300 0
                       :ops $ generate-circle-ops idx
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Nil
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'generate-circle-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-circle-ops (idx)
             loop
@@ -411,10 +393,9 @@
                         :angle $ [] (* r0 a1) (* r0 a2)
                         :anticlockwise? false
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'Number
-            :features $ #{} :js-ffi
-            :return $ :: 'List 'Dynamic
+          :schema $ quote $ Fn Number
+            -> $ List Dynamic
+            :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.circle-demo
           :require
@@ -432,9 +413,7 @@
                   decode-map-as (js/String.prototype.toUpperCase.call initial) 'String
                   slice x 1
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'String)
-            :args $ [] 'String
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn String (-> String) (:features :js-ffi)
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (store)
             let
@@ -485,9 +464,7 @@
                   :on $ {} $ :pointertap
                     fn (e d!) (app.util/ffi-request-fullscreen js/document.body)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-tab $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-tab (title tab idx selected?)
             container
@@ -506,14 +483,12 @@
                   :font-size 20
                   :font-family style/font-fancy
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'String 'Tag 'Number 'Bool
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn String Tag Number Bool (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'tabs $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def tabs
             [] :sun :circle :rects :walking :grow :chars :cycloid :chord :oscillo :geocentric :rotate :bezier :tree :snowflake :harmono :satellite
           :examples $ []
-          :schema $ :: 'List 'Tag
+          :schema $ quote $ List Tag
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
@@ -582,14 +557,11 @@
                           :alpha 0.7
                         g :move-to $ .unwrap-or (first trail) ([] 0 0)
                       -> trail rest $ mapcat $ fn (p)
-                        hint-fn $ {}
-                          :args $ [] $ :: 'List 'Number
-                          :return $ :: 'List $ :: 'List 'Dynamic
+                        hint-fn $ Fn (List Number)
+                          -> $ List $ List Dynamic
                         [] $ g :line-to p
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-numbers-control $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-numbers-control (state states)
             let
@@ -662,31 +634,26 @@
                         :r4 $ rand-value
                         :r5 $ rand-value
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'get-round? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-round? (param)
             contains? (#{} :r1 :r2 :r3 :r4 :r5 :steps) param
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Bool)
-            :args $ [] 'Tag
+          :schema $ quote $ Fn Tag (-> Bool)
         'get-unit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-unit (param)
             match param (:r1 0.2) (:r2 0.1) (:r3 0.04) (:r4 0.04) (:r5 0.04) (:steps 20) (:v 0.001) (_ 1)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Tag
+          :schema $ quote $ Fn Tag (-> Number)
         'polar-point $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn polar-point (r theta)
             []
               * r $ phlox.core/ffi-cos theta
               * r $ phlox.core/ffi-sin theta
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'Number 'Number
-            :features $ #{} :js-ffi
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn Number Number
+            -> $ List Number
+            :features :js-ffi
         'round-value $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn round-value (v param)
             match param
@@ -695,14 +662,11 @@
                 , 'Number
               _ v
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Number 'Tag
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Number Tag (-> Number) (:features :js-ffi)
         'zero? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn zero? (x) (= x 0)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Bool)
-            :args $ [] 'Number
+          :schema $ quote $ Fn Number (-> Bool)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.cycloid-demo
           :require
@@ -759,9 +723,7 @@
                       :steps 4000
                       :step 0.1
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-geocentric-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-geocentric-demo (states)
             let
@@ -803,20 +765,17 @@
                       -> trail rest $ map $ fn (point) ([] :line-to point)
                 comp-geocentric-control state states
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'get-unit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-unit (param)
             match param (:r2 1) (:r3 0.5) (:v2 0.2) (:v3 0.2) (:steps 100) (:step 0.001) (_ 1)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Tag
+          :schema $ quote $ Fn Tag (-> Number)
         'initial-state $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def initial-state
             {} (:r2 100) (:r3 16) (:v2 30) (:v3 260) (:steps 2000) (:step 0.002) (:selected :r2)
           :examples $ []
-          :schema $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Map Tag Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.geocentric-demo
           :require
@@ -830,7 +789,8 @@
         '*grid $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *grid ({})
           :examples $ []
-          :schema $ :: 'Ref $ :: 'Map (:: 'List 'Number) 'Bool
+          :schema $ quote $ Ref
+            Map (List Number) Bool
         'comp-grow-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-grow-demo (touch-key)
             let
@@ -844,9 +804,7 @@
                       :ops $ get-trail-ops trail
                 comp-reset $ [] 0 0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Nil
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'expand-directions $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn expand-directions (base)
             []
@@ -855,9 +813,8 @@
               add-path base $ [] 1 0
               add-path base $ [] -1 0
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List 'Number
-            :return $ :: 'List $ :: 'List 'Number
+          :schema $ quote $ Fn (List Number)
+            -> $ List $ List Number
         'generate-trails $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-trails ()
             reset! *grid $ {}
@@ -880,9 +837,8 @@
                         .unwrap $ first item
                         , 'String
                     .map-list $ fn (pair)
-                      hint-fn $ {}
-                        :args $ [] $ :: 'List 'Dynamic
-                        :return $ :: 'List $ :: 'List (:: 'List 'Number)
+                      hint-fn $ Fn (List Dynamic)
+                        -> $ List $ List (List Number)
                       ->
                         decode-map-as
                           .unwrap $ last pair
@@ -896,11 +852,10 @@
                       pieces $ .unwrap $ last result
                     recur (dec idx) new-points-keys $ concat acc pieces
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ []
-            :features $ #{} :js-ffi
-            :return $ :: 'List $ :: 'List
-              :: 'List $ :: 'List 'Number
+          :schema $ quote $ Fn
+            -> $ List $ List
+              List $ List Number
+            :features :js-ffi
         'get-trail-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-trail-ops (trail)
             let
@@ -914,9 +869,9 @@
                   :width 2
                   :alpha 1
                 -> trail rest $ mapcat $ fn (stop)
-                  hint-fn $ {}
-                    :args $ [] $ :: 'List (:: 'List 'Number)
-                    :return $ :: 'List $ :: 'List 'Dynamic
+                  hint-fn $ Fn
+                    List $ List Number
+                    -> $ List $ List Dynamic
                   []
                     g :move-to $ multiply-path
                       .unwrap-or (first stop) ([] 0 0)
@@ -925,19 +880,17 @@
                       .unwrap-or (last stop) ([] 0 0)
                       , zoom-in
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List
-              :: 'List $ :: 'List 'Number
-            :features $ #{} :js-ffi
-            :return $ :: 'List $ :: 'List 'Dynamic
+          :schema $ quote $ Fn
+            List $ List $ List Number
+            -> $ List $ List Dynamic
+            :features :js-ffi
         'iterate-trails $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn iterate-trails (points)
             let
                 result $ -> points $ map
                   fn (pair)
-                    hint-fn $ {}
-                      :args $ [] $ :: 'List 'Dynamic
-                      :return $ :: 'List $ :: 'List (:: 'List 'Dynamic)
+                    hint-fn $ Fn (List Dynamic)
+                      -> $ List $ List (List Dynamic)
                     let
                         k $ .unwrap-or (first pair) nil
                         base $ decode-map-as
@@ -946,14 +899,10 @@
                         directions $ expand-directions base
                         available $ -> directions
                           filter-not $ fn (x)
-                            hint-fn $ {}
-                              :args $ [] $ :: 'List 'Number
-                              :return 'Bool
+                            hint-fn $ Fn (List Number) (-> Bool)
                             .unwrap-or (get @*grid x) false
                           filter $ fn (x)
-                            hint-fn $ {}
-                              :args $ [] $ :: 'List 'Number
-                              :return 'Bool
+                            hint-fn $ Fn (List Number) (-> Bool)
                             >
                               decode-map-as (rand) 'Number
                               , 0.43
@@ -961,22 +910,18 @@
                       &doseq (x picked) (swap! *grid assoc x true)
                       []
                         -> picked $ map $ fn (x)
-                          hint-fn $ {}
-                            :args $ [] $ :: 'List 'Number
-                            :return $ :: 'List 'Dynamic
+                          hint-fn $ Fn (List Number)
+                            -> $ List Dynamic
                           [] k x
                         -> picked $ map $ fn (x)
-                          hint-fn $ {}
-                            :args $ [] $ :: 'List 'Number
-                            :return $ :: 'List 'Dynamic
+                          hint-fn $ Fn (List Number)
+                            -> $ List Dynamic
                           [] k base x
               []
                 ->
                   concat $ mapcat result app.util/first-list
                   filter-not $ fn (pair)
-                    hint-fn $ {}
-                      :args $ [] $ :: 'List 'Dynamic
-                      :return 'Bool
+                    hint-fn $ Fn (List Dynamic) (-> Bool)
                     let
                         point $ decode-map-as
                           .unwrap-or (nth pair 1) nil
@@ -984,17 +929,15 @@
                         directions $ expand-directions point
                         available $ -> directions $ filter-not
                           fn (x)
-                            hint-fn $ {}
-                              :args $ [] $ :: 'List 'Number
-                              :return 'Bool
+                            hint-fn $ Fn (List Number) (-> Bool)
                             .unwrap-or (get @*grid x) false
                       empty? available
                 mapcat result app.util/last-list
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List (:: 'List 'Dynamic)
-            :features $ #{} :js-ffi
-            :return $ :: 'List $ :: 'List (:: 'List 'Dynamic)
+          :schema $ quote $ Fn
+            List $ List Dynamic
+            -> $ List $ List (List Dynamic)
+            :features :js-ffi
         'pick-many $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pick-many (xs)
             if
@@ -1009,10 +952,9 @@
                 _ xs
               , xs
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List 'A
-            :generics $ [] 'A
-            :return $ :: 'List 'A
+          :schema $ quote $ Fn (List A)
+            -> $ List A
+            :generics A
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.grow-demo
           :require
@@ -1066,9 +1008,7 @@
                         map-indexed $ fn (idx point) (g :line-to point)
                   render-points cursor states state controls
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'gen-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn gen-trail (controls steps base)
             -> (range steps)
@@ -1091,12 +1031,11 @@
                       reduce ([] 0 0) add-path
                   , final-point
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ []
-              :: 'List $ :: 'Map 'Tag 'Dynamic
-              , 'Number 'Number
-            :features $ #{} :js-ffi
-            :return $ :: 'List $ :: 'List 'Number
+          :schema $ quote $ Fn
+            List $ Map Tag Dynamic
+            , Number Number
+              -> $ List $ List Number
+              :features :js-ffi
         'render-controls $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-controls (cursor states state controls)
             container
@@ -1161,10 +1100,10 @@
                         :on-change $ fn (v d!)
                           d! $ :: :states cursor $ assoc-in state ([] :controls idx :damping) v
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'List 'Dynamic) (:: 'Map 'Dynamic 'Dynamic) (:: 'Map 'Tag 'Dynamic)
-              :: 'List $ :: 'Map 'Tag 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (List Dynamic) (Map Dynamic Dynamic) (Map Tag Dynamic)
+            List $ Map Tag Dynamic
+            -> phlox.schema/PhloxElement
+            :features :js-ffi
         'render-points $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-points (cursor states state controls)
             create-list :container ({})
@@ -1176,10 +1115,10 @@
                     :on-change $ fn (v d!)
                       d! $ :: :states cursor $ assoc-in state ([] :controls idx :amplitude) v
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'List 'Dynamic) (:: 'Map 'Dynamic 'Dynamic) (:: 'Map 'Tag 'Dynamic)
-              :: 'List $ :: 'Map 'Tag 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (List Dynamic) (Map Dynamic Dynamic) (Map Tag Dynamic)
+            List $ Map Tag Dynamic
+            -> phlox.schema/PhloxElement
+            :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.harmono-demo
           :require
@@ -1228,9 +1167,7 @@
                       :step 500
                       :unit 0.01
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-oscillo-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-oscillo-demo (states)
             let
@@ -1266,19 +1203,16 @@
                       -> trail rest $ map $ fn (point) ([] :line-to point)
                 comp-oscillo-control state states
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'get-round? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-round? (param) (not= param :unit)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Bool)
-            :args $ [] 'Tag
+          :schema $ quote $ Fn Tag (-> Bool)
         'initial-state $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def initial-state
             {} (:step 1000) (:unit 0.01) (:m 13) (:n 3)
           :examples $ []
-          :schema $ :: 'Map 'Tag 'Number
+          :schema $ quote $ Map Tag Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.oscillo-demo
           :require
@@ -1296,9 +1230,8 @@
                 {} $ :position $ [] 40 40
                 -> (range 10)
                   mapcat $ fn (x)
-                    hint-fn $ {}
-                      :args $ [] 'Number
-                      :return $ :: 'List $ :: 'List 'Dynamic
+                    hint-fn $ Fn Number $ ->
+                      List $ List Dynamic
                     -> (range 10)
                       map $ fn (y)
                         [] (str x |+ y)
@@ -1348,9 +1281,7 @@
                                 :alpha 1
               comp-reset $ [] -40 40
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Nil
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.rects-demo
           :require
@@ -1377,9 +1308,7 @@
                   :fill $ hslx 0 0 100
                   :font-size 20
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'List 'Number
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (List Number) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.reset
           :require
@@ -1452,9 +1381,7 @@
                             + -400 $ * idx 140
                             , -440
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'gen-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn gen-trail (points alpha)
             []
@@ -1486,17 +1413,15 @@
                 :p2 $ .unwrap $ get points 10
                 :to-p $ .unwrap $ get points 11
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ []
-              :: 'List $ :: 'List 'Number
-              , 'Number
-            :features $ #{} :js-ffi
-            :return $ :: 'List 'Dynamic
+          :schema $ quote $ Fn
+            List $ List Number
+            , Number
+              -> $ List Dynamic
+              :features :js-ffi
         'get-round? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-round? (param) (= param :steps)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Bool)
-            :args $ [] 'Tag
+          :schema $ quote $ Fn Tag (-> Bool)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.rotate-demo
           :require
@@ -1592,9 +1517,7 @@
                               , segments $ butlast segments
                         assoc :selected 0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) (:: 'Map 'Dynamic 'Dynamic)
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-satellite-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-satellite-demo (states)
             let
@@ -1608,9 +1531,7 @@
                   :: 'Map 'Tag 'Dynamic
                 ratio $ * phlox.math/ffi-pi $ / 1 180
                 rad $ fn (x)
-                  hint-fn $ {}
-                    :args $ [] 'Number
-                    :return 'Number
+                  hint-fn $ Fn Number $ -> Number
                   * x ratio
               container ({}) (comp-number-controls state states)
                 create-list :container
@@ -1666,9 +1587,7 @@
                               :angle $ [] 0 360
                             g :end-fill nil
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.satellite-demo
           :require
@@ -1700,10 +1619,7 @@
                       fn (e d!)
                         d! $ :: :states cursor $ update state :points
                           fn (points)
-                            hint-fn $ {}
-                              :args $ [] 'Dynamic
-                              :return 'Dynamic
-                              :features $ #{} :js-ffi
+                            hint-fn $ Fn Dynamic (-> Dynamic) (:features :js-ffi)
                             let
                                 ps $ decode-map-as points $ :: 'List (:: 'List 'Number)
                                 tail $ .unwrap-or (last ps) ([] 0 0)
@@ -1716,10 +1632,7 @@
                       fn (e d!)
                         d! $ :: :states cursor $ update state :points
                           fn (points)
-                            hint-fn $ {}
-                              :args $ [] 'Dynamic
-                              :return 'Dynamic
-                              :features $ #{} :js-ffi
+                            hint-fn $ Fn Dynamic (-> Dynamic) (:features :js-ffi)
                             let
                                 ps $ decode-map-as points $ :: 'List (:: 'List 'Number)
                               if
@@ -1784,18 +1697,15 @@
                           :on-change $ fn (position d!)
                             d! $ :: :states cursor $ assoc-in state ([] :points idx) position
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'fold-curve $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn fold-curve (points steps shaking?)
             let
                 first-point $ .unwrap-or (first points) ([] 0 0)
                 template-points $ -> (rest points)
                   map $ fn (point)
-                    hint-fn $ {}
-                      :args $ [] $ :: 'List 'Number
-                      :return $ :: 'List 'Number
+                    hint-fn $ Fn (List Number)
+                      -> $ List Number
                     subtract-path point first-point
                 template-path $ .unwrap-or (last template-points) ([] 1 0)
                 inverted $ divide-path ([] 1 0) template-path
@@ -1809,16 +1719,14 @@
                       [] $ .unwrap-or (first acc-vec) ([] 0 0)
                       -> (rest acc-vec)
                         map-indexed $ fn (idx point)
-                          hint-fn $ {}
-                            :args $ [] 'Number $ :: 'List 'Number
-                            :return $ :: 'List $ :: 'List 'Number
-                            :features $ #{} :js-ffi
+                          hint-fn $ Fn Number (List Number)
+                            -> $ List $ List Number
+                            :features :js-ffi
                           let
                               from $ .unwrap $ get acc-vec idx
                             -> template-points $ map $ fn (pi)
-                              hint-fn $ {}
-                                :args $ [] $ :: 'List 'Number
-                                :return $ :: 'List 'Number
+                              hint-fn $ Fn (List Number)
+                                -> $ List Number
                               add-path from $ multiply-path (subtract-path point from)
                                 if
                                   and shaking? $ odd? idx
@@ -1826,18 +1734,16 @@
                                   multiply-path pi inverted
                         mapcat identity
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ []
-              :: 'List $ :: 'List 'Number
-              , 'Number 'Bool
-            :features $ #{} :js-ffi
-            :return $ :: 'List $ :: 'List 'Number
+          :schema $ quote $ Fn
+            List $ List Number
+            , Number Bool
+              -> $ List $ List Number
+              :features :js-ffi
         'odd? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn odd? (n)
             not= 0 $ &number:rem n 2
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Bool)
-            :args $ [] 'Number
+          :schema $ quote $ Fn Number (-> Bool)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.snowflake-demo
           :require
@@ -1864,9 +1770,7 @@
                       :rotation $ * 0.010 phlox.math/ffi-pi x
                       :ops $ generate-line-ops
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Nil
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'generate-line-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-line-ops ()
             let
@@ -1892,10 +1796,9 @@
                       g :move-to $ [] x2 0
                     , x2
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ []
-            :features $ #{} :js-ffi
-            :return $ :: 'List 'Dynamic
+          :schema $ quote $ Fn
+            -> $ List Dynamic
+            :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.sun-demo
           :require
@@ -1975,9 +1878,7 @@
                     :on-change $ fn (position d!)
                       d! $ :: :states cursor $ assoc state :p0 position
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] $ :: 'Map 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'generate-branches $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-branches (from arrow level factor-1 factor-2)
             let
@@ -1991,10 +1892,9 @@
                 generate-branches next-from (multiply-path factor-1 arrow) (inc level) factor-1 factor-2
                 generate-branches next-from (multiply-path factor-2 arrow) (inc level) factor-1 factor-2
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Number) (:: 'List 'Number) 'Number (:: 'List 'Number) (:: 'List 'Number)
-            :features $ #{} :js-ffi
-            :return $ :: 'List $ :: 'List 'Dynamic
+          :schema $ quote $ Fn (List Number) (List Number) Number (List Number) (List Number)
+            -> $ List $ List Dynamic
+            :features :js-ffi
         'should-shrink? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn should-shrink? (level)
             cond
@@ -2005,8 +1905,7 @@
                 decode-map-as (rand 2) 'Number
                 , 1.4
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Bool)
-            :args $ [] 'Number
+          :schema $ quote $ Fn Number (-> Bool)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.tree-demo
           :require
@@ -2019,7 +1918,8 @@
         '*grid $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *grid ({})
           :examples $ []
-          :schema $ :: 'Ref $ :: 'Map (:: 'List 'Number) 'Bool
+          :schema $ quote $ Ref
+            Map (List Number) Bool
         'comp-walking-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-walking-demo (touch-key)
             let
@@ -2033,9 +1933,7 @@
                       :ops $ get-trail-ops trail
                 comp-reset $ [] 0 0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'phlox.schema/PhloxElement)
-            :args $ [] 'Nil
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'expand-directions $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn expand-directions (base)
             []
@@ -2044,9 +1942,8 @@
               add-path base $ [] 1 0
               add-path base $ [] -1 0
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List 'Number
-            :return $ :: 'List $ :: 'List 'Number
+          :schema $ quote $ Fn (List Number)
+            -> $ List $ List Number
         'generate-trails $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-trails ()
             reset! *grid $ {}
@@ -2064,9 +1961,8 @@
                   acc trails
                 if (= 0 idx) acc $ recur (dec idx) (iterate-trails acc)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ []
-            :return $ :: 'List $ :: 'List (:: 'List 'Number)
+          :schema $ quote $ Fn
+            -> $ List $ List (List Number)
         'get-trail-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-trail-ops (trail)
             let
@@ -2083,32 +1979,28 @@
                     :width 2
                     :alpha 1
                 -> trail rest $ map $ fn (stop)
-                  hint-fn $ {}
-                    :args $ [] $ :: 'List 'Number
-                    :return $ :: 'List 'Dynamic
+                  hint-fn $ Fn (List Number)
+                    -> $ List Dynamic
                   [] :line-to $ multiply-path stop zoom-in
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List (:: 'List 'Number)
-            :return $ :: 'List $ :: 'List 'Dynamic
+          :schema $ quote $ Fn
+            List $ List Number
+            -> $ List $ List Dynamic
         'iterate-trails $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn iterate-trails (trails)
             -> trails $ map $ fn (trail)
-              hint-fn $ {}
-                :args $ [] $ :: 'List (:: 'List 'Number)
-                :return $ :: 'List $ :: 'List 'Number
+              hint-fn $ Fn
+                List $ List Number
+                -> $ List $ List Number
               let
                   pick-next $ fn (base)
-                    hint-fn $ {}
-                      :args $ [] $ :: 'List 'Number
-                      :return $ :: 'List $ :: 'List 'Number
+                    hint-fn $ Fn (List Number)
+                      -> $ List $ List Number
                     let
                         directions $ expand-directions base
                         available $ -> directions $ filter-not
                           fn (x)
-                            hint-fn $ {}
-                              :args $ [] $ :: 'List 'Number
-                              :return 'Bool
+                            hint-fn $ Fn (List Number) (-> Bool)
                             .unwrap-or (get @*grid x) false
                       if
                         not $ empty? available
@@ -2122,28 +2014,24 @@
                     head-next $ pick-next $ .unwrap-or (first trail) ([] 0 0)
                   concat head-next trail tail-next
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List
-              :: 'List $ :: 'List 'Number
-            :return $ :: 'List $ :: 'List (:: 'List 'Number)
+          :schema $ quote $ Fn
+            List $ List $ List Number
+            -> $ List $ List (List Number)
         'pick-one $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pick-one (xs)
             .unwrap $ nth xs $ decode-map-as
               rand-int $ .len xs
               , 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'A)
-            :args $ [] $ :: 'List 'A
-            :generics $ [] 'A
+          :schema $ quote $ Fn (List A) (-> A) (:generics A)
         'rand-point $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-point (n)
             []
               decode-map-as (rand-int n) 'Number
               decode-map-as (rand-int n) 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] 'Number
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn Number
+            -> $ List Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.walking-demo
           :require
@@ -2158,7 +2046,7 @@
           :code $ quote $ def site
             {} (:dev-ui |http://localhost:8100/main-fonts.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main-fonts.css) (:cdn-url |http://cdn.tiye.me/circling-tree/) (:title "|Circling Tree") (:icon |http://cdn.tiye.me/logo/quamolit.png) (:storage-key |circling-tree)
           :examples $ []
-          :schema $ :: 'Map 'Tag 'String
+          :schema $ quote $ Map Tag String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
           :require $ |mobile-detect :default mobile-detect
@@ -2167,7 +2055,7 @@
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *store schema/store
           :examples $ []
-          :schema $ :: 'Ref $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Ref (Map Tag Dynamic)
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             match op
@@ -2179,9 +2067,7 @@
               reset! *store $ updater @*store (app.schema/normalize-op op) op-id op-time
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Enum
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Enum (-> Unit) (:features :js-ffi)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (; js/console.log PIXI)
             -> (new FontFaceObserver "|Josefin Sans") (phlox.core/ffi-load-font)
@@ -2191,9 +2077,7 @@
             when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "|App Started"
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
@@ -2205,15 +2089,12 @@
               hud! |error build-errors
             , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render! (comp-container @*store) dispatch! $ {}
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ []
+          :schema $ quote $ Fn (-> Unit)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require (|pixi.js :as PIXI)
@@ -2232,9 +2113,11 @@
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op (:tab 'Tag) (:touch 'Nil)
-            :states (:: 'List 'Dynamic) 'Dynamic
+            :states
+              quote $ List Dynamic
+              , 'Dynamic
           :examples $ []
-          :schema $ :: 'EnumDef
+          :schema $ quote EnumDef
         'normalize-op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-op (op)
             match op
@@ -2248,14 +2131,13 @@
                   , state
               _ $ raise "|Unknown application operation"
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'app.schema/Op)
-            :args $ [] 'Enum
+          :schema $ quote $ Fn Enum (-> app.schema/Op)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             {} (:tab nil)
               :states $ {}
           :examples $ []
-          :schema $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Map Tag Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.style $ %{} 'FileEntry
@@ -2263,7 +2145,7 @@
         %{} 'CodeEntry (:doc |)
           :code $ quote $ def font-fancy "|Josefin Sans, Helvetica Neue, sans-serif"
           :examples $ []
-          :schema $ :: 'String
+          :schema $ quote String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.style
     'app.updater $ %{} 'FileEntry
@@ -2276,9 +2158,8 @@
               (:states cursor s) (update-states store cursor s)
               _ $ do (eprintln "|unknown op" op) store
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'app.schema/Op 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ quote $ Fn (Map Tag Dynamic) app.schema/Op String Number
+            -> $ Map Tag Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
           :require $ phlox.cursor :refer $ update-states
@@ -2286,26 +2167,22 @@
       :defs $ {}
         'DateHost $ %{} 'CodeEntry (:doc |)
           :code $ quote $ deftrait DateHost
-            .now! $ :: 'Fn $ {}
-              :args $ [] 'app.util/DateHost
-              :return 'Number
+            .now! $ quote $ Fn app.util/DateHost (-> Number)
           :examples $ []
           :ffi $ {} (:backend :js) (:kind :external-object) (:target :browser)
             :names $ {} $ :now! |now
-          :schema $ :: 'Trait
+          :schema $ quote Trait
         'add-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn add-path (p1 p2)
             let[] (a b) p1 $ let[] (x y) p2 $ [] (+ a x) (+ b y)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Number) (:: 'List 'Number)
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn (List Number) (List Number)
+            -> $ List Number
         'child-states $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn child-states (states key) (phlox.core/>> states key)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Dynamic 'Dynamic) 'Dynamic
-            :return $ :: 'Map 'Dynamic 'Dynamic
+          :schema $ quote $ Fn (Map Dynamic Dynamic) Dynamic
+            -> $ Map Dynamic Dynamic
         'divide-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn divide-path (p1 p2)
             let[] (x y) p1 $ let[] (a b) p2 $ let
@@ -2314,9 +2191,8 @@
                 * inverted $ + (* x a) (* y b)
                 * inverted $ - (* y a) (* x b)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Number) (:: 'List 'Number)
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn (List Number) (List Number)
+            -> $ List Number
         'divide-x $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn divide-x (point x)
             []
@@ -2327,105 +2203,87 @@
                 .unwrap-or (last point) 0
                 , x
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Number) 'Number
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn (List Number) Number
+            -> $ List Number
         'ffi-date-now $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-date-now ()
             decode-map-as (js/Date.now) 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Number) (:features :js-ffi)
         'ffi-e $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def ffi-e (ffi-math-e)
           :examples $ []
-          :schema $ :: 'Number
+          :schema $ quote Number
         'ffi-math-e $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-math-e () (decode-map-as js/Math.E 'Number)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Number) (:features :js-ffi)
         'ffi-performance-now $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-performance-now ()
             decode-map-as (js/performance.now) 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ []
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn (-> Number) (:features :js-ffi)
         'ffi-pow $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-pow (base exponent)
             decode-map-as (js/Math.pow base exponent) 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Number 'Number
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Number Number (-> Number) (:features :js-ffi)
         'ffi-request-fullscreen $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-request-fullscreen (target)
             browser/element-request-fullscreen! $ browser/element-host target
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Dynamic (-> Unit) (:features :js-ffi)
         'ffi-round $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-round (value)
             decode-map-as (js/Math.round value) 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] 'Number
-            :features $ #{} :js-ffi
+          :schema $ quote $ Fn Number (-> Number) (:features :js-ffi)
         'first-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn first-list (xs)
             match (first xs)
               (:none) ([])
               (:some child) child
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List (:: 'List 'A)
-            :generics $ [] 'A
-            :return $ :: 'List 'A
+          :schema $ quote $ Fn
+            List $ List A
+            -> $ List A
+            :generics A
         'invert-y $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn invert-y (pair)
             let[] (x y) pair $ [] x $ negate y
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List 'Number
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn (List Number)
+            -> $ List Number
         'last-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn last-list (xs)
             match (last xs)
               (:none) ([])
               (:some child) child
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'List (:: 'List 'A)
-            :generics $ [] 'A
-            :return $ :: 'List 'A
+          :schema $ quote $ Fn
+            List $ List A
+            -> $ List A
+            :generics A
         'multiply-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn multiply-path (p1 p2)
             let[] (a b) p1 $ let[] (x y) p2 $ []
               - (* a x) (* b y)
               + (* a y) (* b x)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Number) (:: 'List 'Number)
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn (List Number) (List Number)
+            -> $ List Number
         'rand-color $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-color ()
             decode-map-as (rand-int 0xffffff) 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ []
+          :schema $ quote $ Fn (-> Number)
         'rand-nth $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-nth (xs)
             .unwrap $ nth xs $ decode-map-as
               rand-int $ .len xs
               , 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'A)
-            :args $ [] $ :: 'List 'A
-            :generics $ [] 'A
+          :schema $ quote $ Fn (List A) (-> A) (:generics A)
         'rand-point $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-point (n & ms)
             let
@@ -2438,31 +2296,27 @@
                   ffi-round $ * 0.2 m
                   decode-map-as (rand-int m) 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:rest 'Number)
-            :args $ [] 'Number
-            :features $ #{} :js-ffi
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn Number & Number
+            -> $ List Number
+            :features :js-ffi
         'rough-size $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rough-size (pair)
             let[] (x y) pair $ + (phlox.core/ffi-abs x) (phlox.core/ffi-abs y)
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] $ :: 'List 'Number
+          :schema $ quote $ Fn (List Number) (-> Number)
         'state-number $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn state-number (state key)
             decode-map-as
               .unwrap-or (get state key) nil
               , 'Number
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Number)
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Tag
+          :schema $ quote $ Fn (Map Tag Dynamic) Tag (-> Number)
         'subtract-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn subtract-path (p1 p2)
             let[] (a b) p1 $ let[] (x y) p2 $ [] (- a x) (- b y)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'List 'Number) (:: 'List 'Number)
-            :return $ :: 'List 'Number
+          :schema $ quote $ Fn (List Number) (List Number)
+            -> $ List Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.util
           :require
