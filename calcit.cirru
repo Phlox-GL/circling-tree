@@ -20,14 +20,14 @@
                     {}
                       :points $ [] ([] 40 100) ([] 200 100) ([] 200 400) ([] 40 400)
                       :n 80
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
               container ({})
                 graphics $ {}
                   :position $ [] 0 0
                   :ops $ let[] (p1 p2 q1 q2)
                     decode-map-as
                       .unwrap-or (get state :points) nil
-                      :: 'List $ :: 'List 'Number
+                      quote $ List $ List Number
                     let
                         n $ app.util/state-number state :n
                       gen-trail p1 p2 q1 q2 n
@@ -35,7 +35,7 @@
                   ->
                     decode-map-as
                       .unwrap-or (get state :points) nil
-                      :: 'List $ :: 'List 'Number
+                      quote $ List $ List Number
                     map-indexed $ fn (idx point)
                       [] idx $ comp-drag-point (app.util/child-states states idx)
                         {} (:position point)
@@ -166,7 +166,7 @@
                       concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
                       rand-stroke curve-strokes
                       []
-                  :: 'List $ :: 'List 'Dynamic
+                  quote $ List $ List Dynamic
           :examples $ []
           :schema $ quote $ Fn Nil Number (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'concat-ops $ %{} 'CodeEntry (:doc |)
@@ -276,7 +276,7 @@
                   or
                     .unwrap-or (get states :data) nil
                     {} $ :size 20
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
               container ({})
                 graphics $ {}
                   :position $ [] 200 320
@@ -420,7 +420,7 @@
                 tab $ .unwrap-or (get store :tab) nil
                 states $ decode-map-as
                   .unwrap-or (get store :states) nil
-                  :: 'Map 'Dynamic 'Dynamic
+                  quote $ Map Dynamic Dynamic
                 touch-key $ decode-map-as
                   .unwrap-or (get store :touch-key) nil
                   , 'Nil
@@ -521,7 +521,7 @@
                   or
                     .unwrap-or (get states :data) nil
                     {} (:r1 312) (:r2 80) (:r3 96) (:r4 20) (:r5 8) (:steps 2000) (:v 0.11) (:round? true)
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
               container ({}) (comp-numbers-control state states)
                 graphics $ {}
                   :position $ [] 400 400
@@ -731,7 +731,7 @@
                   or
                     .unwrap-or (get states :data) nil
                     , initial-state
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
               container ({})
                 graphics $ {}
                   :position $ [] 400 360
@@ -837,15 +837,15 @@
                         .unwrap $ first item
                         , 'String
                     .map-list $ fn (pair)
-                      hint-fn $ Fn (List Dynamic)
+                      hint-fn $ Fn
+                        Tuple String $ List Dynamic
                         -> $ List $ List (List Number)
                       ->
-                        decode-map-as
-                          .unwrap $ last pair
-                          :: 'List $ :: 'List 'Dynamic
+                        decode-map-as (nth pair 1)
+                          quote $ List $ List Dynamic
                         map $ fn (piece)
                           decode-map-as (slice piece 1)
-                            :: 'List $ :: 'List 'Number
+                            quote $ List $ List Number
                   let
                       result $ iterate-trails points-with-keys
                       new-points-keys $ .unwrap $ first result
@@ -895,7 +895,7 @@
                         k $ .unwrap-or (first pair) nil
                         base $ decode-map-as
                           .unwrap-or (nth pair 1) nil
-                          :: 'List 'Number
+                          quote $ List Number
                         directions $ expand-directions base
                         available $ -> directions
                           filter-not $ fn (x)
@@ -925,7 +925,7 @@
                     let
                         point $ decode-map-as
                           .unwrap-or (nth pair 1) nil
-                          :: 'List 'Number
+                          quote $ List Number
                         directions $ expand-directions point
                         available $ -> directions $ filter-not
                           fn (x)
@@ -972,7 +972,7 @@
             let
                 cursor $ decode-map-as
                   .unwrap-or (get states :cursor) nil
-                  :: 'List 'Dynamic
+                  quote $ List Dynamic
                 state $ decode-map-as
                   or
                     .unwrap-or (get states :data) nil
@@ -986,10 +986,10 @@
                             :damping $ decode-map-as (rand 2) 'Number
                       :steps 100
                       :base 0.01
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 controls $ decode-map-as
                   .unwrap-or (get state :controls) nil
-                  :: 'List $ :: 'Map 'Tag 'Dynamic
+                  quote $ List $ Map Tag Dynamic
                 trail $ gen-trail controls (app.util/state-number state :steps) (app.util/state-number state :base)
               container
                 {} $ :position $ [] 400 300
@@ -1027,7 +1027,7 @@
                             , 0
                           decode-map-as
                             .unwrap-or (get control :amplitude) nil
-                            :: 'List 'Number
+                            quote $ List Number
                       reduce ([] 0 0) add-path
                   , final-point
           :examples $ []
@@ -1176,7 +1176,7 @@
                   or
                     .unwrap-or (get states :data) nil
                     , initial-state
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
               container ({})
                 graphics $ {}
                   :position $ [] 400 360
@@ -1332,10 +1332,10 @@
                       :steps 18
                       :base 20
                       :alpha 1
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 points $ decode-map-as
                   .unwrap-or (get state :points) nil
-                  :: 'List $ :: 'List 'Number
+                  quote $ List $ List Number
               container
                 {} $ :position $ [] 240 400
                 create-list :container ({})
@@ -1458,7 +1458,7 @@
                     :max $ dec $ .len
                       decode-map-as
                         .unwrap-or (get state :segments) nil
-                        :: 'List $ :: 'List 'Number
+                        quote $ List $ List Number
                     :title |selected
                     :on-change $ fn (result d!)
                       d! $ :: :states cursor $ assoc state :selected result
@@ -1497,13 +1497,14 @@
                       d! $ :: :states cursor $ -> state
                         update :segments $ fn (xs)
                           let
-                              segments $ decode-map-as xs $ :: 'List (:: 'List 'Number)
+                              segments $ decode-map-as xs $ quote
+                                List $ List Number
                             conj segments $ []
                               decode-map-as (rand-int 360) 'Number
                               decode-map-as (rand-int 360) 'Number
                         assoc :selected $ .len $ decode-map-as
                           .unwrap-or (get state :segments) nil
-                          :: 'List $ :: 'List 'Number
+                          quote $ List $ List Number
                 comp-button $ {} (:text |Remove)
                   :position $ [] 660 0
                   :on $ {} $ :pointertap
@@ -1511,7 +1512,8 @@
                       d! $ :: :states cursor $ -> state
                         update :segments $ fn (xs)
                           let
-                              segments $ decode-map-as xs $ :: 'List (:: 'List 'Number)
+                              segments $ decode-map-as xs $ quote
+                                List $ List Number
                             if
                               < (.len segments) 2
                               , segments $ butlast segments
@@ -1528,7 +1530,7 @@
                     {} (:unit 20)
                       :segments $ [] ([] 0 100) ([] 50 200) ([] 100 180)
                       :selected 0
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 ratio $ * phlox.math/ffi-pi $ / 1 180
                 rad $ fn (x)
                   hint-fn $ Fn Number $ -> Number
@@ -1539,7 +1541,7 @@
                   ->
                     decode-map-as
                       .unwrap-or (get state :segments) nil
-                      :: 'List $ :: 'List 'Number
+                      quote $ List $ List Number
                     map-indexed $ fn (idx segment)
                       [] idx $ let
                           r $ + 10 $ * idx (app.util/state-number state :unit)
@@ -1571,7 +1573,7 @@
                                     .unwrap-or
                                       get-in state $ [] :segments idx
                                       []
-                                    :: 'List 'Number
+                                    quote $ List Number
                                   a $ .unwrap-or (first segment) 0
                                   b $ .unwrap-or (last segment) 0
                                 [] a $ + a b
@@ -1609,7 +1611,7 @@
                     {} (:steps 1)
                       :points $ [] ([] 0 300) ([] 140 300)
                       :shaking? false
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
               container ({})
                 container
                   {} $ :position $ [] -100 -60
@@ -1621,7 +1623,8 @@
                           fn (points)
                             hint-fn $ Fn Dynamic (-> Dynamic) (:features :js-ffi)
                             let
-                                ps $ decode-map-as points $ :: 'List (:: 'List 'Number)
+                                ps $ decode-map-as points $ quote
+                                  List $ List Number
                                 tail $ .unwrap-or (last ps) ([] 0 0)
                               conj (butlast ps)
                                 add-path tail $ [] -80 -60
@@ -1634,7 +1637,8 @@
                           fn (points)
                             hint-fn $ Fn Dynamic (-> Dynamic) (:features :js-ffi)
                             let
-                                ps $ decode-map-as points $ :: 'List (:: 'List 'Number)
+                                ps $ decode-map-as points $ quote
+                                  List $ List Number
                               if
                                 <= (.len ps) 2
                                 , ps $ conj
@@ -1650,7 +1654,7 @@
                       :max $ if
                         >= 3 $ .len $ decode-map-as
                           .unwrap-or (get state :points) nil
-                          :: 'List $ :: 'List 'Number
+                          quote $ List $ List Number
                         , 12 6
                       :round? true
                       :on-change $ fn (value d!)
@@ -1669,7 +1673,7 @@
                       trail $ fold-curve
                         decode-map-as
                           .unwrap-or (get state :points) nil
-                          :: 'List $ :: 'List 'Number
+                          quote $ List $ List Number
                         app.util/state-number state :steps
                         decode-map-as
                           .unwrap-or (get state :shaking?) nil
@@ -1687,7 +1691,7 @@
                   ->
                     decode-map-as
                       .unwrap-or (get state :points) nil
-                      :: 'List $ :: 'List 'Number
+                      quote $ List $ List Number
                     map-indexed $ fn (idx point)
                       [] idx $ comp-drag-point (app.util/child-states states idx)
                         {} (:position point)
@@ -1817,20 +1821,20 @@
                       :p1 $ [] 0.7 0.2
                       :p2 $ [] 0.84 0.15
                       :p0 $ [] 3 -80
-                  :: 'Map 'Tag 'Dynamic
+                  quote $ Map Tag Dynamic
                 p0 $ decode-map-as
                   .unwrap-or (get state :p0) nil
-                  :: 'List 'Number
+                  quote $ List Number
                 base $ subtract-path ([] 0 0) p0
                 factor-1 $ divide-path
                   decode-map-as
                     .unwrap-or (get state :p1) nil
-                    :: 'List 'Number
+                    quote $ List Number
                   , base
                 factor-2 $ divide-path
                   decode-map-as
                     .unwrap-or (get state :p2) nil
-                    :: 'List 'Number
+                    quote $ List Number
                   , base
               container
                 {} $ :position $ [] 0 200
@@ -1849,7 +1853,7 @@
                   {}
                     :position $ decode-map-as
                       .unwrap-or (get state :p1) nil
-                      :: 'List 'Number
+                      quote $ List Number
                     :radius 10
                     :fill $ hslx 200 80 60
                     :alpha 0.4
@@ -1859,7 +1863,7 @@
                   {}
                     :position $ decode-map-as
                       .unwrap-or (get state :p2) nil
-                      :: 'List 'Number
+                      quote $ List Number
                     :title |end
                     :radius 10
                     :alpha 0.4
@@ -1870,7 +1874,7 @@
                   {}
                     :position $ decode-map-as
                       .unwrap-or (get state :p0) nil
-                      :: 'List 'Number
+                      quote $ List Number
                     :title |from
                     :radius 10
                     :alpha 0.5
@@ -2112,10 +2116,10 @@
     'app.schema $ %{} 'FileEntry
       :defs $ {}
         'Op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Op (:tab 'Tag) (:touch 'Nil)
+          :code $ quote $ defenum Op (:tab Tag) (:touch Nil)
             :states
               quote $ List Dynamic
-              , 'Dynamic
+              , Dynamic
           :examples $ []
           :schema $ quote EnumDef
         'normalize-op $ %{} 'CodeEntry (:doc |)
@@ -2127,7 +2131,7 @@
                 Op :touch $ decode-map-as token 'Nil
               (:states cursor state)
                 Op :states
-                  decode-map-as cursor $ :: 'List 'Dynamic
+                  decode-map-as cursor $ quote $ List Dynamic
                   , state
               _ $ raise "|Unknown application operation"
           :examples $ []
