@@ -4,7 +4,11 @@ Circling Tree(WIP)
 
 > Rendering tree patterns
 
-### 0.32.1 迁移候选：使用者影响
+### 0.1.3：Calcit 0.37.0
+
+CLI / `@calcit/procs` 配对正式 0.37.0，依赖为 Phlox 0.9.3、Touch Control 0.0.39、JS-FFI 0.2.13（Phlox 间接使用 Pointed Prompt 0.0.27）。源码无需改动，只升级依赖图并重新生成 JS。
+
+### 历史 0.32.1 迁移候选：使用者影响
 
 CLI/runtime 配对正式 `0.32.1`，依赖声明对齐 Phlox `0.8.0`、Touch Control
 `0.0.35`、js-ffi `0.2.9`。Phlox 间接使用 Pointed Prompt `0.0.24`。这些库
