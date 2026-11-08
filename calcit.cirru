@@ -415,10 +415,8 @@
         'comp-container $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-container (store)
             let
-                tab $ .unwrap-or (get store :tab) :sun
-                states $ decode-map-as
-                  .unwrap-or (get store :states) ({})
-                  Map Dynamic Dynamic
+                tab $ :tab store
+                states $ :states store
                 touch-key nil
               container
                 {} $ :position $ [] -250 -320
@@ -427,12 +425,11 @@
                   -> tabs $ map-indexed $ fn (idx item)
                     [] idx $ comp-tab
                       cap-name $ to-string item
-                      , item idx $ = tab item
+                      , item idx $ = tab (Option :some item)
                 container
                   {} $ :position $ [] 280 80
-                  match tab
+                  match (.unwrap-or tab :sun)
                     :sun $ comp-sun-demo touch-key
-                    nil $ comp-sun-demo touch-key
                     :circle $ comp-circle-demo touch-key
                     :tree $ comp-tree-demo $ >> states :tree
                     :walking $ comp-walking-demo touch-key
@@ -449,7 +446,7 @@
                     :harmono $ comp-harmono-demo $ >> states :harmono
                     :satellite $ comp-satellite-demo $ >> states :satellite
                     _ $ text $ {}
-                      :text $ str "|Unknown " tab
+                      :text $ str "|Unknown " $ .unwrap-or tab :sun
                       :style $ {} $ :fill (hslx 0 0 100)
                       :position $ [] 0 0
                 circle $ {}
@@ -460,7 +457,7 @@
                   :on $ {} $ :pointertap
                     fn (e d!) (app.util/ffi-request-fullscreen js/document.body)
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-tab $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-tab (title tab idx selected?)
             container
@@ -2048,7 +2045,7 @@
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *store schema/store
           :examples $ []
-          :schema $ quote $ Ref (Map Tag Dynamic)
+          :schema $ quote $ Ref app.schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             match op
@@ -2109,6 +2106,13 @@
             :states (List Dynamic) Dynamic
           :examples $ []
           :schema $ quote EnumDef
+        'Store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Store
+            :tab $ Option Tag
+            :touch-key Nil
+            :states $ Map Dynamic Dynamic
+          :examples $ []
+          :schema $ quote StructDef
         'normalize-op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-op (op)
             match op
@@ -2125,10 +2129,9 @@
           :schema $ quote $ Fn AnyEnum (-> app.schema/Op)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
-            {} (:tab nil)
-              :states $ {}
+            Store :tab (Option :none) :touch-key nil :states $ {}
           :examples $ []
-          :schema $ quote $ Map Tag Dynamic
+          :schema $ quote app.schema/Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.style $ %{} 'FileEntry
@@ -2142,18 +2145,19 @@
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn updater (store op op-id op-time)
+          :code $ quote $ defn updater (store op _op-id _op-time)
             match op
-              (:tab t) (assoc store :tab t)
-              (:touch t) (assoc store :touch-key t)
-              (:states cursor s) (update-states store cursor s)
-              _ $ do (eprintln "|unknown op" op) store
+              (:tab tab)
+                assoc store :tab $ Option :some tab
+              (:touch token) (assoc store :touch-key token)
+              (:states cursor state)
+                assoc store :states $ decode-map-as
+                  assoc-in (:states store) (conj cursor :data) state
+                  Map Dynamic Dynamic
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) app.schema/Op String Number
-            -> $ Map Tag Dynamic
+          :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require $ phlox.cursor :refer $ update-states
     'app.util $ %{} 'FileEntry
       :defs $ {}
         'DateHost $ %{} 'CodeEntry (:doc |)
