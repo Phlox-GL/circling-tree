@@ -781,6 +781,23 @@
           :examples $ []
           :schema $ quote $ Ref
             Map (List Number) Bool
+        'TrailPiece $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct TrailPiece (:key String)
+            :from $ List Number
+            :to $ List Number
+          :examples $ []
+          :schema $ quote StructDef
+        'TrailPoint $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct TrailPoint (:key String)
+            :position $ List Number
+          :examples $ []
+          :schema $ quote StructDef
+        'TrailStep $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct TrailStep
+            :points $ List app.comp.grow-demo/TrailPoint
+            :pieces $ List app.comp.grow-demo/TrailPiece
+          :examples $ []
+          :schema $ quote StructDef
         'comp-grow-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-grow-demo (touch-key)
             let
@@ -815,17 +832,17 @@
               &doseq (point trails) (swap! *grid assoc point true)
               loop
                   idx 50
-                  points-with-keys $ map trails $ fn (x)
-                    []
+                  points-with-keys $ map trails $ fn (point)
+                    hint-fn $ Fn (List Number) (-> app.comp.grow-demo/TrailPoint)
+                    TrailPoint :key
                       decode-map-as (shortid/generate) 'String
-                      , x
-                  acc $ []
+                      , :position point
+                  acc $ assert-type ([]) (List app.comp.grow-demo/TrailPiece)
                 if (= 0 idx) (group-trail-pieces acc)
                   let
                       result $ iterate-trails points-with-keys
-                      new-points-keys $ .unwrap $ first result
-                      pieces $ .unwrap $ last result
-                    recur (dec idx) new-points-keys $ concat acc pieces
+                    recur (dec idx) (:points result)
+                      concat acc $ :pieces result
           :examples $ []
           :schema $ quote $ Fn
             -> $ List $ List
@@ -861,80 +878,65 @@
             :features :js-ffi
         'group-trail-pieces $ %{} 'CodeEntry
           :doc "|groups pieces by their trail key, kept outside `loop` so the decode types stay in a function body"
-          :code $ quote $ defn group-trail-pieces (acc)
-            -> acc
-              group-by $ fn (item)
-                decode-map-as
-                  .unwrap $ first item
-                  , 'String
+          :code $ quote $ defn group-trail-pieces (pieces)
+            -> pieces
+              group-by $ fn (piece)
+                hint-fn $ Fn app.comp.grow-demo/TrailPiece $ -> String
+                :key piece
               .map-list $ fn (pair)
                 hint-fn $ Fn
-                  Tuple String $ List Dynamic
+                  Tuple String $ List app.comp.grow-demo/TrailPiece
                   -> $ List $ List (List Number)
-                let
-                    pieces $ decode-map-as (nth pair 1)
-                      List $ List Dynamic
-                  map pieces $ fn (piece)
-                    decode-map-as (slice piece 1)
-                      List $ List Number
+                let[] (_ trail) pair $ map trail $ fn (piece)
+                  hint-fn $ Fn app.comp.grow-demo/TrailPiece $ ->
+                    List $ List Number
+                  [] (:from piece) (:to piece)
           :examples $ []
-          :schema $ quote $ Fn (List Dynamic)
+          :schema $ quote $ Fn (List app.comp.grow-demo/TrailPiece)
             -> $ List $ List
               List $ List Number
         'iterate-trails $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn iterate-trails (points)
             let
-                result $ -> points $ map
-                  fn (pair)
-                    hint-fn $ Fn (List Dynamic)
-                      -> $ List $ List (List Dynamic)
+                result $ foldl points
+                  TrailStep :points ([]) :pieces $ []
+                  fn (step point)
+                    hint-fn $ Fn app.comp.grow-demo/TrailStep app.comp.grow-demo/TrailPoint $ -> app.comp.grow-demo/TrailStep
                     let
-                        k $ .unwrap $ first pair
-                        base $ decode-map-as
-                          .unwrap $ nth pair 1
-                          List Number
+                        k $ :key point
+                        base $ :position point
                         directions $ expand-directions base
                         available $ -> directions
                           filter-not $ fn (x)
                             hint-fn $ Fn (List Number) (-> Bool)
                             .unwrap-or (get @*grid x) false
-                          filter $ fn (x)
+                          filter $ fn (_)
                             hint-fn $ Fn (List Number) (-> Bool)
                             >
                               decode-map-as (rand) 'Number
                               , 0.43
                         picked $ pick-many available
                       &doseq (x picked) (swap! *grid assoc x true)
-                      []
-                        -> picked $ map $ fn (x)
-                          hint-fn $ Fn (List Number)
-                            -> $ List Dynamic
-                          [] k x
-                        -> picked $ map $ fn (x)
-                          hint-fn $ Fn (List Number)
-                            -> $ List Dynamic
-                          [] k base x
-              []
-                ->
-                  concat $ mapcat result app.util/first-list
-                  filter-not $ fn (pair)
-                    hint-fn $ Fn (List Dynamic) (-> Bool)
-                    let
-                        point $ decode-map-as
-                          .unwrap $ nth pair 1
-                          List Number
-                        directions $ expand-directions point
-                        available $ -> directions $ filter-not
-                          fn (x)
-                            hint-fn $ Fn (List Number) (-> Bool)
-                            .unwrap-or (get @*grid x) false
-                      empty? available
-                mapcat result app.util/last-list
+                      struct-with step
+                        :points $ concat (:points step)
+                          map picked $ fn (x)
+                            hint-fn $ Fn (List Number) (-> app.comp.grow-demo/TrailPoint)
+                            TrailPoint :key k :position x
+                        :pieces $ concat (:pieces step)
+                          map picked $ fn (x)
+                            hint-fn $ Fn (List Number) (-> app.comp.grow-demo/TrailPiece)
+                            TrailPiece :key k :from base :to x
+              assoc result :points $ filter-not (:points result)
+                fn (point)
+                  hint-fn $ Fn app.comp.grow-demo/TrailPoint $ -> Bool
+                  let
+                      directions $ expand-directions $ :position point
+                      available $ filter-not directions $ fn (x)
+                        hint-fn $ Fn (List Number) (-> Bool)
+                        .unwrap-or (get @*grid x) false
+                    empty? available
           :examples $ []
-          :schema $ quote $ Fn
-            List $ List Dynamic
-            -> $ List $ List (List Dynamic)
-            :features :js-ffi
+          :schema $ quote $ Fn (List app.comp.grow-demo/TrailPoint) (-> app.comp.grow-demo/TrailStep) (:features :js-ffi)
         'pick-many $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pick-many (xs)
             if
