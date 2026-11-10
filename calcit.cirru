@@ -425,7 +425,7 @@
                   -> tabs $ map-indexed $ fn (idx item)
                     [] idx $ comp-tab
                       cap-name $ to-string item
-                      , item idx $ = tab (Option :some item)
+                      , item idx $ = tab (Some item)
                 container
                   {} $ :position $ [] 280 80
                   match (.unwrap-or tab :sun)
@@ -455,7 +455,7 @@
                   :alpha 1
                   :radius 10
                   :on $ {} $ :pointertap
-                    fn (e d!) (app.util/ffi-request-fullscreen js/document.body)
+                    fn (e d!) (app.util/ffi-request-fullscreen)
           :examples $ []
           :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-tab $ %{} 'CodeEntry (:doc |)
@@ -892,7 +892,7 @@
                     List $ List Number
                   [] (:from piece) (:to piece)
           :examples $ []
-          :schema $ quote $ Fn (List app.comp.grow-demo/TrailPiece)
+          :schema $ quote $ Fn (List TrailPiece)
             -> $ List $ List
               List $ List Number
         'iterate-trails $ %{} 'CodeEntry (:doc |)
@@ -936,7 +936,7 @@
                         .unwrap-or (get @*grid x) false
                     empty? available
           :examples $ []
-          :schema $ quote $ Fn (List app.comp.grow-demo/TrailPoint) (-> app.comp.grow-demo/TrailStep) (:features :js-ffi)
+          :schema $ quote $ Fn (List TrailPoint) (-> TrailStep) (:features :js-ffi)
         'pick-many $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pick-many (xs)
             if
@@ -947,7 +947,7 @@
                 1 $ []
                   .unwrap $ nth xs 0
                   .unwrap $ nth xs 2
-                2 $ slice xs 0 $ Option :some 2
+                2 $ slice xs 0 $ Some 2
                 _ xs
               , xs
           :examples $ []
@@ -2047,7 +2047,7 @@
         '*store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defref *store schema/store
           :examples $ []
-          :schema $ quote $ Ref app.schema/Store
+          :schema $ quote $ Ref schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
             match op
@@ -2132,12 +2132,12 @@
                   , state
               _ $ raise "|Unknown application operation"
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> app.schema/Op) (:open :decode)
+          :schema $ quote $ Fn AnyEnum (-> Op) (:open :decode)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
-            Store :tab (Option :none) :touch-key nil :states $ {}
+            Store :tab None :touch-key nil :states $ {}
           :examples $ []
-          :schema $ quote app.schema/Store
+          :schema $ quote Store
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
     'app.style $ %{} 'FileEntry
@@ -2154,7 +2154,7 @@
           :code $ quote $ defn updater (store op _op-id _op-time)
             match op
               (:tab tab)
-                assoc store :tab $ Option :some tab
+                assoc store :tab $ Some tab
               (:touch token) (assoc store :touch-key token)
               (:states cursor state)
                 assoc store :states $ decode-map-as
@@ -2230,10 +2230,10 @@
           :examples $ []
           :schema $ quote $ Fn Number Number (-> Number) (:features :js-ffi)
         'ffi-request-fullscreen $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn ffi-request-fullscreen (target)
-            browser/element-request-fullscreen! $ browser/element-host target
+          :code $ quote $ defn ffi-request-fullscreen ()
+            browser/element-request-fullscreen! $ .unwrap $ browser/document-body
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
         'ffi-round $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn ffi-round (value)
             decode-map-as (js/Math.round value) 'Number
