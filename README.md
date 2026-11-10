@@ -4,13 +4,13 @@ Circling Tree(WIP)
 
 > Rendering tree patterns
 
-### Calcit 0.38.0 升级
+### Calcit 0.40.0 升级
 
 请配套升级 CLI 和 `@calcit/procs`，重新安装并构建。页面启动仍显示 Sun，
 切换场景时保留本次访问中的控制参数，刷新回到默认场景。
 
 应用用具名 `Store` 保存状态，当前标签使用 `Option Tag` 表达是否已选择。
-Phlox 的组件状态仍接受混合键游标，原 HUD 展示和发布路径沿用现有配置。
+Phlox 的组件游标使用 `CursorKey` union，允许 Tag、String 和 Number 混用。HUD 展示和发布路径沿用现有配置。
 
 ### 0.1.3：Calcit 0.37.0
 

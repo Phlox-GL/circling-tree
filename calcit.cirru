@@ -2059,7 +2059,7 @@
               reset! *store $ updater @*store (app.schema/normalize-op op) op-id op-time
             , &unit
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :js-ffi) (:open :decode)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (; js/console.log PIXI)
             -> (new FontFaceObserver "|Josefin Sans") (phlox.core/ffi-load-font)
@@ -2103,9 +2103,13 @@
             touch-control.core :refer $ render-control! start-control-loop! replace-control-loop!
     'app.schema $ %{} 'FileEntry
       :defs $ {}
+        'CursorKey $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion CursorKey Tag String Number
+          :examples $ []
+          :schema $ quote UnionDef
         'Op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defenum Op (:tab Tag) (:touch Nil)
-            :states (List Dynamic) Dynamic
+            :states (List app.schema/CursorKey) Dynamic
           :examples $ []
           :schema $ quote EnumDef
         'Store $ %{} 'CodeEntry (:doc |)
@@ -2124,11 +2128,11 @@
                 Op :touch $ decode-map-as token 'Nil
               (:states cursor state)
                 Op :states
-                  decode-map-as cursor $ List Dynamic
+                  decode-map-as cursor $ List app.schema/CursorKey
                   , state
               _ $ raise "|Unknown application operation"
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> app.schema/Op)
+          :schema $ quote $ Fn AnyEnum (-> app.schema/Op) (:open :decode)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :tab (Option :none) :touch-key nil :states $ {}
@@ -2178,7 +2182,7 @@
         'child-states $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn child-states (states key) (phlox.core/>> states key)
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) Dynamic
+          :schema $ quote $ Fn (Map Dynamic Dynamic) app.schema/CursorKey
             -> $ Map Dynamic Dynamic
         'divide-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn divide-path (p1 p2)
