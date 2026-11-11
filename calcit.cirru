@@ -833,11 +833,11 @@
               loop
                   idx 50
                   points-with-keys $ map trails $ fn (point)
-                    hint-fn $ Fn (List Number) (-> app.comp.grow-demo/TrailPoint)
+                    hint-fn $ Fn (List Number) (-> TrailPoint)
                     TrailPoint :key
                       decode-map-as (shortid/generate) 'String
                       , :position point
-                  acc $ assert-type ([]) (List app.comp.grow-demo/TrailPiece)
+                  acc $ assert-type ([]) (List TrailPiece)
                 if (= 0 idx) (group-trail-pieces acc)
                   let
                       result $ iterate-trails points-with-keys
@@ -881,14 +881,14 @@
           :code $ quote $ defn group-trail-pieces (pieces)
             -> pieces
               group-by $ fn (piece)
-                hint-fn $ Fn app.comp.grow-demo/TrailPiece $ -> String
+                hint-fn $ Fn TrailPiece $ -> String
                 :key piece
               .map-list $ fn (pair)
                 hint-fn $ Fn
-                  Tuple String $ List app.comp.grow-demo/TrailPiece
+                  Tuple String $ List TrailPiece
                   -> $ List $ List (List Number)
                 let[] (_ trail) pair $ map trail $ fn (piece)
-                  hint-fn $ Fn app.comp.grow-demo/TrailPiece $ ->
+                  hint-fn $ Fn TrailPiece $ ->
                     List $ List Number
                   [] (:from piece) (:to piece)
           :examples $ []
@@ -901,7 +901,7 @@
                 result $ foldl points
                   TrailStep :points ([]) :pieces $ []
                   fn (step point)
-                    hint-fn $ Fn app.comp.grow-demo/TrailStep app.comp.grow-demo/TrailPoint $ -> app.comp.grow-demo/TrailStep
+                    hint-fn $ Fn TrailStep TrailPoint $ -> TrailStep
                     let
                         k $ :key point
                         base $ :position point
@@ -920,15 +920,15 @@
                       struct-with step
                         :points $ concat (:points step)
                           map picked $ fn (x)
-                            hint-fn $ Fn (List Number) (-> app.comp.grow-demo/TrailPoint)
+                            hint-fn $ Fn (List Number) (-> TrailPoint)
                             TrailPoint :key k :position x
                         :pieces $ concat (:pieces step)
                           map picked $ fn (x)
-                            hint-fn $ Fn (List Number) (-> app.comp.grow-demo/TrailPiece)
+                            hint-fn $ Fn (List Number) (-> TrailPiece)
                             TrailPiece :key k :from base :to x
               assoc result :points $ filter-not (:points result)
                 fn (point)
-                  hint-fn $ Fn app.comp.grow-demo/TrailPoint $ -> Bool
+                  hint-fn $ Fn TrailPoint $ -> Bool
                   let
                       directions $ expand-directions $ :position point
                       available $ filter-not directions $ fn (x)
