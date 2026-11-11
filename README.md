@@ -4,6 +4,10 @@ Circling Tree(WIP)
 
 > Rendering tree patterns
 
+### Calcit 0.41.0 升级
+
+配对正式 Calcit 和 @calcit/procs 0.41.0，重新安装依赖并构建。点击全屏控件时从 JS-FFI 读取具名 DOM 元素，继续使用原页面主体和图形交互。
+
 ### Calcit 0.40.0 升级
 
 请配套升级 CLI 和 `@calcit/procs`，重新安装并构建。页面启动仍显示 Sun，
