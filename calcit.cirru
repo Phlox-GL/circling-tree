@@ -971,7 +971,7 @@
             let
                 cursor $ decode-map-as
                   .unwrap-or (get states :cursor) ([])
-                  List Dynamic
+                  List app.schema/CursorKey
                 state $ decode-map-as
                   .unwrap-or (get states :data)
                     {}
@@ -1047,7 +1047,7 @@
                   :min 0
                   :title |steps
                   :on-change $ fn (v d!)
-                    d! $ :: :states cursor $ assoc state :steps v
+                    d! $ app.schema/Op :states cursor $ assoc state :steps v
               comp-slider (app.util/child-states states :base)
                 {}
                   :position $ [] 140 0
@@ -1057,7 +1057,7 @@
                   :min 0
                   :title |base
                   :on-change $ fn (v d!)
-                    d! $ :: :states cursor $ assoc state :base v
+                    d! $ app.schema/Op :states cursor $ assoc state :base v
               create-list :container ({})
                 -> controls $ map-indexed $ fn (idx control)
                   [] idx $ container
@@ -1074,7 +1074,7 @@
                         :min 0
                         :title |frequency
                         :on-change $ fn (v d!)
-                          d! $ :: :states cursor $ assoc-in state ([] :controls idx :frequency) v
+                          d! $ app.schema/Op :states cursor $ assoc-in state ([] :controls idx :frequency) v
                     comp-slider
                       app.util/child-states states $ str |phase: idx
                       {}
@@ -1085,7 +1085,7 @@
                         :min 0
                         :title |phase
                         :on-change $ fn (v d!)
-                          d! $ :: :states cursor $ assoc-in state ([] :controls idx :phase) v
+                          d! $ app.schema/Op :states cursor $ assoc-in state ([] :controls idx :phase) v
                     comp-slider
                       app.util/child-states states $ str |damping: idx
                       {}
@@ -1096,9 +1096,9 @@
                         :min 0
                         :title |damping
                         :on-change $ fn (v d!)
-                          d! $ :: :states cursor $ assoc-in state ([] :controls idx :damping) v
+                          d! $ app.schema/Op :states cursor $ assoc-in state ([] :controls idx :damping) v
           :examples $ []
-          :schema $ quote $ Fn (List Dynamic) (Map Dynamic Dynamic) (Map Tag Dynamic)
+          :schema $ quote $ Fn (List app.schema/CursorKey) (Map Dynamic Dynamic) (Map Tag Dynamic)
             List $ Map Tag Dynamic
             -> phlox.schema/PhloxElement
             :features :js-ffi
@@ -1111,9 +1111,9 @@
                   {}
                     :position $ .unwrap $ get control :amplitude
                     :on-change $ fn (v d!)
-                      d! $ :: :states cursor $ assoc-in state ([] :controls idx :amplitude) v
+                      d! $ app.schema/Op :states cursor $ assoc-in state ([] :controls idx :amplitude) v
           :examples $ []
-          :schema $ quote $ Fn (List Dynamic) (Map Dynamic Dynamic) (Map Tag Dynamic)
+          :schema $ quote $ Fn (List app.schema/CursorKey) (Map Dynamic Dynamic) (Map Tag Dynamic)
             List $ Map Tag Dynamic
             -> phlox.schema/PhloxElement
             :features :js-ffi
