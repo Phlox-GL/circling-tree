@@ -457,7 +457,7 @@
                   :on $ {} $ :pointertap
                     fn (e d!) (app.util/ffi-request-fullscreen)
           :examples $ []
-          :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn app.schema/Store (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'comp-tab $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-tab (title tab idx selected?)
             container
@@ -811,7 +811,7 @@
                       :ops $ get-trail-ops trail
                 comp-reset $ [] 0 0
           :examples $ []
-          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'expand-directions $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn expand-directions (base)
             []
@@ -847,7 +847,7 @@
           :schema $ quote $ Fn
             -> $ List $ List
               List $ List Number
-            :features :js-ffi
+            :features :js-ffi :state
         'get-trail-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-trail-ops (trail)
             let
@@ -936,7 +936,7 @@
                         .unwrap-or (get @*grid x) false
                     empty? available
           :examples $ []
-          :schema $ quote $ Fn (List TrailPoint) (-> TrailStep) (:features :js-ffi)
+          :schema $ quote $ Fn (List TrailPoint) (-> TrailStep) (:features :js-ffi :state)
         'pick-many $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pick-many (xs)
             if
@@ -1925,7 +1925,7 @@
                       :ops $ get-trail-ops trail
                 comp-reset $ [] 0 0
           :examples $ []
-          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'expand-directions $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn expand-directions (base)
             []
@@ -1955,6 +1955,7 @@
           :examples $ []
           :schema $ quote $ Fn
             -> $ List $ List (List Number)
+            :features :state
         'get-trail-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-trail-ops (trail)
             let
@@ -2009,6 +2010,7 @@
           :schema $ quote $ Fn
             List $ List $ List Number
             -> $ List $ List (List Number)
+            :features :state
         'pick-one $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn pick-one (xs)
             .unwrap $ nth xs $ decode-map-as
@@ -2059,7 +2061,7 @@
               reset! *store $ updater @*store (app.schema/normalize-op op) op-id op-time
             , &unit
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :js-ffi) (:open :decode)
+          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :io :js-ffi :state) (:open :decode)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (; js/console.log PIXI)
             -> (new FontFaceObserver "|Josefin Sans") (phlox.core/ffi-load-font)
@@ -2069,7 +2071,7 @@
             when mobile? (render-control!) (start-control-loop! 8 on-control-event)
             println "|App Started"
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if (nil? build-errors)
@@ -2081,12 +2083,12 @@
               hud! |error build-errors
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :js-ffi)
+          :schema $ quote $ Fn (-> Unit) (:features :io :js-ffi :state)
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
             render! (comp-container @*store) dispatch! $ {}
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :io :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.main
           :require (|pixi.js :as PIXI)
