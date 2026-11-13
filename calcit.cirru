@@ -2029,16 +2029,18 @@
           :schema $ quote $ Ref schema/Store
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op)
-            match op
-              (:states _ _) nil
-              _ $ println |dispatch! op
             let
-                op-id $ decode-map-as (shortid/generate) 'String
-                op-time $ app.util/ffi-date-now
-              reset! *store $ updater @*store (app.schema/normalize-op op) op-id op-time
-            , &unit
+                action $ app.schema/normalize-op op
+              match action
+                (:states _ _) &unit
+                _ $ println |dispatch! op
+              let
+                  op-id $ decode-map-as (shortid/generate) 'String
+                  op-time $ app.util/ffi-date-now
+                reset! *store $ updater @*store action op-id op-time
+              , &unit
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Unit) (:features :io :js-ffi :state) (:open :decode)
+          :schema $ quote $ Fn Input (-> Unit) (:generics Input) (:features :io :js-ffi :state) (:open :decode)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! () (; js/console.log PIXI)
             -> (new FontFaceObserver "|Josefin Sans") (phlox.core/ffi-load-font)
@@ -2100,18 +2102,20 @@
           :schema $ quote StructDef
         'normalize-op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-op (op)
-            match op
-              (:tab tab)
-                Op :tab $ decode-map-as tab 'Tag
-              (:touch token)
-                Op :touch $ decode-map-as token 'Nil
-              (:states cursor state)
-                Op :states
-                  decode-map-as cursor $ List app.schema/CursorKey
-                  , state
-              _ $ raise "|Unknown application operation"
+            if (enum? op)
+              match op
+                (:tab tab)
+                  Op :tab $ decode-map-as tab 'Tag
+                (:touch token)
+                  Op :touch $ decode-map-as token 'Nil
+                (:states cursor state)
+                  Op :states
+                    decode-map-as cursor $ List app.schema/CursorKey
+                    , state
+                _ $ raise "|Unknown application operation"
+              raise "|Unknown application operation"
           :examples $ []
-          :schema $ quote $ Fn AnyEnum (-> Op) (:open :decode)
+          :schema $ quote $ Fn Input (-> Op) (:generics Input) (:open :decode)
         'store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def store
             Store :tab None :touch-key nil :states $ {}
