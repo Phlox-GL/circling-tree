@@ -2316,7 +2316,7 @@
               .unwrap $ get state key
               , 'Number
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) Tag (-> Number)
+          :schema $ quote $ Fn (Map Tag Value) Tag (-> Number) (:generics Value)
         'subtract-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn subtract-path (p1 p2)
             let[] (a b) p1 $ let[] (x y) p2 $ [] (- a x) (- b y)
