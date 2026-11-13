@@ -671,6 +671,9 @@
             |@calcit/std :refer $ rand rand-int
     'app.comp.geocentric-demo $ %{} 'FileEntry
       :defs $ {}
+        'InitialStateValue $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion InitialStateValue Number Tag
+          :examples $ []
         'comp-geocentric-control $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-geocentric-control (state states)
             container
@@ -765,7 +768,7 @@
           :code $ quote $ def initial-state
             {} (:r2 100) (:r3 16) (:v2 30) (:v3 260) (:steps 2000) (:step 0.002) (:selected :r2)
           :examples $ []
-          :schema $ quote $ Map Tag Dynamic
+          :schema $ quote $ Map Tag InitialStateValue
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.geocentric-demo
           :require
