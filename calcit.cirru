@@ -91,6 +91,14 @@
             phlox.comp.slider :refer $ comp-slider
     'app.comp.chars-demo $ %{} 'FileEntry
       :defs $ {}
+        'StrokeOp $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum StrokeOp
+            :move-to $ List Number
+            :line-to $ List Number
+            :arc (List Number) Number $ List Number
+            :close-path
+          :examples $ []
+          :schema $ quote EnumDef
         'comp-char $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-char (touch-key kind)
             container ({})
@@ -142,30 +150,32 @@
                   :width 1
                   :alpha 1
                 ; rand-stroke $ [] (rand-stroke curve-strokes) (rand-stroke straight-strokes) (rand-stroke slash-strokes)
-                decode-map-as
-                  case kind
-                    0 $ concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
-                    1 $ concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
-                    2 $ rand-stroke $ []
-                      concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
-                      concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
-                      rand-stroke dot-strokes
-                      []
-                    3 $ rand-stroke $ [] (rand-stroke curve-strokes) (rand-stroke dot-strokes) ([])
-                    4 $ rand-stroke $ []
-                      concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
-                      concat-ops (rand-stroke curve-strokes) (rand-stroke curve-strokes)
-                      rand-stroke dot-strokes
-                      []
-                    5 $ rand-stroke $ []
-                      concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
-                      rand-stroke curve-strokes
-                      []
-                    rand-stroke $ []
-                      concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
-                      rand-stroke curve-strokes
-                      []
-                  List $ List Dynamic
+                map
+                  decode-map-as
+                    case kind
+                      0 $ concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
+                      1 $ concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
+                      2 $ rand-stroke $ []
+                        concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
+                        concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
+                        rand-stroke dot-strokes
+                        []
+                      3 $ rand-stroke $ [] (rand-stroke curve-strokes) (rand-stroke dot-strokes) ([])
+                      4 $ rand-stroke $ []
+                        concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
+                        concat-ops (rand-stroke curve-strokes) (rand-stroke curve-strokes)
+                        rand-stroke dot-strokes
+                        []
+                      5 $ rand-stroke $ []
+                        concat-ops (rand-stroke slash-strokes) (rand-stroke slash-strokes)
+                        rand-stroke curve-strokes
+                        []
+                      rand-stroke $ []
+                        concat-ops (rand-stroke straight-strokes) (rand-stroke straight-strokes)
+                        rand-stroke curve-strokes
+                        []
+                    List StrokeOp
+                  , stroke-to-graphics
           :examples $ []
           :schema $ quote $ Fn Nil Number (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'concat-ops $ %{} 'CodeEntry (:doc |)
@@ -178,52 +188,32 @@
           :code $ quote $ def curve-strokes
             []
               []
-                g :move-to $ [] 0 0
-                g :arc $ {}
-                  :center $ [] 0 10
-                  :radius 10
-                  :angle $ [] (* -0.5 phlox.math/ffi-pi) 0
+                StrokeOp :move-to $ [] 0 0
+                StrokeOp :arc ([] 0 10) 10 $ [] (* -0.5 phlox.math/ffi-pi) 0
               []
-                g :move-to $ [] 10 0
-                g :arc $ {}
-                  :center $ [] 0 0
-                  :radius 10
-                  :angle $ [] 0 $ * 0.5 phlox.math/ffi-pi
+                StrokeOp :move-to $ [] 10 0
+                StrokeOp :arc ([] 0 0) 10 $ [] 0 $ * 0.5 phlox.math/ffi-pi
               []
-                g :move-to $ [] 10 10
-                g :arc $ {}
-                  :center $ [] 10 0
-                  :radius 10
-                  :angle $ [] (* 0.5 phlox.math/ffi-pi) phlox.math/ffi-pi
+                StrokeOp :move-to $ [] 10 10
+                StrokeOp :arc ([] 10 0) 10 $ [] (* 0.5 phlox.math/ffi-pi) phlox.math/ffi-pi
               []
-                g :move-to $ [] 0 10
-                g :arc $ {}
-                  :center $ [] 10 10
-                  :radius 10
-                  :angle $ [] phlox.math/ffi-pi $ * 1.5 phlox.math/ffi-pi
+                StrokeOp :move-to $ [] 0 10
+                StrokeOp :arc ([] 10 10) 10 $ [] phlox.math/ffi-pi $ * 1.5 phlox.math/ffi-pi
           :examples $ []
-          :schema $ quote $ List
-            List $ List Dynamic
+          :schema $ quote $ List (List StrokeOp)
         'dot-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dot-strokes
             []
               []
-                g :move-to $ [] 4 5
-                g :arc $ {}
-                  :center $ [] 5 5
-                  :radius 1
-                  :angle $ [] (- 0 phlox.math/ffi-pi) phlox.math/ffi-pi
-                g :close-path nil
+                StrokeOp :move-to $ [] 4 5
+                StrokeOp :arc ([] 5 5) 1 $ [] (- 0 phlox.math/ffi-pi) phlox.math/ffi-pi
+                StrokeOp :close-path
               []
-                g :move-to $ [] 0 5
-                g :arc $ {}
-                  :center $ [] 5 5
-                  :radius 4
-                  :angle $ [] (- 0 phlox.math/ffi-pi) phlox.math/ffi-pi
-                g :close-path nil
+                StrokeOp :move-to $ [] 0 5
+                StrokeOp :arc ([] 5 5) 4 $ [] (- 0 phlox.math/ffi-pi) phlox.math/ffi-pi
+                StrokeOp :close-path
           :examples $ []
-          :schema $ quote $ List
-            List $ List Dynamic
+          :schema $ quote $ List (List StrokeOp)
         'rand-stroke $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn rand-stroke (strokes)
             .unwrap $ nth strokes $ decode-map-as
@@ -235,28 +225,38 @@
           :code $ quote $ def slash-strokes
             []
               []
-                g :move-to $ [] 0 0
-                g :line-to $ [] 10 10
+                StrokeOp :move-to $ [] 0 0
+                StrokeOp :line-to $ [] 10 10
               []
-                g :move-to $ [] 10 0
-                g :line-to $ [] 0 10
+                StrokeOp :move-to $ [] 10 0
+                StrokeOp :line-to $ [] 0 10
               []
           :examples $ []
-          :schema $ quote $ List
-            List $ List Dynamic
+          :schema $ quote $ List (List StrokeOp)
         'straight-strokes $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def straight-strokes
             []
               []
-                g :move-to $ [] 5 0
-                g :line-to $ [] 5 10
+                StrokeOp :move-to $ [] 5 0
+                StrokeOp :line-to $ [] 5 10
               []
-                g :move-to $ [] 0 5
-                g :line-to $ [] 10 5
+                StrokeOp :move-to $ [] 0 5
+                StrokeOp :line-to $ [] 10 5
               []
           :examples $ []
-          :schema $ quote $ List
-            List $ List Dynamic
+          :schema $ quote $ List (List StrokeOp)
+        'stroke-to-graphics $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn stroke-to-graphics (op)
+            hint-fn $ Fn StrokeOp
+              -> $ List Dynamic
+              :features :js-ffi
+            match op
+              (:move-to point) (g :move-to point)
+              (:line-to point) (g :line-to point)
+              (:arc center radius angle)
+                g :arc $ {} (:center center) (:radius radius) (:angle angle)
+              (:close-path) (g :close-path nil)
+          :examples $ []
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.chars-demo
           :require
@@ -671,6 +671,9 @@
             |@calcit/std :refer $ rand rand-int
     'app.comp.geocentric-demo $ %{} 'FileEntry
       :defs $ {}
+        'InitialStateValue $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion InitialStateValue Number Tag
+          :examples $ []
         'comp-geocentric-control $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-geocentric-control (state states)
             container
@@ -765,7 +768,7 @@
           :code $ quote $ def initial-state
             {} (:r2 100) (:r3 16) (:v2 30) (:v3 260) (:steps 2000) (:step 0.002) (:selected :r2)
           :examples $ []
-          :schema $ quote $ Map Tag Dynamic
+          :schema $ quote $ Map Tag InitialStateValue
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.geocentric-demo
           :require
@@ -2313,7 +2316,7 @@
               .unwrap $ get state key
               , 'Number
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) Tag (-> Number)
+          :schema $ quote $ Fn (Map Tag Value) Tag (-> Number) (:generics Value)
         'subtract-path $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn subtract-path (p1 p2)
             let[] (a b) p1 $ let[] (x y) p2 $ [] (- a x) (- b y)
