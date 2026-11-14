@@ -779,9 +779,7 @@
                 create-list :container
                   {} $ :position $ [] 700 400
                   -> trails $ map-indexed $ fn (idx trail)
-                    [] idx $ graphics $ {}
-                      :position $ [] 0 0
-                      :ops $ get-trail-ops trail
+                    [] idx $ path-graphics ([] 0 0) (get-trail-ops trail)
                 comp-reset $ [] 0 0
           :examples $ []
           :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
@@ -826,28 +824,27 @@
             let
                 zoom-in $ [] 6 0
               concat
-                [] $ g :line-style $ {}
-                  :color $ hslx
+                [] $ phlox.schema/PathOp :line-style
+                  hslx
                     decode-map-as (rand 360) 'Number
                     + 20 $ decode-map-as (rand-int 80) 'Number
                     + 20 $ decode-map-as (rand-int 80) 'Number
-                  :width 2
-                  :alpha 1
+                  , 2 1
                 -> trail rest $ mapcat $ fn (stop)
                   hint-fn $ Fn
                     List $ List Number
-                    -> $ List $ List Dynamic
+                    -> $ List phlox.schema/PathOp
                   []
-                    g :move-to $ multiply-path
+                    phlox.schema/PathOp :move-to $ multiply-path
                       .unwrap-or (first stop) ([] 0 0)
                       , zoom-in
-                    g :line-to $ multiply-path
+                    phlox.schema/PathOp :line-to $ multiply-path
                       .unwrap-or (last stop) ([] 0 0)
                       , zoom-in
           :examples $ []
           :schema $ quote $ Fn
             List $ List $ List Number
-            -> $ List $ List Dynamic
+            -> $ List phlox.schema/PathOp
             :features :js-ffi
         'group-trail-pieces $ %{} 'CodeEntry
           :doc "|groups pieces by their trail key, kept outside `loop` so the decode types stay in a function body"
@@ -930,7 +927,7 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.grow-demo
           :require
-            phlox.core :refer $ defcomp g hslx rect circle text container graphics create-list
+            phlox.core :refer $ defcomp hslx rect circle text container path-graphics create-list
             app.util :refer $ add-path multiply-path
             app.comp.reset :refer $ comp-reset
             clojure.core.rrb-vector :refer $ catvec
