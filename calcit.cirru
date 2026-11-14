@@ -1580,6 +1580,9 @@
                       :points $ [] ([] 0 300) ([] 140 300)
                       :shaking? false
                   Map Tag Dynamic
+                points $ decode-map-as
+                  .unwrap $ get state :points
+                  List $ List Number
               container ({})
                 container
                   {} $ :position $ [] -100 -60
@@ -1587,29 +1590,22 @@
                     :position $ [] -60 0
                     :on $ {} $ :pointertap
                       fn (e d!)
-                        d! $ :: :states cursor $ update state :points
-                          fn (points)
-                            hint-fn $ Fn Dynamic (-> Dynamic) (:features :js-ffi)
-                            let
-                                ps $ decode-map-as points $ List (List Number)
-                                tail $ .unwrap-or (last ps) ([] 0 0)
-                              conj (butlast ps)
-                                add-path tail $ [] -80 -60
-                                , tail
+                        let
+                            tail $ .unwrap-or (last points) ([] 0 0)
+                          d! $ :: :states cursor $ assoc state :points
+                            conj (butlast points)
+                              add-path tail $ [] -80 -60
+                              , tail
                   comp-button $ {} (:text |Reduce)
                     :position $ [] 0 0
                     :on $ {} $ :pointertap
                       fn (e d!)
-                        d! $ :: :states cursor $ update state :points
-                          fn (points)
-                            hint-fn $ Fn Dynamic (-> Dynamic) (:features :js-ffi)
-                            let
-                                ps $ decode-map-as points $ List (List Number)
-                              if
-                                <= (.len ps) 2
-                                , ps $ conj
-                                  butlast $ butlast ps
-                                  .unwrap-or (last ps) ([] 0 0)
+                        d! $ :: :states cursor $ assoc state :points
+                          if
+                            <= (.len points) 2
+                            , points $ conj
+                              butlast $ butlast points
+                              .unwrap-or (last points) ([] 0 0)
                   comp-slider (app.util/child-states states :steps)
                     {}
                       :value $ app.util/state-number state :steps
@@ -1618,9 +1614,7 @@
                       :title |Steps
                       :min 0
                       :max $ if
-                        >= 3 $ .len $ decode-map-as
-                          .unwrap $ get state :points
-                          List $ List Number
+                        >= 3 $ .len points
                         , 12 6
                       :round? true
                       :on-change $ fn (value d!)
@@ -1636,11 +1630,7 @@
                 graphics $ {}
                   :position $ [] 0 0
                   :ops $ let
-                      trail $ fold-curve
-                        decode-map-as
-                          .unwrap $ get state :points
-                          List $ List Number
-                        app.util/state-number state :steps
+                      trail $ fold-curve points (app.util/state-number state :steps)
                         decode-map-as
                           .unwrap-or (get state :shaking?) false
                           , 'Bool
@@ -1654,18 +1644,15 @@
                       -> (rest trail)
                         map-indexed $ fn (idx point) (g :line-to point)
                 create-list :container ({})
-                  ->
-                    decode-map-as
-                      .unwrap $ get state :points
-                      List $ List Number
-                    map-indexed $ fn (idx point)
-                      [] idx $ comp-drag-point (app.util/child-states states idx)
-                        {} (:position point)
-                          :title $ str |p idx
-                          :alpha 0.5
-                          :color $ hslx 300 80 50
-                          :on-change $ fn (position d!)
-                            d! $ :: :states cursor $ assoc-in state ([] :points idx) position
+                  -> points $ map-indexed $ fn (idx point)
+                    [] idx $ comp-drag-point (app.util/child-states states idx)
+                      {} (:position point)
+                        :title $ str |p idx
+                        :alpha 0.5
+                        :color $ hslx 300 80 50
+                        :on-change $ fn (position d!)
+                          d! $ :: :states cursor $ assoc state :points
+                            assoc points idx $ decode-map-as position $ List Number
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'fold-curve $ %{} 'CodeEntry (:doc |)
@@ -2097,7 +2084,7 @@
           :code $ quote $ defstruct Store
             :tab $ Option Tag
             :touch-key Nil
-            :states $ Map Dynamic Dynamic
+            :states $ Map app.schema/CursorKey Dynamic
           :examples $ []
           :schema $ quote StructDef
         'normalize-op $ %{} 'CodeEntry (:doc |)
@@ -2142,7 +2129,7 @@
               (:states cursor state)
                 assoc store :states $ decode-map-as
                   assoc-in (:states store) (conj cursor :data) state
-                  Map Dynamic Dynamic
+                  Map app.schema/CursorKey Dynamic
           :examples $ []
           :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store)
       :ns $ %{} 'NsEntry (:doc |)
