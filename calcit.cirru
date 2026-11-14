@@ -1884,9 +1884,7 @@
                 create-list :container
                   {} $ :position $ [] 200 0
                   -> trails $ map-indexed $ fn (idx trail)
-                    [] idx $ graphics $ {}
-                      :position $ [] 0 0
-                      :ops $ get-trail-ops trail
+                    [] idx $ path-graphics ([] 0 0) (get-trail-ops trail)
                 comp-reset $ [] 0 0
           :examples $ []
           :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
@@ -1926,23 +1924,20 @@
                 zoom-in $ [] 6 0
               concat
                 []
-                  g :move-to $ multiply-path
+                  phlox.schema/PathOp :move-to $ multiply-path
                     .unwrap-or (first trail) ([] 0 0)
                     , zoom-in
-                  g :line-style $ {}
-                    :color $ decode-map-as
+                  phlox.schema/PathOp :line-style
+                    decode-map-as
                       rand-int $ hslx 0 0 90
                       , 'Number
-                    :width 2
-                    :alpha 1
+                    , 2 1
                 -> trail rest $ map $ fn (stop)
-                  hint-fn $ Fn (List Number)
-                    -> $ List Dynamic
-                  [] :line-to $ multiply-path stop zoom-in
+                  phlox.schema/PathOp :line-to $ multiply-path stop zoom-in
           :examples $ []
           :schema $ quote $ Fn
             List $ List Number
-            -> $ List $ List Dynamic
+            -> $ List phlox.schema/PathOp
         'iterate-trails $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn iterate-trails (trails)
             -> trails $ map $ fn (trail)
@@ -1993,7 +1988,7 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.walking-demo
           :require
-            phlox.core :refer $ defcomp g hslx rect circle text container graphics create-list
+            phlox.core :refer $ defcomp hslx rect circle text container path-graphics create-list
             app.util :refer $ add-path multiply-path
             app.comp.reset :refer $ comp-reset
             clojure.core.rrb-vector :refer $ catvec
