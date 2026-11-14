@@ -700,9 +700,8 @@
                   .unwrap-or (get states :data) initial-state
                   Map Tag Dynamic
               container ({})
-                graphics $ {}
-                  :position $ [] 400 360
-                  :ops $ let
+                path-graphics ([] 400 360)
+                  let
                       steps $ app.util/state-number state :steps
                       step $ app.util/state-number state :step
                       r2 $ app.util/state-number state :r2
@@ -724,12 +723,9 @@
                                 * r3 $ phlox.core/ffi-sin $ * t (app.util/state-number state :v3)
                     concat
                       []
-                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
-                        g :line-style $ {}
-                          :color $ hslx 0 80 80
-                          :width 2
-                          :alpha 1
-                      -> trail rest $ map $ fn (point) ([] :line-to point)
+                        phlox.schema/PathOp :move-to $ .unwrap-or (first trail) ([] 0 0)
+                        phlox.schema/PathOp :line-style (hslx 0 80 80) 2 1
+                      -> trail rest $ map $ fn (point) (phlox.schema/PathOp :line-to point)
                 comp-geocentric-control state states
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
@@ -746,7 +742,7 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.geocentric-demo
           :require
-            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            phlox.core :refer $ defcomp >> hslx rect circle text container path-graphics create-list
             app.util :refer $ rand-point rand-color add-path
             phlox.comp.button :refer $ comp-button
             phlox.comp.slider :refer $ comp-slider
