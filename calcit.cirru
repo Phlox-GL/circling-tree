@@ -1651,7 +1651,8 @@
                         :alpha 0.5
                         :color $ hslx 300 80 50
                         :on-change $ fn (position d!)
-                          d! $ :: :states cursor $ assoc-in state ([] :points idx) position
+                          d! $ :: :states cursor $ assoc state :points
+                            assoc points idx $ decode-map-as position $ List Number
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'fold-curve $ %{} 'CodeEntry (:doc |)
