@@ -2083,7 +2083,7 @@
           :code $ quote $ defstruct Store
             :tab $ Option Tag
             :touch-key Nil
-            :states $ Map Dynamic Dynamic
+            :states $ Map app.schema/CursorKey Dynamic
           :examples $ []
           :schema $ quote StructDef
         'normalize-op $ %{} 'CodeEntry (:doc |)
@@ -2128,7 +2128,7 @@
               (:states cursor state)
                 assoc store :states $ decode-map-as
                   assoc-in (:states store) (conj cursor :data) state
-                  Map Dynamic Dynamic
+                  Map app.schema/CursorKey Dynamic
           :examples $ []
           :schema $ quote $ Fn app.schema/Store app.schema/Op String Number (-> app.schema/Store)
       :ns $ %{} 'NsEntry (:doc |)
