@@ -250,9 +250,8 @@
                     {} $ :size 20
                   Map Tag Dynamic
               container ({})
-                graphics $ {}
-                  :position $ [] 200 320
-                  :ops $ generate-ops $ app.util/state-number state :size
+                phlox.core/path-graphics ([] 200 320)
+                  generate-ops $ app.util/state-number state :size
                 comp-slider (>> states :size)
                   {}
                     :value $ app.util/state-number state :size
@@ -270,8 +269,7 @@
                 r 320
                 shares $ + 2 size
               -> (range shares) shuffle $ mapcat $ fn (idx)
-                hint-fn $ Fn Number $ ->
-                  List $ List Dynamic
+                hint-fn $ Fn Number $ -> (List phlox.schema/PathOp)
                 let
                     t $ * 2 phlox.math/ffi-pi idx $ / 1 shares
                     t2 $ decode-map-as
@@ -281,26 +279,23 @@
                       * 180 t $ / 1 phlox.math/ffi-pi
                       , 100 60
                   []
-                    g :move-to $ []
+                    phlox.schema/PathOp :move-to $ []
                       * r $ phlox.core/ffi-cos t
                       * r $ phlox.core/ffi-sin t
-                    g :line-style $ {} (:color color) (:width 2) (:alpha 0.8)
-                    g :quadratic-to $ {}
-                      :p1 $ [] 0 0
-                      :to-p $ []
+                    phlox.schema/PathOp :line-style color 2 0.8
+                    phlox.schema/PathOp :quadratic-to ([] 0 0)
+                      []
                         * r $ phlox.core/ffi-cos t2
                         * r $ phlox.core/ffi-sin t2
-                    g :line-style $ {} (:color color) (:width 0) (:alpha 0)
-                    g :arc $ {}
-                      :center $ [] 0 0
-                      :radius r
-                      :angle $ [] t2 t
-                      :anticlockwise? $ <
+                    phlox.schema/PathOp :line-style color 0 0
+                    phlox.schema/PathOp :directed-arc ([] 0 0) r ([] t2 t)
+                      <
                         phlox.core/ffi-abs $ - t t2
                         , phlox.math/ffi-pi
           :examples $ []
           :schema $ quote $ Fn Number
-            -> $ List $ List Dynamic
+            -> $ List phlox.schema/PathOp
+            :features :js-ffi
         'shuffle $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn shuffle (xs) (js/console.warn "|TODO shuffle" xs) xs
           :examples $ []
