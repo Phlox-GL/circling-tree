@@ -522,7 +522,7 @@
                           -> $ List $ List Dynamic
                         [] $ g :line-to p
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'comp-numbers-control $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-numbers-control (state states)
             let
@@ -595,7 +595,7 @@
                         :r4 $ rand-value
                         :r5 $ rand-value
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'get-round? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-round? (param)
             contains? (#{} :r1 :r2 :r3 :r4 :r5 :steps) param
@@ -687,7 +687,7 @@
                       :steps 4000
                       :step 0.1
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'comp-geocentric-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-geocentric-demo (states)
             let
@@ -723,7 +723,7 @@
                       -> trail rest $ map $ fn (point) (phlox.schema/PathOp :line-to point)
                 comp-geocentric-control state states
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'get-unit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-unit (param)
             match param (:r2 1) (:r3 0.5) (:v2 0.2) (:v3 0.2) (:steps 100) (:step 0.001) (_ 1)
@@ -1130,7 +1130,7 @@
                       :step 500
                       :unit 0.01
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'comp-oscillo-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-oscillo-demo (states)
             let
@@ -1164,7 +1164,7 @@
                       -> trail rest $ map $ fn (point) ([] :line-to point)
                 comp-oscillo-control state states
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'get-round? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-round? (param) (not= param :unit)
           :examples $ []
@@ -1477,7 +1477,7 @@
                               , segments $ butlast segments
                         assoc :selected 0
           :examples $ []
-          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Tag Dynamic) (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'comp-satellite-demo $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-satellite-demo (states)
             let
@@ -1546,7 +1546,7 @@
                               :angle $ [] 0 360
                             g :end-fill nil
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.satellite-demo
           :require
@@ -1642,7 +1642,7 @@
                           d! $ :: :states cursor $ assoc state :points
                             assoc points idx $ decode-map-as position $ List Number
           :examples $ []
-          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
+          :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'fold-curve $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn fold-curve (points steps shaking?)
             let
