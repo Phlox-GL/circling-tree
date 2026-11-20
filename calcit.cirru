@@ -643,6 +643,7 @@
         'InitialStateValue $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defunion InitialStateValue Number Tag
           :examples $ []
+          :schema $ quote UnionDef
         'comp-geocentric-control $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-geocentric-control (state states)
             container
