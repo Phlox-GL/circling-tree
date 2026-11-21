@@ -1545,7 +1545,7 @@
                                   * r $ phlox.core/ffi-sin $ rad th
                               :radius 4
                               :angle $ [] 0 360
-                            g :end-fill nil
+                            g :end-fill
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
       :ns $ %{} 'NsEntry (:doc |)
