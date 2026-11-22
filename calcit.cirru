@@ -21,9 +21,8 @@
                       :n 80
                   Map Tag Dynamic
               container ({})
-                graphics $ {}
-                  :position $ [] 0 0
-                  :ops $ let[] (p1 p2 q1 q2)
+                path-graphics ([] 0 0)
+                  let[] (p1 p2 q1 q2)
                     decode-map-as
                       .unwrap $ get state :points
                       List $ List Number
@@ -59,32 +58,26 @@
               ->
                 range $ inc n
                 mapcat $ fn (idx)
-                  hint-fn $ Fn Number $ ->
-                    List $ List Dynamic
+                  hint-fn $ Fn Number $ -> (List PathOp)
                   let
                       p3 $ add-path p1 $ multiply-path p-unit ([] idx 0)
                       q3 $ add-path q2 $ multiply-path q-unit ([] idx 0)
                       m-unit $ divide-x (subtract-path q3 p3) n
                       mp $ add-path p3 $ multiply-path m-unit ([] idx 0)
-                    [] (g :move-to p3)
-                      [] :line-style $ {}
-                        :color $ hslx 200 100 70
-                        :width 3
-                        :alpha 0.3
-                      g :line-to mp
-                      [] :line-style $ {}
-                        :color $ hslx 20 100 70
-                        :width 3
-                        :alpha 0.9
-                      g :line-to q3
+                    [] (PathOp :move-to p3)
+                      PathOp :line-style (hslx 200 100 70) 3 0.3
+                      PathOp :line-to mp
+                      PathOp :line-style (hslx 20 100 70) 3 0.9
+                      PathOp :line-to q3
           :examples $ []
           :schema $ quote $ Fn (List Number) (List Number) (List Number) (List Number) Number
-            -> $ List Dynamic
+            -> $ List PathOp
             :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.bezier-demo
           :require
-            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            phlox.core :refer $ defcomp >> hslx rect circle text container path-graphics create-list
+            phlox.schema :refer $ PathOp
             app.comp.reset :refer $ comp-reset
             app.util :refer $ rand-point add-path subtract-path divide-x multiply-path
             phlox.comp.drag-point :refer $ comp-drag-point
