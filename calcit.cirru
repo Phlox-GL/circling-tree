@@ -477,9 +477,8 @@
                     {} (:r1 312) (:r2 80) (:r3 96) (:r4 20) (:r5 8) (:steps 2000) (:v 0.11) (:round? true)
                   Map Tag Dynamic
               container ({}) (comp-numbers-control state states)
-                graphics $ {}
-                  :position $ [] 400 400
-                  :ops $ let
+                path-graphics ([] 400 400)
+                  let
                       r1 $ app.util/state-number state :r1
                       r2 $ app.util/state-number state :r2
                       r3 $ app.util/state-number state :r3
@@ -505,15 +504,9 @@
                               add-path $ if (zero? r5) ([] 0 0) (polar-point r5 t5)
                     concat
                       []
-                        g :line-style $ {}
-                          :color $ hslx 0 80 70
-                          :width 2
-                          :alpha 0.7
-                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
-                      -> trail rest $ mapcat $ fn (p)
-                        hint-fn $ Fn (List Number)
-                          -> $ List $ List Dynamic
-                        [] $ g :line-to p
+                        PathOp :line-style (hslx 0 80 70) 2 0.7
+                        PathOp :move-to $ .unwrap-or (first trail) ([] 0 0)
+                      -> trail rest $ map $ fn (p) (PathOp :line-to p)
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
         'comp-numbers-control $ %{} 'CodeEntry (:doc |)
@@ -624,7 +617,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.cycloid-demo
           :require
-            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            phlox.core :refer $ defcomp >> hslx rect circle text container path-graphics create-list
+            phlox.schema :refer $ PathOp
             app.comp.reset :refer $ comp-reset
             app.util :refer $ rand-point add-path subtract-path multiply-path
             phlox.comp.button :refer $ comp-button
