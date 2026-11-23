@@ -314,16 +314,14 @@
               create-list :container ({})
                 -> (range 60)
                   map $ fn (idx)
-                    [] idx $ graphics $ {}
-                      :position $ [] 300 0
-                      :ops $ generate-circle-ops idx
+                    [] idx $ path-graphics ([] 300 0) (generate-circle-ops idx)
           :examples $ []
           :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'generate-circle-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-circle-ops (idx)
             loop
                 angle 0
-                acc $ []
+                acc $ assert-type ([]) (List PathOp)
               if
                 > angle $ + phlox.math/ffi-pi -0.3 $ decode-map-as (rand 1.4) 'Number
                 , acc $ let
@@ -334,32 +332,27 @@
                   recur
                     + a2 $ * 0.2 ratio
                     conj acc
-                      g :line-style $ {}
-                        :color $ * (phlox.core/ffi-random) (hslx 0 0 100)
-                        :width 6
-                        :alpha 0
-                      g :arc $ {}
-                        :center $ [] 0 0
-                        :radius $ * 8 idx
-                        :angle $ [] (* r0 angle) (* r0 a1)
-                        :anticlockwise? false
-                      g :line-style $ {}
-                        :color $ * (phlox.core/ffi-random) (hslx 0 0 100)
-                        :width 4
-                        :alpha 1
-                      g :arc $ {}
-                        :center $ [] 0 0
-                        :radius $ * 8 idx
-                        :angle $ [] (* r0 a1) (* r0 a2)
-                        :anticlockwise? false
+                      PathOp :line-style
+                        * (phlox.core/ffi-random) (hslx 0 0 100)
+                        , 6 0
+                      PathOp :directed-arc ([] 0 0) (* 8 idx)
+                        [] (* r0 angle) (* r0 a1)
+                        , false
+                      PathOp :line-style
+                        * (phlox.core/ffi-random) (hslx 0 0 100)
+                        , 4 1
+                      PathOp :directed-arc ([] 0 0) (* 8 idx)
+                        [] (* r0 a1) (* r0 a2)
+                        , false
           :examples $ []
           :schema $ quote $ Fn Number
-            -> $ List Dynamic
+            -> $ List PathOp
             :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.circle-demo
           :require
-            phlox.core :refer $ defcomp hslx rect circle text container graphics create-list g
+            phlox.core :refer $ defcomp hslx rect circle text container path-graphics create-list
+            phlox.schema :refer $ PathOp
             app.comp.reset :refer $ comp-reset
             |@calcit/std :refer $ rand rand-int
     'app.comp.container $ %{} 'FileEntry
