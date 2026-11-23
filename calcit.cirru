@@ -946,17 +946,13 @@
                 {} $ :position $ [] 400 300
                 render-controls cursor states state controls
                 container ({})
-                  graphics $ {}
-                    :position $ [] 0 80
-                    :ops $ concat
+                  path-graphics ([] 0 80)
+                    concat
                       []
-                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
-                        g :line-style $ {}
-                          :color $ hslx 0 0 100
-                          :width 1
-                          :alpha 1
+                        PathOp :move-to $ .unwrap-or (first trail) ([] 0 0)
+                        PathOp :line-style (hslx 0 0 100) 1 1
                       -> (rest trail)
-                        map-indexed $ fn (idx point) (g :line-to point)
+                        map $ fn (point) (PathOp :line-to point)
                   render-points cursor states state controls
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi)
@@ -1073,7 +1069,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.harmono-demo
           :require
-            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            phlox.core :refer $ defcomp >> hslx rect circle text container path-graphics create-list
+            phlox.schema :refer $ PathOp
             app.util :refer $ rand-point rand-color add-path multiply-path
             phlox.comp.slider :refer $ comp-slider
             phlox.comp.drag-point :refer $ comp-drag-point
@@ -1127,9 +1124,8 @@
                   .unwrap-or (get states :data) initial-state
                   Map Tag Dynamic
               container ({})
-                graphics $ {}
-                  :position $ [] 400 360
-                  :ops $ let
+                path-graphics ([] 400 360)
+                  let
                       step $ app.util/state-number state :step
                       r 200
                       m $ app.util/state-number state :m
@@ -1144,12 +1140,9 @@
                               * r $ phlox.core/ffi-sin $ * n t
                     concat
                       []
-                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
-                        g :line-style $ {}
-                          :color $ rand-color
-                          :width 2
-                          :alpha 1
-                      -> trail rest $ map $ fn (point) ([] :line-to point)
+                        PathOp :move-to $ .unwrap-or (first trail) ([] 0 0)
+                        PathOp :line-style (rand-color) 2 1
+                      -> trail rest $ map $ fn (point) (PathOp :line-to point)
                 comp-oscillo-control state states
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
@@ -1165,7 +1158,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.oscillo-demo
           :require
-            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            phlox.core :refer $ defcomp >> hslx rect circle text container path-graphics create-list
+            phlox.schema :refer $ PathOp
             app.util :refer $ rand-point rand-color
             phlox.comp.button :refer $ comp-button
             phlox.comp.slider :refer $ comp-slider
@@ -1603,22 +1597,18 @@
                     :title |Shake
                     :on-change $ fn (v d!)
                       d! $ :: :states cursor $ assoc state :shaking? v
-                graphics $ {}
-                  :position $ [] 0 0
-                  :ops $ let
+                path-graphics ([] 0 0)
+                  let
                       trail $ fold-curve points (app.util/state-number state :steps)
                         decode-map-as
                           .unwrap-or (get state :shaking?) false
                           , 'Bool
                     concat
                       []
-                        g :move-to $ .unwrap-or (first trail) ([] 0 0)
-                        g :line-style $ {}
-                          :color $ hslx 0 0 100
-                          :width 1
-                          :alpha 1
+                        PathOp :move-to $ .unwrap-or (first trail) ([] 0 0)
+                        PathOp :line-style (hslx 0 0 100) 1 1
                       -> (rest trail)
-                        map-indexed $ fn (idx point) (g :line-to point)
+                        map $ fn (point) (PathOp :line-to point)
                 create-list :container ({})
                   -> points $ map-indexed $ fn (idx point)
                     [] idx $ comp-drag-point (app.util/child-states states idx)
@@ -1680,7 +1670,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.snowflake-demo
           :require
-            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            phlox.core :refer $ defcomp >> hslx rect circle text container path-graphics create-list
+            phlox.schema :refer $ PathOp
             app.comp.reset :refer $ comp-reset
             app.util :refer $ rand-point add-path subtract-path divide-x multiply-path divide-path invert-y
             phlox.comp.drag-point :refer $ comp-drag-point
