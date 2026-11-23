@@ -1772,16 +1772,12 @@
                   , base
               container
                 {} $ :position $ [] 0 200
-                graphics $ {}
-                  :position $ [] 0 0
-                  :ops $ let
+                path-graphics ([] 0 0)
+                  let
                       trail $ []
-                        [] :move-to $ [] 0 0
-                        [] :line-style $ {}
-                          :color $ hslx 0 0 100
-                          :width 1
-                          :alpha 1
-                        [] :line-to p0
+                        PathOp :move-to $ [] 0 0
+                        PathOp :line-style (hslx 0 0 100) 1 1
+                        PathOp :line-to p0
                     concat trail $ generate-branches p0 base 0 factor-1 factor-2
                 comp-drag-point (>> states :p1)
                   {}
@@ -1823,7 +1819,7 @@
                 next-from $ add-path from arrow
                 next-p1 $ add-path next-from $ multiply-path factor-1 arrow
                 next-p2 $ add-path next-from $ multiply-path factor-2 arrow
-                trail $ [] (g :move-to next-p1) (g :line-to next-from) (g :line-to next-p2)
+                trail $ [] (PathOp :move-to next-p1) (PathOp :line-to next-from) (PathOp :line-to next-p2)
                 too-deep? $ or (> level 8)
                   < (rough-size arrow) 4
               if too-deep? trail $ concat trail
@@ -1831,7 +1827,7 @@
                 generate-branches next-from (multiply-path factor-2 arrow) (inc level) factor-1 factor-2
           :examples $ []
           :schema $ quote $ Fn (List Number) (List Number) Number (List Number) (List Number)
-            -> $ List $ List Dynamic
+            -> $ List PathOp
             :features :js-ffi
         'should-shrink? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn should-shrink? (level)
@@ -1847,7 +1843,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.tree-demo
           :require
-            phlox.core :refer $ defcomp >> g hslx rect circle text container graphics create-list
+            phlox.core :refer $ defcomp >> hslx rect circle text container path-graphics create-list
+            phlox.schema :refer $ PathOp
             app.util :refer $ add-path multiply-path subtract-path divide-path rough-size
             phlox.comp.drag-point :refer $ comp-drag-point
             |@calcit/std :refer $ rand
