@@ -1277,9 +1277,9 @@
                   ->
                     range $ app.util/state-number state :steps
                     map $ fn (idx)
-                      [] idx $ graphics $ {}
-                        :ops $ gen-trail points $ app.util/state-number state :alpha
-                        :angle $ * idx $ app.util/state-number state :base
+                      [] idx $ path-graphics-with
+                        {} $ :angle $ * idx (app.util/state-number state :base)
+                        gen-trail points $ app.util/state-number state :alpha
                 create-list :container ({})
                   -> points $ map-indexed $ fn (idx point)
                     [] idx $ comp-drag-point (app.util/child-states states idx)
@@ -1320,38 +1320,29 @@
         'gen-trail $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn gen-trail (points alpha)
             []
-              g :move-to $ .unwrap $ get points 0
-              g :line-style $ {}
-                :color $ hslx 0 100 70
-                :width 2
-                :alpha alpha
-              g :bezier-to $ {}
-                :p1 $ .unwrap $ get points 1
-                :p2 $ .unwrap $ get points 2
-                :to-p $ .unwrap $ get points 3
-              g :move-to $ .unwrap $ get points 4
-              g :line-style $ {}
-                :color $ hslx 120 100 70
-                :width 2
-                :alpha alpha
-              g :bezier-to $ {}
-                :p1 $ .unwrap $ get points 5
-                :p2 $ .unwrap $ get points 6
-                :to-p $ .unwrap $ get points 7
-              g :move-to $ .unwrap $ get points 8
-              g :line-style $ {}
-                :color $ hslx 240 100 70
-                :width 2
-                :alpha alpha
-              g :bezier-to $ {}
-                :p1 $ .unwrap $ get points 9
-                :p2 $ .unwrap $ get points 10
-                :to-p $ .unwrap $ get points 11
+              PathOp :move-to $ .unwrap $ get points 0
+              PathOp :line-style (hslx 0 100 70) 2 alpha
+              PathOp :bezier-to
+                .unwrap $ get points 1
+                .unwrap $ get points 2
+                .unwrap $ get points 3
+              PathOp :move-to $ .unwrap $ get points 4
+              PathOp :line-style (hslx 120 100 70) 2 alpha
+              PathOp :bezier-to
+                .unwrap $ get points 5
+                .unwrap $ get points 6
+                .unwrap $ get points 7
+              PathOp :move-to $ .unwrap $ get points 8
+              PathOp :line-style (hslx 240 100 70) 2 alpha
+              PathOp :bezier-to
+                .unwrap $ get points 9
+                .unwrap $ get points 10
+                .unwrap $ get points 11
           :examples $ []
           :schema $ quote $ Fn
             List $ List Number
             , Number
-              -> $ List Dynamic
+              -> $ List PathOp
               :features :js-ffi
         'get-round? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-round? (param) (= param :steps)
@@ -1360,7 +1351,8 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.rotate-demo
           :require
-            phlox.core :refer $ defcomp >> hslx g rect circle text container graphics create-list
+            phlox.core :refer $ defcomp >> hslx rect circle text container path-graphics-with create-list
+            phlox.schema :refer $ PathOp
             app.comp.reset :refer $ comp-reset
             app.util :refer $ rand-point
             phlox.comp.drag-point :refer $ comp-drag-point
@@ -1682,17 +1674,18 @@
                 {} $ :position $ [] 200 40
                 -> (range 200)
                   map $ fn (x)
-                    [] x $ graphics $ {}
-                      :position $ [] 0 0
-                      :rotation $ * 0.010 phlox.math/ffi-pi x
-                      :ops $ generate-line-ops
+                    [] x $ path-graphics-with
+                      {}
+                        :position $ [] 0 0
+                        :rotation $ * 0.010 phlox.math/ffi-pi x
+                      generate-line-ops
           :examples $ []
           :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'generate-line-ops $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn generate-line-ops ()
             let
                 x0 2
-                ops $ [] $ g :move-to
+                ops $ [] $ PathOp :move-to
                   []
                     + x0 $ * 400 $ phlox.core/ffi-random
                     , 0
@@ -1705,21 +1698,22 @@
                       * 8 $ phlox.core/ffi-random
                   recur
                     conj acc
-                      g :line-style $ {}
-                        :color $ * (phlox.core/ffi-random) (hslx 0 0 100)
-                        :width $ if (< x2 160) 2 3
-                        :alpha $ if (< x2 80) 0.2 0.9
-                      g :line-to $ [] x1 0
-                      g :move-to $ [] x2 0
+                      PathOp :line-style
+                        * (phlox.core/ffi-random) (hslx 0 0 100)
+                        if (< x2 160) 2 3
+                        if (< x2 80) 0.2 0.9
+                      PathOp :line-to $ [] x1 0
+                      PathOp :move-to $ [] x2 0
                     , x2
           :examples $ []
           :schema $ quote $ Fn
-            -> $ List Dynamic
+            -> $ List PathOp
             :features :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.sun-demo
           :require
-            phlox.core :refer $ defcomp g hslx rect circle text container graphics create-list
+            phlox.core :refer $ defcomp hslx rect circle text container path-graphics-with create-list
+            phlox.schema :refer $ PathOp
             app.comp.reset :refer $ comp-reset
     'app.comp.tree-demo $ %{} 'FileEntry
       :defs $ {}
