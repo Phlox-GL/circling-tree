@@ -1469,49 +1469,43 @@
                     map-indexed $ fn (idx segment)
                       [] idx $ let
                           r $ + 10 $ * idx (app.util/state-number state :unit)
-                        graphics $ {} $ :ops
+                        phlox.core/path-graphics-with ({})
                           []
-                            g :line-style $ {}
-                              :color $ if
+                            phlox.schema/PathOp :line-style
+                              if
                                 = idx $ app.util/state-number state :selected
                                 hslx 0 0 100
                                 hslx 20 80 70
-                              :width $ if
+                              if
                                 = idx $ app.util/state-number state :selected
                                 , 2 2
-                              :alpha 1
-                            ; g :begin-fill $ {} $ :color (hslx 20 80 70)
-                            g :arc $ {}
-                              :center $ let
+                              , 1
+                            phlox.schema/PathOp :arc
+                              let
                                   th $ .unwrap-or (first segment) 0
                                 []
                                   * r $ phlox.core/ffi-cos $ rad th
                                   * r $ phlox.core/ffi-sin $ rad th
-                              :radius 4
-                              :angle $ [] 0 360
-                            g :arc $ {}
-                              :center $ [] 0 0
-                              :radius r
-                              :angle $ let
-                                  segment $ decode-map-as
-                                    .unwrap-or
-                                      get-in state $ [] :segments idx
-                                      []
-                                    List Number
-                                  a $ .unwrap-or (first segment) 0
-                                  b $ .unwrap-or (last segment) 0
-                                [] a $ + a b
-                            g :arc $ {}
-                              :center $ let
+                              , 4 $ [] 0 360
+                            phlox.schema/PathOp :arc ([] 0 0) r $ let
+                                segment $ decode-map-as
+                                  .unwrap-or
+                                    get-in state $ [] :segments idx
+                                    []
+                                  List Number
+                                a $ .unwrap-or (first segment) 0
+                                b $ .unwrap-or (last segment) 0
+                              [] a $ + a b
+                            phlox.schema/PathOp :arc
+                              let
                                   a $ .unwrap-or (first segment) 0
                                   b $ .unwrap-or (last segment) 0
                                   th $ + a b
                                 []
                                   * r $ phlox.core/ffi-cos $ rad th
                                   * r $ phlox.core/ffi-sin $ rad th
-                              :radius 4
-                              :angle $ [] 0 360
-                            g :end-fill
+                              , 4 $ [] 0 360
+                            phlox.schema/PathOp :end-fill
           :examples $ []
           :schema $ quote $ Fn (Map Dynamic Dynamic) (-> phlox.schema/PhloxElement) (:features :js-ffi :state)
       :ns $ %{} 'NsEntry (:doc |)
