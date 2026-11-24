@@ -6,7 +6,7 @@ Circling Tree(WIP)
 
 ### Calcit 0.44.0 升级
 
-配对正式 Calcit 和 @calcit/procs 0.44.0，重新安装依赖并构建。当前正式依赖为 Phlox 0.9.8、Touch Control 0.0.43 和 JS-FFI 0.2.19。地心参数联合类型已声明为 `UnionDef`，卫星场景使用无参数的 `end-fill` 写法。页面主体、图形交互和原 HUD 保持。
+配对正式 Calcit 和 @calcit/procs 0.44.0，重新安装依赖并构建。当前正式依赖为 Phlox 0.11.0、Touch Control 0.0.43 和 JS-FFI 0.2.19。旋转和太阳场景的路径使用明确的 PathOp 类型，绘图参数及随机调用顺序保持。地心参数联合类型已声明为 `UnionDef`，卫星场景使用无参数的 `end-fill` 写法。页面主体、图形交互和原 HUD 保持。
 
 ### Calcit 0.40.0 升级
 
