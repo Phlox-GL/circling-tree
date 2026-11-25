@@ -507,7 +507,9 @@
             let
                 cursor $ .unwrap-or (get states :cursor) ([])
                 params $ [] :r1 :r2 :r3 :r4 :r5 :steps :v
-                is-round? $ .unwrap-or (get state :round?) false
+                is-round? $ decode-map-as
+                  .unwrap-or (get state :round?) false
+                  , Bool
                 rand-value $ fn () $ if is-round?
                   -
                     decode-map-as (rand-int 300) 'Number
@@ -532,7 +534,7 @@
                 comp-switch $ {} (:value is-round?) (:title "|Round value?")
                   :position $ [] 0 100
                   :on-change $ fn (e d!)
-                    d! $ :: :states cursor $ update state :round? not
+                    d! $ :: :states cursor $ assoc state :round? (not is-round?)
                 comp-button $ {} (:text |rand2)
                   :position $ [] 100 80
                   :on-pointertap $ fn (e d!)
