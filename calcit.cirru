@@ -84,6 +84,10 @@
             phlox.comp.slider :refer $ comp-slider
     'app.comp.chars-demo $ %{} 'FileEntry
       :defs $ {}
+        'CharacterChild $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion CharacterChild String phlox.schema/PhloxElement
+          :examples $ []
+          :schema $ quote UnionDef
         'comp-char $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-char (touch-key kind)
             container ({})
@@ -98,13 +102,16 @@
                 -> (range 4)
                   mapcat $ fn (y)
                     hint-fn $ Fn Number $ ->
-                      List $ List Dynamic
+                      List $ List CharacterChild
                     -> (range 4)
                       map $ fn (x)
-                        [] (str x |+ y)
-                          container
-                            {} $ :position $ [] (* x 10) (* y 10)
-                            comp-stroke touch-key kind
+                        []
+                          assert-type (str x |+ y) CharacterChild
+                          assert-type
+                            container
+                              {} $ :position $ [] (* x 10) (* y 10)
+                              comp-stroke touch-key kind
+                            , CharacterChild
           :examples $ []
           :schema $ quote $ Fn Nil Number (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-chars-demo $ %{} 'CodeEntry (:doc |)
@@ -115,13 +122,16 @@
                 -> (range 10)
                   mapcat $ fn (y)
                     hint-fn $ Fn Number $ ->
-                      List $ List Dynamic
+                      List $ List CharacterChild
                     -> (range 10)
                       map $ fn (x)
-                        [] (str x |+ y)
-                          container
-                            {} $ :position $ [] (* x 54) (* y 54)
-                            comp-char touch-key $ decode-map-as (rand-int 6) 'Number
+                        []
+                          assert-type (str x |+ y) CharacterChild
+                          assert-type
+                            container
+                              {} $ :position $ [] (* x 54) (* y 54)
+                              comp-char touch-key $ decode-map-as (rand-int 6) 'Number
+                            , CharacterChild
               comp-reset $ [] -140 40
           :examples $ []
           :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
