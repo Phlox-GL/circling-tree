@@ -98,13 +98,16 @@
                 -> (range 4)
                   mapcat $ fn (y)
                     hint-fn $ Fn Number $ ->
-                      List $ List Dynamic
+                      List $ List app.schema/KeyedChild
                     -> (range 4)
                       map $ fn (x)
-                        [] (str x |+ y)
-                          container
-                            {} $ :position $ [] (* x 10) (* y 10)
-                            comp-stroke touch-key kind
+                        []
+                          assert-type (str x |+ y) app.schema/KeyedChild
+                          assert-type
+                            container
+                              {} $ :position $ [] (* x 10) (* y 10)
+                              comp-stroke touch-key kind
+                            , app.schema/KeyedChild
           :examples $ []
           :schema $ quote $ Fn Nil Number (-> phlox.schema/PhloxElement) (:features :js-ffi)
         'comp-chars-demo $ %{} 'CodeEntry (:doc |)
@@ -115,13 +118,16 @@
                 -> (range 10)
                   mapcat $ fn (y)
                     hint-fn $ Fn Number $ ->
-                      List $ List Dynamic
+                      List $ List app.schema/KeyedChild
                     -> (range 10)
                       map $ fn (x)
-                        [] (str x |+ y)
-                          container
-                            {} $ :position $ [] (* x 54) (* y 54)
-                            comp-char touch-key $ decode-map-as (rand-int 6) 'Number
+                        []
+                          assert-type (str x |+ y) app.schema/KeyedChild
+                          assert-type
+                            container
+                              {} $ :position $ [] (* x 54) (* y 54)
+                              comp-char touch-key $ decode-map-as (rand-int 6) 'Number
+                            , app.schema/KeyedChild
               comp-reset $ [] -140 40
           :examples $ []
           :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
@@ -1169,54 +1175,57 @@
                 -> (range 10)
                   mapcat $ fn (x)
                     hint-fn $ Fn Number $ ->
-                      List $ List Dynamic
+                      List $ List app.schema/KeyedChild
                     -> (range 10)
                       map $ fn (y)
-                        [] (str x |+ y)
-                          container
-                            {} $ :position $ [] (* x 60) (* y 60)
-                            rect $ {}
-                              :size $ []
-                                * 15 $ decode-map-as (rand-int 16) 'Number
-                                * 15 $ decode-map-as (rand-int 16) 'Number
-                              :angle $ * 45 $ decode-map-as (rand-int 4) 'Number
-                              :position $ []
-                                * 15 $ decode-map-as (rand-int 4) 'Number
-                                * 15 $ decode-map-as (rand-int 4) 'Number
-                              :line-style $ {}
-                                :color $ decode-map-as
+                        []
+                          assert-type (str x |+ y) app.schema/KeyedChild
+                          assert-type
+                            container
+                              {} $ :position $ [] (* x 60) (* y 60)
+                              rect $ {}
+                                :size $ []
+                                  * 15 $ decode-map-as (rand-int 16) 'Number
+                                  * 15 $ decode-map-as (rand-int 16) 'Number
+                                :angle $ * 45 $ decode-map-as (rand-int 4) 'Number
+                                :position $ []
+                                  * 15 $ decode-map-as (rand-int 4) 'Number
+                                  * 15 $ decode-map-as (rand-int 4) 'Number
+                                :line-style $ {}
+                                  :color $ decode-map-as
+                                    rand $ hslx 0 0 100
+                                    , 'Number
+                                  :width $ decode-map-as (rand-int 4) 'Number
+                                  :alpha 1
+                                :alpha 1
+                              rect $ {}
+                                :size $ []
+                                  * 15 $ decode-map-as (rand-int 5) 'Number
+                                  * 15 $ decode-map-as (rand-int 5) 'Number
+                                :position $ []
+                                  * 15 $ decode-map-as (rand-int 6) 'Number
+                                  * 15 $ decode-map-as (rand-int 6) 'Number
+                                :fill $ decode-map-as
                                   rand $ hslx 0 0 100
                                   , 'Number
-                                :width $ decode-map-as (rand-int 4) 'Number
-                                :alpha 1
-                              :alpha 1
-                            rect $ {}
-                              :size $ []
-                                * 15 $ decode-map-as (rand-int 5) 'Number
-                                * 15 $ decode-map-as (rand-int 5) 'Number
-                              :position $ []
-                                * 15 $ decode-map-as (rand-int 6) 'Number
-                                * 15 $ decode-map-as (rand-int 6) 'Number
-                              :fill $ decode-map-as
-                                rand $ hslx 0 0 100
-                                , 'Number
-                              :angle $ * 45 $ decode-map-as (rand-int 4) 'Number
-                              :alpha 0.9
-                            rect $ {}
-                              :size $ []
-                                * 15 $ inc $ decode-map-as (rand-int 2) 'Number
-                                * 15 $ inc $ decode-map-as (rand-int 2) 'Number
-                              :position $ []
-                                * 15 $ decode-map-as (rand-int 16) 'Number
-                                * 15 $ decode-map-as (rand-int 16) 'Number
-                              :angle $ * 45 $ decode-map-as (rand-int 4) 'Number
-                              :alpha $ decode-map-as (rand 1) 'Number
-                              :line-style $ {}
-                                :color $ decode-map-as
-                                  rand $ hslx 0 0 100
-                                  , 'Number
-                                :width 2
-                                :alpha 1
+                                :angle $ * 45 $ decode-map-as (rand-int 4) 'Number
+                                :alpha 0.9
+                              rect $ {}
+                                :size $ []
+                                  * 15 $ inc $ decode-map-as (rand-int 2) 'Number
+                                  * 15 $ inc $ decode-map-as (rand-int 2) 'Number
+                                :position $ []
+                                  * 15 $ decode-map-as (rand-int 16) 'Number
+                                  * 15 $ decode-map-as (rand-int 16) 'Number
+                                :angle $ * 45 $ decode-map-as (rand-int 4) 'Number
+                                :alpha $ decode-map-as (rand 1) 'Number
+                                :line-style $ {}
+                                  :color $ decode-map-as
+                                    rand $ hslx 0 0 100
+                                    , 'Number
+                                  :width 2
+                                  :alpha 1
+                            , app.schema/KeyedChild
               comp-reset $ [] -40 40
           :examples $ []
           :schema $ quote $ Fn Nil (-> phlox.schema/PhloxElement) (:features :js-ffi)
@@ -2015,6 +2024,10 @@
       :defs $ {}
         'CursorKey $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defunion CursorKey Tag String Number
+          :examples $ []
+          :schema $ quote UnionDef
+        'KeyedChild $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defunion KeyedChild String phlox.schema/PhloxElement
           :examples $ []
           :schema $ quote UnionDef
         'Op $ %{} 'CodeEntry (:doc |)
